@@ -16,7 +16,7 @@ module.exports = function(deployer) {
 
     await deployer.deploy(NFTokenMetadata);
 
-    await deployer.deploy(NFTokenShield, Verifier.address, NFTokenMetadata.address);
+    await deployer.deploy(NFTokenShield, Verifier.address);
 
     await deployer.deploy(FToken);
 
