@@ -31,6 +31,14 @@ du -h -d 0
 free -h
 df -h
 
+if ! command -v 7z; then
+  echo "7-Zip was not installed"
+fi
+
+if ! command -v kubectl; then
+  echo "kubectl was not installed"
+fi
+
 printf "${GREEN}*** Deploying all contracts ***${NC}\n"
 docker-compose run --rm truffle-offchain migrate --reset --network=default
 docker-compose run --rm truffle-zkp migrate --reset --network=default

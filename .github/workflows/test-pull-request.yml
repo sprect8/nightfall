@@ -84,6 +84,7 @@ jobs:
           du -h -d 0
           du -h -d 1
           cd ../work/nightfall/nightfall
+          apt-get uninstall -y p7zip p7zip-full p7zip-rar
       - name: Increase swap memory
         run: |
           du -h -d 0
