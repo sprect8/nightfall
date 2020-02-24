@@ -22,11 +22,21 @@ i.e. DIRNAME_DIRPATH_REL: "/dirName/" is a relative path which (on the host mach
 
 ABS - absolute path
 */
+const nodeHashLength = process.env.HASH_TYPE === 'sha' ? 27 : 32;
+const zeroHex =
+  process.env.HASH_TYPE === 'sha'
+    ? '0x000000000000000000000000000000000000000000000000000000'
+    : '0x0000000000000000000000000000000000000000000000000000000000000000';
+const consolidationTransferVK =
+  process.env.HASH_TYPE === 'sha'
+    ? './code/gm17/ft-mint/ft-mint-vk.json' // replace with mint - vk never used with sha
+    : './code/gm17/ft-consolidation-transfer/ft-consolidation-transfer-vk.json';
+
 module.exports = {
   // Tree parameters. You also need to set these in the MerkleTree.sol contract, and in Nightfall's ./config/merkle-tree/default.js config file.
   LEAF_HASHLENGTH: 32, // expected length of an input to a hash in bytes
-  NODE_HASHLENGTH: 27, // expected length of inputs to hashes up the merkle tree, in bytes
-
+  NODE_HASHLENGTH: nodeHashLength, // expected length of inputs to hashes up the merkle tree, in bytes
+  ZERO: zeroHex,
   // *****
 
   BATCH_PROOF_SIZE: 20, // the number of proofs in a batch (you will need to redo the proofs if you change this)
@@ -34,6 +44,7 @@ module.exports = {
   // *****
 
   ZOKRATES_PACKING_SIZE: '128', // ZOKRATES_PRIME is approx 253-254bits (just shy of 256), so we pack field elements into blocks of 128 bits.
+  ZOKRATES_PRIME: '21888242871839275222246405745257275088548364400416034343698204186575808495617', // decimal representation of the prime p of GaloisField(p)
 
   VK_PATHS: {
     NFTokenShield: {
@@ -45,6 +56,7 @@ module.exports = {
       mint: './code/gm17/ft-mint/ft-mint-vk.json',
       transfer: './code/gm17/ft-transfer/ft-transfer-vk.json',
       simpleBatchTransfer: './code/gm17/ft-batch-transfer/ft-batch-transfer-vk.json',
+      consolidationTransfer: consolidationTransferVK,
       burn: './code/gm17/ft-burn/ft-burn-vk.json',
     },
   },

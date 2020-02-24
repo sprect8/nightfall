@@ -15,7 +15,7 @@ declare -i index=0
 mkdir zkp/code/gm17 || true
 
 # Get available trusted setup names, excluding the 'common' directory
-pushd zkp/code/gm17/
+pushd zkp/code/gm17
 for d in *
 do
   if [ -d "$d" ] && [ "$d" != "common" ]
@@ -42,7 +42,7 @@ generateSetups(){
   selectedSetupsIndexes=$(echo $selectedSetupsIndexes | tr "," "\n")
   for i in $selectedSetupsIndexes
   do
-    npm run setup -- -f gm17/${setups[$i-1]}
+    npm run setup -- -f ${setups[$i-1]}
   done
 }
 

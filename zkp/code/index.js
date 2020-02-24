@@ -14,6 +14,7 @@ import { generateZokratesFiles } from '@eyblockchain/nightlite';
  */
 async function main() {
   // -f being the name of the .code file (i.e., 'ft-mint')
+
   const { f } = argv;
 
   if (!f) {
@@ -41,7 +42,7 @@ async function main() {
     try {
       await generateZokratesFiles(`${process.cwd()}/code/gm17`, f);
     } catch (err) {
-      throw new Error(`Trusted setup failed: ${err}`);
+      throw new Error(`Trusted setup failed: ${process.cwd()} ${err}`);
     }
   }
 }
