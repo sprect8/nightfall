@@ -91,6 +91,8 @@ jobs:
           npm run setupAll
       - name: Remove ZoKrates Containers
         run: |
+          sudo mv zkp/code/gm17 /mnt/gm17
+          sudo ln -s /mnt/gm17 zkp/code/gm17
           cd zkp/
           du -h -d 1
           cd ..
