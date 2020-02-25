@@ -14,11 +14,9 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '10.15.3'
-      - run: |
-          npm ci
+      - run: npm ci
       - name: Run check for ESLint errors
-        run: |
-          npm run lint
+        run: npm run lint
 
   zkp-unit-test:
     name: ZKP microservice unit test
@@ -74,7 +72,6 @@ jobs:
         run: docker pull zokrates/zokrates:0.5.1
       - name: Increase swap memory
         run: |
-          swapon --show
           sudo usermod -a -G sudo runner
           sudo swapoff -a
           sudo fallocate -l 12G /swapfile
@@ -84,18 +81,12 @@ jobs:
           grep SwapTotal /proc/meminfo
       - name: Generate the keys and constraint files for Zero Knowledge Proofs
         run: |
-          cd zkp/
-          du -h -d 1
-          cd ..
           chmod -R 777 zkp/code/
           npm run setupAll
       - name: Remove ZoKrates Containers
         run: |
           sudo mv zkp/code/gm17 /mnt/gm17
           sudo ln -s /mnt/gm17 zkp/code/gm17
-          cd zkp/
-          du -h -d 1
-          cd ..
           docker stop $(docker ps -a -q)
           docker rm $(docker ps -a -q)
       - name: Run integration test
