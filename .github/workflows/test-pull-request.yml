@@ -91,6 +91,9 @@ jobs:
           npm run setupAll
       - name: Remove ZoKrates Containers
         run: |
+          cd zkp/
+          du -h -d 1
+          cd ..
           docker stop $(docker ps -a -q)
           docker rm $(docker ps -a -q)
       - name: Run integration test
