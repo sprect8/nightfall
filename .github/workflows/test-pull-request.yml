@@ -72,22 +72,8 @@ jobs:
         run: docker login -u ${{ secrets.GITHUB_USERNAME }} -p ${{ secrets.GITHUB_PASSWORD }} docker.pkg.github.com
       - name: Pull docker image
         run: docker pull zokrates/zokrates:0.5.1
-      - name: free up some space
-        run: |
-          pwd
-          cd ..
-          cd ..
-          cd ..
-          cd runners
-          sudo rm -dr 2.164.0
-          pwd
-          du -h -d 0
-          du -h -d 1
-          cd ../work/nightfall/nightfall
-          sudo apt-get remove -y p7zip p7zip-full p7zip-rar
       - name: Increase swap memory
         run: |
-          du -h -d 0
           swapon --show
           sudo usermod -a -G sudo runner
           sudo swapoff -a
@@ -98,11 +84,13 @@ jobs:
           grep SwapTotal /proc/meminfo
       - name: Generate the keys and constraint files for Zero Knowledge Proofs
         run: |
+          cd zkp/
+          du -h -d 1
+          cd ..
           chmod -R 777 zkp/code/
           npm run setupAll
       - name: Remove ZoKrates Containers
         run: |
-          du -h -d 0
           docker stop $(docker ps -a -q)
           docker rm $(docker ps -a -q)
       - name: Run integration test
