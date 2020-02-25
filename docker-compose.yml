@@ -85,7 +85,7 @@ services:
       - ./zkp/__tests__:/app/__tests__
       - ./zkp/config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock
-      - /mnt/gm17:/mnt/gm17 # only for github actions
+      - /mnt:/mnt # only for github actions
     environment:
       BLOCKCHAIN_HOST: ws://ganache
       BLOCKCHAIN_PORT: 8545
