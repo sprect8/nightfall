@@ -1,4 +1,5 @@
 import config from 'config';
+import logger from '../logger';
 import { COLLECTIONS } from '../common/constants';
 import {
   UserSchema,
@@ -67,7 +68,7 @@ export default class DB {
       const data = await model.find(query).exec();
       return Promise.resolve(data);
     } catch (e) {
-      console.log('DB error', e);
+      logger.error('DB error', e);
       return Promise.reject(e);
     }
   }

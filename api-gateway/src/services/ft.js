@@ -1,4 +1,5 @@
 import { sendWhisperMessage } from './whisper';
+import logger from '../logger';
 import { db, offchain, zkp } from '../rest';
 
 // ERC-20 token
@@ -30,6 +31,7 @@ export async function insertFTTransactionToDb(req, res, next) {
     res.data = await db.insertFTTransaction(req.user, req.body);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -54,6 +56,7 @@ export async function getFTTransactions(req, res, next) {
     res.data = await db.getFTTransactions(req.user, req.query);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -81,6 +84,7 @@ export async function mintFToken(req, res, next) {
     res.data = { message: 'Mint Successful' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -126,6 +130,7 @@ export async function transferFToken(req, res, next) {
     res.data = { message: 'transfer Successful' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -153,6 +158,7 @@ export async function burnFToken(req, res, next) {
     res.data = { message: 'Burn Successful' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -171,6 +177,7 @@ export async function getFTokenAddress(req, res, next) {
     res.data = await zkp.getFTokenAddress(req.user);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -197,6 +204,7 @@ export async function getFTokenInfo(req, res, next) {
     res.data = await zkp.getFTokenInfo(req.user);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }

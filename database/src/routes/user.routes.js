@@ -1,4 +1,5 @@
 import { UserService } from '../business';
+import logger from '../logger';
 
 /**
  * This function will create or get mongo db connection
@@ -15,6 +16,7 @@ async function configureDBconnection(req, res, next) {
     req.user.db = await UserService.createDBconnection(name, password);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -34,6 +36,7 @@ async function createUser(req, res, next) {
     res.data = await userService.createUser(req.body);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -48,6 +51,7 @@ async function getUser(req, res, next) {
     res.data = await userService.getUser();
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -59,6 +63,7 @@ async function updateUser(req, res, next) {
     res.data = { message: 'user informantion updated' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -79,6 +84,7 @@ async function insertPrivateAccountHandler(req, res, next) {
     res.data = await userService.insertPrivateAccountHandler(req.body);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -101,6 +107,7 @@ async function addFTShieldContractInfo(req, res, next) {
     res.data = { message: 'Contract Information Inserted' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -125,6 +132,7 @@ async function updateFTShieldContractInfoByContractAddress(req, res, next) {
     res.data = { message: 'Contract Information Updated' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -146,6 +154,7 @@ async function deleteFTShieldContractInfoByContractAddress(req, res, next) {
     res.data = { message: 'Contract Information Removed', status };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -168,6 +177,7 @@ async function addNFTShieldContractInfo(req, res, next) {
     res.data = { message: 'Contract Information Inserted' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -192,6 +202,7 @@ async function updateNFTShieldContractInfoByContractAddress(req, res, next) {
     res.data = { message: 'Contract Information Updated' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -213,6 +224,7 @@ async function deleteNFTShieldContractInfoByContractAddress(req, res, next) {
     res.data = { message: 'Contract Information Removed', status };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }

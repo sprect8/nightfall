@@ -1,4 +1,5 @@
 import { sendWhisperMessage } from './whisper';
+import logger from '../logger';
 import { accounts, db, offchain, zkp } from '../rest';
 
 /**
@@ -25,6 +26,7 @@ export async function insertNFTCommitmentToDb(req, res, next) {
     res.data = await db.insertNFTCommitment(req.user, req.body);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -47,9 +49,9 @@ export async function insertNFTCommitmentToDb(req, res, next) {
 export async function getNFTCommitments(req, res, next) {
   try {
     res.data = await db.getNFTCommitments(req.user, req.query);
-    console.log(res.data);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -108,6 +110,7 @@ export async function checkCorrectnessForNFTCommitment(req, res, next) {
     res.data = await zkp.checkCorrectnessForNFTCommitment(req.headers, req.body);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -161,6 +164,7 @@ export async function mintToken(req, res, next) {
     res.data = data;
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -263,6 +267,7 @@ export async function transferToken(req, res, next) {
     res.data = data;
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -337,6 +342,7 @@ export async function burnToken(req, res, next) {
     res.data = { message: 'burn successful' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }

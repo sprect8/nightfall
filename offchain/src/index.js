@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-
+import logger from './logger';
 import Web3 from './web3';
 import { pkdRouter, whisperRouter } from './routes';
 import { formatResponse, formatError, errorHandler } from './middlewares';
@@ -31,7 +31,7 @@ app.use('/', whisperRouter);
 app.use(formatResponse);
 
 app.use(function logError(err, req, res, next) {
-  console.error(
+  logger.error(
     `${req.method}:${req.url}
     ${JSON.stringify({ error: err.message })}
     ${JSON.stringify({ errorStack: err.stack.split('\n') }, null, 1)}
@@ -46,4 +46,4 @@ app.use(function logError(err, req, res, next) {
 app.use(formatError);
 app.use(errorHandler);
 
-app.listen(80, '0.0.0.0', () => console.log('zkp OffChain RESTful API server started on ::: 80'));
+app.listen(80, '0.0.0.0', () => logger.info('zkp OffChain RESTful API server started on ::: 80'));

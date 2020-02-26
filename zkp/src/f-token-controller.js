@@ -11,6 +11,7 @@ import contract from 'truffle-contract';
 import jsonfile from 'jsonfile';
 import zkp from './f-token-zkp';
 import Web3 from './web3';
+import logger from './logger';
 
 const FTokenShield = contract(jsonfile.readFileSync('./build/contracts/FTokenShield.json'));
 FTokenShield.setProvider(Web3.connect());
@@ -78,7 +79,7 @@ useful to be able to create coins for demonstration purposes.
 @param {string} address - the address of the Ethereum account
 */
 async function buyFToken(amount, address) {
-  console.log('Buying ERC-20', amount, address);
+  logger.info('Buying ERC-20', amount, address);
   const fTokenShieldInstance = shield[address] ? shield[address] : await FTokenShield.deployed();
   const fToken = await FToken.at(await fTokenShieldInstance.getFToken.call());
   return fToken.mint(address, amount, {
@@ -95,7 +96,7 @@ to toAddress.  The tranaction fee will be taken from fromAddress
 @param {string} fromAddress - the address of the Ethereum account to transfer from
 */
 async function transferFToken(amount, fromAddress, toAddress) {
-  console.log('Transferring ERC-20', amount, toAddress);
+  logger.info('Transferring ERC-20', amount, toAddress);
   const fTokenShieldInstance = shield[fromAddress]
     ? shield[fromAddress]
     : await FTokenShield.deployed();
@@ -117,7 +118,7 @@ Burning a commitment recovers the original ERC-20 value.
 @param {string} address - the address of the Ethereum account
 */
 async function burnFToken(amount, address) {
-  console.log('Buying ERC-20', amount, address);
+  logger.info('Buying ERC-20', amount, address);
   const fTokenShieldInstance = shield[address] ? shield[address] : await FTokenShield.deployed();
   const fToken = await FToken.at(await fTokenShieldInstance.getFToken.call());
   return fToken.burn(address, amount, {
@@ -133,7 +134,7 @@ is utilising.
 @returns - an object containing the token symbol and name.
 */
 async function getTokenInfo(address) {
-  console.log('Getting ERC-20 info');
+  logger.info('Getting ERC-20 info');
   const fTokenShieldInstance = shield[address] ? shield[address] : await FTokenShield.deployed();
   const fToken = await FToken.at(await fTokenShieldInstance.getFToken.call());
   const symbol = await fToken.symbol.call();
@@ -161,7 +162,7 @@ async function checkCorrectness(
     blockNumber,
     fTokenShieldInstance,
   );
-  console.log('\nf-token-controller', '\ncheckCorrectness', '\nresults', results);
+  logger.info('\nf-token-controller', '\ncheckCorrectness', '\nresults', results);
 
   return results;
 }

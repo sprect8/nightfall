@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import nfController from '../nf-token-controller';
+import logger from '../logger';
 
 const router = Router();
 /**
@@ -22,6 +23,7 @@ async function mint(req, res, next) {
     };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -50,6 +52,7 @@ async function transfer(req, res, next) {
     };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -74,6 +77,7 @@ async function burn(req, res, next) {
     };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -93,6 +97,7 @@ async function getAddress(req, res, next) {
     };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -116,6 +121,7 @@ async function getInfo(req, res, next) {
     };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }

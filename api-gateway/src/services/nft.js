@@ -1,4 +1,5 @@
 import { sendWhisperMessage } from './whisper';
+import logger from '../logger';
 import { db, offchain, zkp } from '../rest';
 
 // ERC-721 token
@@ -27,6 +28,7 @@ export async function insertNFTToDb(req, res, next) {
     res.data = await db.insertNFToken(req.user, req.body);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -76,6 +78,7 @@ export async function getNFTTransactions(req, res, next) {
     res.data = await db.getNFTTransactions(req.user, req.query);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -113,6 +116,7 @@ export async function mintNFToken(req, res, next) {
     res.data.tokenId = tokenId;
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -163,6 +167,7 @@ export async function transferNFToken(req, res, next) {
 
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -201,6 +206,7 @@ export async function burnNFToken(req, res, next) {
 
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -235,6 +241,7 @@ export async function getNFTokens(req, res, next) {
 
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -250,6 +257,7 @@ export async function getNFTokenAddress(req, res, next) {
     res.data = await zkp.getNFTokenAddress(req.user);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -275,6 +283,7 @@ export async function getNFTokenInfo(req, res, next) {
     res.data = await zkp.getNFTokenInfo(req.user);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }

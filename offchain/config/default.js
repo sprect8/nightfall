@@ -13,4 +13,5 @@ module.exports = {
       return `${this.authenticationApi.host}:${this.authenticationApi.port}`;
     }),
   },
+  isLoggerEnable: true,
 };

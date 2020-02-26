@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import accounts from './routes/accounts';
+import logger from './logger';
 import { formatResponse, formatError, errorHandler } from './middlewares';
 
 const app = express();
@@ -16,7 +17,7 @@ app.use('/', accounts);
 app.use(formatResponse);
 
 app.use(function logError(err, req, res, next) {
-  console.error(
+  logger.error(
     `${req.method}:${req.url}
     ${JSON.stringify({ error: err.message })}
     ${JSON.stringify({ errorStack: err.stack.split('\n') }, null, 1)}

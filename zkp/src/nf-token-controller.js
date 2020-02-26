@@ -11,6 +11,7 @@ import contract from 'truffle-contract';
 import jsonfile from 'jsonfile';
 import zkp from './nf-token-zkp';
 import Web3 from './web3';
+import logger from './logger';
 
 const NFTokenShield = contract(jsonfile.readFileSync('./build/contracts/NFTokenShield.json'));
 
@@ -104,7 +105,7 @@ async function getOwner(tokenID, address) {
 create an ERC-721 Token in the account that calls the function
 */
 async function mintNFToken(tokenID, tokenURI, address) {
-  console.log('Minting NF Token', tokenID, address);
+  logger.info('Minting NF Token', tokenID, address);
   const nfTokenShield = shield[address] ? shield[address] : await NFTokenShield.deployed();
   const nfToken = await NFTokenMetadata.at(await nfTokenShield.getNFToken.call());
   return nfToken.mint(tokenID, tokenURI, {
@@ -117,7 +118,7 @@ async function mintNFToken(tokenID, tokenURI, address) {
 Transfer ERC-721 Token from the owner's account to another account
 */
 async function transferNFToken(tokenID, fromAddress, toAddress) {
-  console.log(`Transferring NF Token ${tokenID}from ${fromAddress}to ${toAddress}`);
+  logger.info(`Transferring NF Token ${tokenID}from ${fromAddress}to ${toAddress}`);
   const nfTokenShield = shield[fromAddress] ? shield[fromAddress] : await NFTokenShield.deployed();
   const nfToken = await NFTokenMetadata.at(await nfTokenShield.getNFToken.call());
   return nfToken.safeTransferFrom(fromAddress, toAddress, tokenID, {
@@ -130,7 +131,7 @@ async function transferNFToken(tokenID, fromAddress, toAddress) {
 create an ERC-721 Token in the account that calls the function
 */
 async function burnNFToken(tokenID, address) {
-  console.log('Burning NF Token', tokenID, address);
+  logger.info('Burning NF Token', tokenID, address);
   const nfTokenShield = shield[address] ? shield[address] : await NFTokenShield.deployed();
   const nfToken = await NFTokenMetadata.at(await nfTokenShield.getNFToken.call());
   return nfToken.burn(tokenID, {
@@ -143,7 +144,7 @@ async function burnNFToken(tokenID, address) {
 Add an approver for an ERC-721 Token
 */
 async function addApproverNFToken(approved, tokenID, address) {
-  console.log('Adding Approver for an NF Token', approved, tokenID, address);
+  logger.info('Adding Approver for an NF Token', approved, tokenID, address);
   const nfTokenShield = shield[address] ? shield[address] : await NFTokenShield.deployed();
   const nfToken = await NFTokenMetadata.at(await nfTokenShield.getNFToken.call());
   return nfToken.approve(approved, tokenID, {
@@ -156,7 +157,7 @@ async function addApproverNFToken(approved, tokenID, address) {
 Get an approver for an ERC-721 Token
 */
 async function getApproved(tokenID, address) {
-  console.log('Getting Approver for an NF Token', tokenID);
+  logger.info('Getting Approver for an NF Token', tokenID);
   const nfTokenShield = shield[address] ? shield[address] : await NFTokenShield.deployed();
   const nfToken = await NFTokenMetadata.at(await nfTokenShield.getNFToken.call());
   return nfToken.getApproved.call(tokenID);
@@ -182,7 +183,7 @@ async function checkCorrectness(
     blockNumber,
     nfTokenShield,
   );
-  console.log('\nnf-token-controller', '\ncheckCorrectness', '\nresults', results);
+  logger.info('\nnf-token-controller', '\ncheckCorrectness', '\nresults', results);
 
   return results;
 }

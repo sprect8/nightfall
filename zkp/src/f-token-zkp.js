@@ -9,6 +9,7 @@ new one, which enables sending of arbritrary amounts. The code also talks direct
 
 import { merkleTree } from '@eyblockchain/nightlite';
 import utils from './zkpUtils';
+import logger from './logger';
 
 /**
 checks the details of an incoming (newly transferred token), to ensure the data we have received is correct and legitimate!!
@@ -22,32 +23,32 @@ async function checkCorrectness(
   blockNumber,
   fTokenShield,
 ) {
-  console.log('Checking h(A|pk|S) = z...');
+  logger.info('Checking h(A|pk|S) = z...');
   const commitmentCheck = utils.concatenateThenHash(value, publicKey, salt);
   const zCorrect = commitmentCheck === commitment;
-  console.log('commitment:', commitment);
-  console.log('commitmentCheck:', commitmentCheck);
+  logger.info('commitment:', commitment);
+  logger.info('commitmentCheck:', commitmentCheck);
 
-  console.log(
+  logger.info(
     'Checking the commitment exists in the merkle-tree db (and therefore was emitted as an event on-chain)...',
   );
-  console.log('commitment:', commitment);
-  console.log('commitmentIndex:', commitmentIndex);
+  logger.info('commitment:', commitment);
+  logger.info('commitmentIndex:', commitmentIndex);
   const { contractName } = fTokenShield.constructor._json; // eslint-disable-line no-underscore-dangle
 
   // query the merkle-tree microservice until it's filtered the blockNumber we wish to query:
   await merkleTree.waitForBlockNumber(contractName, blockNumber);
 
   const leaf = await merkleTree.getLeafByLeafIndex(contractName, commitmentIndex);
-  console.log('leaf found:', leaf);
+  logger.info('leaf found:', leaf);
   if (leaf.value !== commitment)
     throw new Error(
       `Could not find commitment ${commitment} at the given commitmentIndex ${commitmentIndex} in  the merkle-tree microservice. Found ${leaf.value} instead.`,
     );
 
   const zOnchainCorrect = leaf.value === commitment;
-  console.log('commitment:', commitment);
-  console.log('commitment emmitted by blockchain:', leaf.value);
+  logger.info('commitment:', commitment);
+  logger.info('commitment emmitted by blockchain:', leaf.value);
 
   return {
     zCorrect,

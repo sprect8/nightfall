@@ -5,6 +5,7 @@ import {
   getBalance,
   unlockAccount,
 } from '../services/accounts';
+import logger from '../logger';
 
 const router = express.Router({ mergeParams: true });
 
@@ -18,6 +19,7 @@ async function createAccount(req, res, next) {
     res.data = address;
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -36,6 +38,7 @@ async function transferEther(req, res, next) {
     res.data = txHash;
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -48,6 +51,7 @@ async function unlockUserAccount(req, res, next) {
     res.data = { message: 'Unlocked' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
