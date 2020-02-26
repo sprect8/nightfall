@@ -26,8 +26,6 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '10.15.3'
-      - name: login to github registry
-        run: docker login -u ${{ secrets.GITHUB_USERNAME }} -p ${{ secrets.GITHUB_PASSWORD }} docker.pkg.github.com
       - name: Pull docker image
         run: docker pull zokrates/zokrates:0.5.1
       - name: Increase swap memory
@@ -66,8 +64,6 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '10.15.3'
-      - name: login to github registry
-        run: docker login -u ${{ secrets.GITHUB_USERNAME }} -p ${{ secrets.GITHUB_PASSWORD }} docker.pkg.github.com
       - name: Pull docker image
         run: docker pull zokrates/zokrates:0.5.1
       - name: Increase swap memory
