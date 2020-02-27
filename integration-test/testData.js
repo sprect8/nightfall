@@ -48,6 +48,7 @@ export default {
       // commitment while mint
       get mintCommitment() {
         return utils.concatenateThenHash(
+          `0x${utils.strip0x(this.address).padStart(64, '0')}`,
           utils.strip0x(this.tokenId).slice(-(LEAF_HASHLENGTH * 2)),
           alice.pk,
           this.salt, // salt - set at erc-721 commitment mint (step 4)
@@ -57,6 +58,7 @@ export default {
       // commitment while transfer
       get transferCommitment() {
         return utils.concatenateThenHash(
+          `0x${utils.strip0x(this.address).padStart(64, '0')}`,
           utils.strip0x(this.tokenId).slice(-(LEAF_HASHLENGTH * 2)),
           bob.pk,
           this.transferredSalt, // S_B - set at erc-721 commitment transfer to bob (step 5)

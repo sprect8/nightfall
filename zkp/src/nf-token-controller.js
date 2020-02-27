@@ -68,11 +68,8 @@ async function getNFTSymbol() {
 /**
 return the address of the ERC-721 token
 */
-async function getNFTAddress(address) {
-  const nfTokenShield = shield[address]
-    ? shield[address]
-    : await getContractAddress('NFTokenShield');
-  return nfTokenShield.getNFToken.call();
+async function getNFTAddress() {
+  return getContractAddress('NFTokenMetadata');
 }
 
 /**
