@@ -122,13 +122,13 @@ export default class FtCommitmentBurnComponent implements OnInit , AfterContentI
     this.isRequesting = true;
     this.ftCommitmentService.burnFTCommitment(commitment, this.receiverName).subscribe( data => {
         this.isRequesting = false;
-        this.toastr.success('Burned commitment ' + commitment['commitment']);
+        this.toastr.success('Burned commitment successfully.', 'Success');
         transactions.splice(Number(index), 1);
         this.selectedCommitment = undefined;
         this.router.navigate(['/overview'], { queryParams: { selectedTab: 'ft-commitment' } });
       }, error => {
         this.isRequesting = false;
-        this.toastr.error('Please try again', 'Error');
+        this.toastr.error('Please try again.', 'Error');
     });
   }
 
@@ -137,12 +137,10 @@ export default class FtCommitmentBurnComponent implements OnInit , AfterContentI
    * @param item {Object} Item to be removed.
    */
   onRemove(item) {
-    console.log('selected items', this.selectedCommitmentList, item);
     const newList = this.selectedCommitmentList.filter((it) => {
       return item._id !== it._id;
     });
     this.selectedCommitmentList = newList;
-    console.log('selected new items', this.selectedCommitmentList);
   }
 
   /**

@@ -24,7 +24,7 @@ export default class UserService {
    */
   getAccounts() {
     return this.http.get(this.root + 'listAccounts').pipe(
-      tap(datra => console.log(''))
+      tap(data => console.log())
     );
   }
 
@@ -39,7 +39,7 @@ export default class UserService {
 
     return this.http
       .get(url, httpOptions)
-      .pipe(tap(data => console.log(data)),
+      .pipe(tap(data => console.log()),
       catchError(err => {
         console.log('User Not Found', err);
         return err;
@@ -125,7 +125,7 @@ export default class UserService {
     return this.http.get(url).pipe(
       tap(data => {}),
       catchError(err => {
-        console.log('Count api Not Found', err);
+        console.log('Error in getting token commitment count', err);
         return err;
       })
     );
@@ -137,7 +137,7 @@ export default class UserService {
   getBalance(address) {
     const url = this.root + 'account/' + address;
     return this.http.get(url).pipe(
-      tap(datra => console.log(''))
+      tap(datra => console.log())
     );
   }
 
@@ -194,7 +194,7 @@ export default class UserService {
       contractName: account.contractName,
       isSelected: account.selection,
     };
-    return this.http.post(url, body, httpOptions).pipe(tap(data => console.log('added ERC-20 Account')));
+    return this.http.post(url, body, httpOptions).pipe(tap(data => console.log('Added ERC-20 account')));
   }
 
   /**
@@ -220,7 +220,7 @@ export default class UserService {
         isSelected: account.selection
       };
     }
-    return this.http.post(url, body, httpOptions).pipe(tap(data => console.log('update ERC-20 Account')));
+    return this.http.post(url, body, httpOptions).pipe(tap(data => console.log('Update ERC-20 Account')));
   }
 
   /**
@@ -236,7 +236,7 @@ export default class UserService {
     } else if (account.tokenShield) {
       url = url + 'token_shield=' + account.contractAdd;
     }
-    return this.http.post(url, httpOptions).pipe(tap(data => console.log('update ERC-20 Account')));
+    return this.http.post(url, httpOptions).pipe(tap(data => console.log('Delete ERC-20 Account')));
   }
 
   /**
@@ -245,7 +245,7 @@ export default class UserService {
   getDefaultShieldAddress() {
     const url = config.apiGateway.root + 'getShieldAddresses';
     return this.http.get(url).pipe(
-      tap(data => console.log(''))
+      tap(data => console.log())
     );
   }
 
@@ -256,7 +256,7 @@ export default class UserService {
   getNFTAddress() {
     const url = config.apiGateway.root  + 'getNFTokenContractAddress';
     return this.http.get(url).pipe(
-      tap(data => console.log(''))
+      tap(data => console.log())
     );
   }
 
@@ -266,7 +266,7 @@ export default class UserService {
   getFTAddress() {
     const url = config.apiGateway.root + 'getFTokenContractAddress';
     return this.http.get(url).pipe(
-      tap(data => console.log(''))
+      tap(data => console.log())
     );
   }
 

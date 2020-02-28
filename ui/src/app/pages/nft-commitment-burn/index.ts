@@ -86,7 +86,7 @@ export default class NftCommitmentBurnComponent implements OnInit, AfterContentI
     } = this;
     const selectedCommitment = this.selectedCommitmentList[0];
     if (!selectedCommitment) {
-      this.toastr.error('All fields are mandatory');
+      this.toastr.warning('All fields are mandatory.');
       return;
     }
     this.isRequesting = true;
@@ -95,13 +95,13 @@ export default class NftCommitmentBurnComponent implements OnInit, AfterContentI
       this.receiverName,
     ).subscribe( data => {
         this.isRequesting = false;
-        this.toastr.success('Token burned successfully.');
+        this.toastr.success('Token burned successfully.', 'Success');
         transactions.splice(Number(index), 1);
         this.selectedCommitment = undefined;
         this.router.navigate(['/overview'], { queryParams: { selectedTab: 'nft-commitment' } });
       }, error => {
         this.isRequesting = false;
-        this.toastr.error('Please try again', 'Error');
+        this.toastr.error('Please try again.', 'Error');
     });
   }
 
@@ -130,12 +130,10 @@ export default class NftCommitmentBurnComponent implements OnInit, AfterContentI
    * @param item {Object} Item to be removed.
    */
   onRemove(item) {
-    console.log('selected items', this.selectedCommitmentList, item);
     const newList = this.selectedCommitmentList.filter((it) => {
       return item._id !== it._id;
     });
     this.selectedCommitmentList = newList;
-    console.log('selected new items', this.selectedCommitmentList);
   }
 
   /**

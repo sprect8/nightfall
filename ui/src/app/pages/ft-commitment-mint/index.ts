@@ -60,7 +60,7 @@ export default class FtCommitmentMintComponent implements OnInit {
         this.ftBalance = data['data']['balance'];
       },
       error => {
-        console.log('error in user get', error);
+        console.log('Error in getting FTokens', error);
       },
     );
   }
@@ -81,19 +81,18 @@ export default class FtCommitmentMintComponent implements OnInit {
     const amountToMint = this.ftCommitmentMintForm.controls['A'].value;
     if (!amountToMint) { return; }
     if (amountToMint > this.ftBalance) {
-      return this.toastr.error('You do not have enough ERC-20 tokens');
+      return this.toastr.warning('You do not have enough ERC-20 tokens.');
     }
     this.isRequesting = true;
     const hexValue = (this.ftCommitmentMintForm.controls['A'].value).toString(16);
     const hexString = '0x' + hexValue.padStart(32, '0');
-    console.log('Hexstring::', hexString);
     this.ftCommitmentService.mintFTCommitment(hexString).subscribe(tokenDetails => {
       this.isRequesting = false;
-      this.toastr.success('ft-commitment Minted is ' + tokenDetails['data']['commitment']);
+      this.toastr.success('Minted fungible token commitment successfully.', 'Success');
       this.router.navigate(['/overview'], { queryParams: { selectedTab: 'ft-commitment' } });
     }, error => {
         this.isRequesting = false;
-        this.toastr.error('Please try again', 'Error');
+        this.toastr.error('Please try again.', 'Error');
       },
     );
   }

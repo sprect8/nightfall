@@ -122,7 +122,7 @@ export default class FtCommitmentBatchTrasnferComponent implements OnInit , Afte
           });
         }
       }, (error) => {
-        console.log('error', error);
+        console.log('Error in listing FTCommitments ', error);
         this.isRequesting = false;
       });
   }
@@ -150,7 +150,7 @@ export default class FtCommitmentBatchTrasnferComponent implements OnInit , Afte
     let emptyInputFlag: boolean;
     const count = this.selectedCommitmentList.length;
     if (!count || count !== 1) {
-      this.toastr.error('Invalid commitment Selection.');
+      this.toastr.warning('Invalid commitment Selection.');
       return;
     }
     this.transferData = this.transferDetails.value.map(({value, receiverName}) => {
@@ -167,7 +167,7 @@ export default class FtCommitmentBatchTrasnferComponent implements OnInit , Afte
     });
     const { transactions } = this;
     if (emptyInputFlag === true) {
-      this.toastr.error('All fields are mandatory');
+      this.toastr.warning('All fields are mandatory.');
       return;
     }
     this.isRequesting = true;
@@ -178,17 +178,13 @@ export default class FtCommitmentBatchTrasnferComponent implements OnInit , Afte
       this.transferData,
     ).subscribe( data => {
         this.isRequesting = false;
-        this.toastr.success('Transferred to selected receivers');
+        this.toastr.success('Transferred fungible tokens to selected receivers.', 'Success');
         transactions.splice(commitment.id, 1);
         this.getFTCommitments();
         this.router.navigate(['/overview'], { queryParams: { selectedTab: 'ft-batch-commitment' } });
       }, ({error}) => {
         this.isRequesting = false;
-        if (error.error && error.error.message) {
-          this.toastr.error(error.error.message, 'Error');
-        } else {
-          this.toastr.error('Please try again', 'Error');
-        }
+        this.toastr.error('Please try again.', 'Error');
     });
   }
 
