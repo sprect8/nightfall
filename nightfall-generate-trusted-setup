@@ -12,6 +12,8 @@ completedSetupList=""
 selectedSetupsIndexes=""
 declare -i index=0
 
+mkdir zkp/code/gm17 || true
+
 # Get available trusted setup names, excluding the 'common' directory
 pushd zkp/code/gm17/
 for d in *

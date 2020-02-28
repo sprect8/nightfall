@@ -84,6 +84,7 @@ services:
       - ./zkp/__tests__:/app/__tests__:cached,ro
       - ./zkp/config:/app/config:cached,ro
       - /var/run/docker.sock:/var/run/docker.sock 
+      - /mnt:/mnt # only for github actions
     environment:
       BLOCKCHAIN_HOST: ws://ganache
       BLOCKCHAIN_PORT: 8545
@@ -186,8 +187,7 @@ services:
       - nightfall_network
 
   merkle-tree:
-    image:
-      docker.pkg.github.com/eyblockchain/timber/timber:v1.3.0
+    image: eyblockchain/timber:v1.3.0
     restart: on-failure
     depends_on:
       - mongo-merkle-tree
@@ -197,7 +197,7 @@ services:
       - ./zkp/contracts/:/app/contracts:consistent 
       - ./zkp/build/:/app/build:consistent
     ports:
-      - "9000:80"
+      - '9000:80'
     environment:
       BLOCKCHAIN_HOST: ws://ganache
       BLOCKCHAIN_PORT: 8545
