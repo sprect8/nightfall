@@ -22,15 +22,15 @@ i.e. DIRNAME_DIRPATH_REL: "/dirName/" is a relative path which (on the host mach
 
 ABS - absolute path
 */
-const nodeHashLength = process.env.HASH_TYPE === 'sha' ? 27 : 32;
+const nodeHashLength = process.env.HASH_TYPE === 'mimc' ? 32 : 27;
 const zeroHex =
-  process.env.HASH_TYPE === 'sha'
-    ? '0x000000000000000000000000000000000000000000000000000000'
-    : '0x0000000000000000000000000000000000000000000000000000000000000000';
+  process.env.HASH_TYPE === 'mimc'
+    ? '0x0000000000000000000000000000000000000000000000000000000000000000'
+    : '0x000000000000000000000000000000000000000000000000000000';
 const consolidationTransferVK =
-  process.env.HASH_TYPE === 'sha'
-    ? './code/gm17/ft-mint/ft-mint-vk.json' // replace with mint - vk never used with sha
-    : './code/gm17/ft-consolidation-transfer/ft-consolidation-transfer-vk.json';
+  process.env.HASH_TYPE === 'mimc'
+    ? './code/gm17/ft-consolidation-transfer/ft-consolidation-transfer-vk.json'
+    : './code/gm17/ft-mint/ft-mint-vk.json'; // replace consolidationTransferVK with mint - it's never used with sha, we just need a placeholder
 
 module.exports = {
   // Tree parameters. You also need to set these in the MerkleTree.sol contract, and in Nightfall's ./config/merkle-tree/default.js config file.

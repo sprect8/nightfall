@@ -237,8 +237,8 @@ contract FTokenShield is Ownable, MerkleTree {
 
       // Check that the publicInputHash equals the hash of the 'public inputs':
       // bytes31 publicInputHash = bytes31(bytes32(_inputs[0]) << 8);
-      bytes32 publicInputHashCheck = sha256(abi.encodePacked(_root, _nullifiers, _commitment));
-      require(publicInputHashCheck == bytes32(_inputs[0]), "publicInputHash cannot be reconciled");
+      bytes31 publicInputHashCheck = bytes31(sha256(abi.encodePacked(_root, _nullifiers, _commitment)) << 8);
+      require(publicInputHashCheck == bytes31(bytes32(_inputs[0]) << 8), "publicInputHash cannot be reconciled");
 
       // gas measurement:
       uint256 gasUsedByShieldContract = gasCheckpoint - gasleft();
@@ -269,7 +269,7 @@ contract FTokenShield is Ownable, MerkleTree {
       emit GasUsed(gasUsedByShieldContract, gasUsedByVerifierContract);
   }
 
-  function burn(uint256[] calldata _proof, uint256[] calldata _inputs, bytes32 _root, bytes32 _nullifier, uint128 _value, uint256 _payTo) external {
+  function burn(bytes32 tokenContractAddress, uint256[] calldata _proof, uint256[] calldata _inputs, bytes32 _root, bytes32 _nullifier, uint128 _value, uint256 _payTo) external {
 
       // gas measurement:
       uint256 gasCheckpoint = gasleft();

@@ -47,7 +47,7 @@ function keyExtractor(solFilePath) {
 describe('Json test', () => {
   test('Should create vk file', async () => {
     const codeFileDirectory = './code/gm17/ft-burn';
-    const codeFile = 'ft-burn.code';
+    const codeFile = 'ft-burn.zok';
     const vkJson = await keyExtractor(`${codeFileDirectory}/verifier.sol`, true);
     // Create a JSON with the file name but without .code
     fs.writeFileSync(`${codeFileDirectory}/${codeFile.split('.')[0]}-vk.json`, vkJson, err => {

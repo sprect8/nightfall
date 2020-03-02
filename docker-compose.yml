@@ -87,7 +87,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /mnt:/mnt # only for github actions
     environment:
-      HASH_TYPE: 'mimc' #SHA or MiMC (lowercase)
+      HASH_TYPE: 'sha' #override this with docker-compose.override.mimc
       BLOCKCHAIN_HOST: ws://ganache
       BLOCKCHAIN_PORT: 8545
       MERKLE_TREE_HOST: http://merkle-tree
@@ -110,18 +110,6 @@ services:
       - '8000:80'
     networks:
       - nightfall_network
-
-  hash-switch:
-    build:
-      context: ./
-    volumes:
-      - ./zkp/switch.js/:/app/switch.js
-      - ./zkp/contracts/:/app/contracts
-      - ./zkp/code/:/app/code
-      - ./.yalc/@eyblockchain/nightlite/:/app/nightlite
-    command: node switch.js
-    environment:
-      HASH_TYPE: 'mimc' #SHA or MiMC (lowercase)
 
   ganache:
     image: trufflesuite/ganache-cli:latest
@@ -182,19 +170,20 @@ services:
   truffle-zkp:
     image: ajmay/truffle:5.0.9
     environment:
-      HASH_TYPE: 'mimc' #SHA or MiMC (lowercase)
       SOLC_VERSION: 0.5.8
       ETH_HOST: ganache
       ETH_GAS: 6000000
       ETH_GAS_PRICE: 20000000000
     volumes:
       - ./zkp/contracts/:/truffle/contracts:delegated
+      - /truffle/contracts/mimc
+      - /truffle/contracts/sha
+      - ./zkp/contracts/sha/MerkleTree.sol:/truffle/contracts/MerkleTree.sol:delegated
       - ./zkp/migrations/:/truffle/migrations:delegated
       - ./zkp/build/contracts/:/truffle/build/contracts:cached
       - ./zkp/test/:/truffle/test:delegated
       - ./zkp/src/:/truffle/src:delegated
     depends_on:
-      - hash-switch
       - ganache
     logging:
       options:
@@ -213,13 +202,12 @@ services:
       - ./zkp/contracts/:/app/contracts:consistent # required if deploying contracts from within this service (if CONTRACT_LOCATION = 'default')
       - ./zkp/build/:/app/build:consistent # required if CONTRACT_LOCATION = 'default'
       - app/node_modules
-      - ~/nightfallmimc/timber/merkle-tree/src:/app/src
+      - ~/nightfallmimc/timber/merkle-tree/src:/app/src # REMOVE before merge - non pkg timber vers
       - ~/nightfallmimc/timber/merkle-tree/.babelrc:/app/.babelrc
       - ~/nightfallmimc/timber/merkle-tree/setup-mongo-acl-for-new-users.js:/app/setup-mongo-acl-for-new-users.js
     ports:
       - '9000:80'
     environment:
-      HASH_TYPE: 'mimc' #SHA or MiMC (lowercase)
       BLOCKCHAIN_HOST: ws://ganache
       BLOCKCHAIN_PORT: 8545
       CONTRACT_LOCATION: 'default' # Where to find the contractInstances?

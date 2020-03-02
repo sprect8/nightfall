@@ -5,7 +5,7 @@ import utils from '../src/zkpUtils';
 import bc from '../src/web3';
 
 import controller from '../src/f-token-controller';
-import { getTruffleContractInstance } from '../src/contractUtils';
+import { getContractAddress, getTruffleContractInstance } from '../src/contractUtils';
 // import vk from '../src/vk-controller';
 
 jest.setTimeout(7200000);
@@ -70,11 +70,14 @@ const outputCommitments = [];
 let accounts;
 let fTokenShieldJson;
 let fTokenShieldAddress;
+let erc20Address;
 
 beforeAll(async () => {
   if (!(await bc.isConnected())) await bc.connect();
   accounts = await (await bc.connection()).eth.getAccounts();
   const { contractJson, contractInstance } = await getTruffleContractInstance('FTokenShield');
+  erc20Address = await getContractAddress('FToken');
+  const erc20AddressPadded = `0x${utils.strip0x(erc20Address).padStart(64, '0')}`;
   fTokenShieldAddress = contractInstance.address;
   fTokenShieldJson = contractJson;
   for (let i = 0; i < PROOF_LENGTH; i++) {
@@ -83,7 +86,7 @@ beforeAll(async () => {
   pkB = await Promise.all(pkB);
   S_A_C = await utils.rndHex(32);
   pkA = utils.strip0x(utils.hash(skA));
-  Z_A_C = utils.concatenateThenHash(C, pkA, S_A_C);
+  Z_A_C = utils.concatenateThenHash(erc20AddressPadded, C, pkA, S_A_C);
 });
 
 // eslint-disable-next-line no-undef
@@ -111,6 +114,7 @@ describe('f-token-controller.js tests', () => {
       S_A_C,
       // await getVkId('MintFToken'),
       {
+        erc20Address,
         account: accounts[0],
         fTokenShieldJson,
         fTokenShieldAddress,
@@ -144,6 +148,7 @@ describe('f-token-controller.js tests', () => {
       skA,
       // await getVkId('SimpleBatchTransferFToken'),
       {
+        erc20Address,
         account: accounts[0],
         fTokenShieldJson,
         fTokenShieldAddress,
@@ -172,7 +177,7 @@ describe('f-token-controller.js tests', () => {
         value: E[i],
         salt: S_B_E[i],
         commitment: outputCommitments[i].commitment,
-        commitmentIndex: zInd2 - E.length + i,
+        commitmentIndex: zInd2 - E.length + i + 1,
       };
     }
     const outputCommitment = { value: C, salt: await utils.rndHex(32) };
@@ -183,6 +188,7 @@ describe('f-token-controller.js tests', () => {
       pkE,
       skB[0],
       {
+        erc20Address,
         account: accounts[0],
         fTokenShieldJson,
         fTokenShieldAddress,

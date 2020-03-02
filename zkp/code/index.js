@@ -14,12 +14,15 @@ import { generateZokratesFiles } from '@eyblockchain/nightlite';
  */
 async function main() {
   // -f being the name of the .code file (i.e., 'ft-mint')
+  const hashType = process.env.HASH_TYPE === 'mimc' ? 'MiMC' : 'SHA';
+  console.log('Hash type is set to:', hashType);
+  console.log(`${process.cwd()}/code/gm17`);
 
   const { f } = argv;
 
   if (!f) {
     console.log(
-      "The '-f' option has not been specified.\nThat's OK, we can go ahead and loop through every .code file.\nHOWEVER, if you wanted to choose just one file, cancel this process, and instead use option -f (see the README-trusted-setup)",
+      "The '-f' option has not been specified.\nThat's OK, we can go ahead and loop through every .zok file.\nHOWEVER, if you wanted to choose just one file, cancel this process, and instead use option -f (see the README-trusted-setup)",
     );
     console.log('Be warned, this could take up to an hour!');
 
