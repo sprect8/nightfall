@@ -76,7 +76,7 @@ contract NFTokenShield is Ownable, MerkleTree {
     /**
     Stores verification keys (for the 'mint', 'transfer' and 'burn' computations).
     */
-    function registerVerificationKey(uint256[] calldata _vk, TransactionTypes _txType) external onlyOwner returns (bytes32) {
+    function registerVerificationKey(uint256[] calldata _vk, TransactionTypes _txType) external onlyOwner {
         // CAUTION: we do not prevent overwrites of vk's. Users must listen for the emitted event to detect updates to a vk.
         vks[uint(_txType)] = _vk;
 
