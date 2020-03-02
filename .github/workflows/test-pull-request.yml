@@ -37,10 +37,11 @@ jobs:
           sudo swapon /swapfile
           swapon --show
           grep SwapTotal /proc/meminfo
+      - name: Build docker images
+        run: docker-compose build
       - name: Generate the keys and constraint files for Zero Knowledge Proofs
         run: |
           chmod -R 777 zkp/code/
-          docker-compose build
           npm run setupAll
       - name: Remove ZoKrates Containers
         run: |
@@ -76,10 +77,11 @@ jobs:
           sudo swapon /swapfile
           swapon --show
           grep SwapTotal /proc/meminfo
+      - name: Build docker images
+        run: docker-compose build
       - name: Generate the keys and constraint files for Zero Knowledge Proofs
         run: |
           chmod -R 777 zkp/code/
-          docker-compose build
           npm run setupAll
       - name: Remove ZoKrates Containers
         run: |
