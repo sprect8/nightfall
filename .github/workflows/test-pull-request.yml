@@ -83,10 +83,6 @@ jobs:
         run: |
           chmod -R 777 zkp/code/
           npm run setupAll
-      - name: Remove swap memory allocation
-        run: |
-          sudo swapoff /mnt/swapfile
-          sudo rm -dr /mnt/swapfile
       - name: Remove ZoKrates Containers
         run: |
           docker stop $(docker ps -a -q)
