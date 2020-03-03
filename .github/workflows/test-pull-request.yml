@@ -85,14 +85,16 @@ jobs:
           npm run setupAll
       - name: Remove ZoKrates Containers
         run: |
-          swapon --show
-          grep SwapTotal /proc/meminfo
           sudo swapoff /mnt/swapfile
-          swapon --show
+          sudo rm -dr /mnt/swapfile
           grep SwapTotal /proc/meminfo
           docker stop $(docker ps -a -q)
           docker rm $(docker ps -a -q)
-          pwd
+          cd /mnt
+          du -h -d 1
+          cd /home/runner/work/nightfall/nightfall
+          sudo mv zkp/code/gm17 /mnt/gm17
+          sudo ln -s /mnt/gm17 zkp/code/gm17
       - name: Run integration test
         run: ./nightfall-test
       - name: If integration test failed, upload logs files as artifacts
