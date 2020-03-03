@@ -14,6 +14,7 @@ const { alice, bob, erc20 } = testData;
 // dependent test data. which need to be configured.
 let erc721;
 let erc721Commitment;
+let erc721Address;
 let erc20Commitments;
 let erc20CommitmentBatchTransfer;
 
@@ -151,33 +152,43 @@ describe('****** Integration Test ******\n', function() {
        * Step 4.
        * Mint ERC-721 token commitment.
        */
-      it('Mint ERC-721 token commitment', function(done) {
-        const { tokenUri, tokenId } = erc721Commitment;
-        request
-          .post('/mintNFTCommitment')
+      it('Mint ERC-721 token commitment', async function() {
+        // Get the erc721 address so that we can include it in the commitment hashes
+        const erc721AddressResponse = await request
+          .get('/getNFTokenContractAddress')
           .use(prefix(apiServerURL))
-          .send({
-            outputCommitments: [
-              {
-                tokenUri,
-                tokenId,
-              },
-            ],
-          })
-          .set('Accept', 'application/json')
-          .set('Authorization', alice.token)
-          .end((err, res) => {
-            if (err) return done(err);
-            expect(res).to.have.nested.property('body.data.salt');
-            expect(res).to.have.nested.property('body.data.commitment');
-            expect(res).to.have.nested.property('body.data.commitmentIndex');
+          .set('Authorization', alice.token);
+        erc721Address = erc721AddressResponse.body.data.nftAddress;
+        erc721Commitment.address = erc721Address;
 
-            erc721Commitment.salt = res.body.data.salt; // set Salt from response to calculate and verify commitment.
+        const { tokenUri, tokenId } = erc721Commitment;
+        let res;
+        try {
+          res = await request
+            .post('/mintNFTCommitment')
+            .use(prefix(apiServerURL))
+            .send({
+              outputCommitments: [
+                {
+                  tokenUri,
+                  tokenId,
+                },
+              ],
+            })
+            .set('Accept', 'application/json')
+            .set('Authorization', alice.token);
+        } catch (err) {
+          throw new Error(err);
+        }
 
-            expect(res.body.data.commitment).to.be.equal(erc721Commitment.mintCommitment);
-            expect(res.body.data.commitmentIndex).to.be.equal(erc721Commitment.mintCommitmentIndex);
-            return done();
-          });
+        expect(res).to.have.nested.property('body.data.salt');
+        expect(res).to.have.nested.property('body.data.commitment');
+        expect(res).to.have.nested.property('body.data.commitmentIndex');
+
+        erc721Commitment.salt = res.body.data.salt; // set Salt from response to calculate and verify commitment.
+
+        expect(res.body.data.commitment).to.be.equal(erc721Commitment.mintCommitment);
+        expect(res.body.data.commitmentIndex).to.be.equal(erc721Commitment.mintCommitmentIndex);
       });
       /*
        * Step 5.
