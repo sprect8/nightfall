@@ -83,16 +83,16 @@ jobs:
         run: |
           chmod -R 777 zkp/code/
           npm run setupAll
-      - name: Remove ZoKrates Containers
+      - name: Remove swap memory allocation
         run: |
           sudo swapoff /mnt/swapfile
           sudo rm -dr /mnt/swapfile
-          grep SwapTotal /proc/meminfo
+      - name: Remove ZoKrates Containers
+        run: |
           docker stop $(docker ps -a -q)
           docker rm $(docker ps -a -q)
-          cd /mnt
-          du -h -d 1
-          cd /home/runner/work/nightfall/nightfall
+      - name: move and create symbolic link of gm17 folder
+        run: |
           sudo mv zkp/code/gm17 /mnt/gm17
           sudo ln -s /mnt/gm17 zkp/code/gm17
       - name: Run integration test
