@@ -91,10 +91,6 @@ jobs:
         run: |
           docker stop $(docker ps -a -q)
           docker rm $(docker ps -a -q)
-      - name: move and create symbolic link of gm17 folder
-        run: |
-          sudo mv zkp/code/gm17 /mnt/gm17
-          sudo ln -s /mnt/gm17 zkp/code/gm17
       - name: Run integration test
         run: ./nightfall-test
       - name: If integration test failed, upload logs files as artifacts
