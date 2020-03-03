@@ -115,7 +115,8 @@ contract FTokenShield is Ownable, MerkleTree {
       roots[latestRoot] = latestRoot; // and save the new root to the list of roots
 
       // Finally, transfer the fTokens from the sender to this contract
-      fToken.transferFrom(msg.sender, address(this), _value);
+      bool transferCheck = fToken.transferFrom(msg.sender, address(this), _value);
+      require(transferCheck, "Commitment cannot be minted");
 
       // gas measurement:
       gasUsedByShieldContract = gasUsedByShieldContract + gasCheckpoint - gasleft();
@@ -245,7 +246,8 @@ contract FTokenShield is Ownable, MerkleTree {
 
       //Finally, transfer the fungible tokens from this contract to the nominated address
       address payToAddress = address(_payTo); // we passed _payTo as a uint256, to ensure the packing was correct within the sha256() above
-      fToken.transfer(payToAddress, _value);
+      bool transferCheck = fToken.transfer(payToAddress, _value);
+      require(transferCheck, "Commitment cannot be burned");
 
       emit Burn(_nullifier);
 
