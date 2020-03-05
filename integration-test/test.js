@@ -17,6 +17,7 @@ let erc721Commitment;
 let erc721Address;
 let erc20Commitments;
 let erc20CommitmentBatchTransfer;
+let erc20Address;
 
 describe('****** Integration Test ******\n', function() {
   before(async function() {
@@ -344,21 +345,32 @@ describe('****** Integration Test ******\n', function() {
        * Step 9.
        * Mint ERC-20 token,
        */
-      it(`Mint ${erc20.mint} ERC-20 tokens`, function(done) {
-        request
-          .post('/mintFToken')
+      it(`Mint ${erc20.mint} ERC-20 tokens`, async function() {
+        // Get the erc20 address so that we can include it in the commitment hashes
+        const erc20AddressResponse = await request
+          .get('/getFTokenContractAddress')
           .use(prefix(apiServerURL))
-          .send({
-            value: erc20.mint,
-          })
-          .set('Accept', 'application/json')
-          .set('Authorization', alice.token)
-          .end((err, res) => {
-            if (err) return done(err);
-            expect(res).to.have.nested.property('body.data.message');
-            expect(res.body.data.message).to.be.equal('Mint Successful');
-            return done();
-          });
+          .set('Authorization', alice.token);
+        erc20Address = erc20AddressResponse.body.data.ftAddress;
+        erc20Commitments.erc20Address = erc20Address;
+        erc20CommitmentBatchTransfer.erc20Address = erc20Address;
+
+        let res;
+        try {
+          res = await request
+            .post('/mintFToken')
+            .use(prefix(apiServerURL))
+            .send({
+              value: erc20.mint,
+            })
+            .set('Accept', 'application/json')
+            .set('Authorization', alice.token);
+        } catch (err) {
+          throw new Error(err);
+        }
+
+        expect(res).to.have.nested.property('body.data.message');
+        expect(res.body.data.message).to.be.equal('Mint Successful');
       });
       /*
        * Step 10.
@@ -378,6 +390,7 @@ describe('****** Integration Test ******\n', function() {
             expect(res).to.have.nested.property('body.data.commitmentIndex');
 
             erc20Commitments.mint[0].salt = res.body.data.salt; // set Salt from response to calculate and verify commitment.
+            erc20Commitments.mint[0].address = erc20Address;
             expect(res.body.data.commitment).to.be.equal(erc20Commitments.mint[0].commitment);
             expect(res.body.data.commitmentIndex).to.be.equal(
               erc20Commitments.mint[0].commitmentIndex,
@@ -403,7 +416,7 @@ describe('****** Integration Test ******\n', function() {
             expect(res).to.have.nested.property('body.data.commitmentIndex');
 
             erc20Commitments.mint[1].salt = res.body.data.salt; // set Salt from response to calculate and verify commitment.
-
+            erc20Commitments.mint[1].address = erc20Address;
             expect(res.body.data.commitment).to.be.equal(erc20Commitments.mint[1].commitment);
             expect(res.body.data.commitmentIndex).to.be.equal(
               erc20Commitments.mint[1].commitmentIndex,
@@ -431,7 +444,9 @@ describe('****** Integration Test ******\n', function() {
 
             const outputCommitments = res.body.data;
             erc20Commitments.transfer.salt = outputCommitments[0].salt; // set Salt from response to calculate and verify commitment.
+            erc20Commitments.transfer.address = erc20Address;
             erc20Commitments.change.salt = outputCommitments[1].salt; // set Salt from response to calculate and verify commitment.
+            erc20Commitments.change.address = erc20Address;
 
             expect(outputCommitments[0].commitment).to.be.equal(
               erc20Commitments.transfer.commitment,
@@ -596,6 +611,7 @@ describe('****** Integration Test ******\n', function() {
           expect(res).to.have.nested.property('body.data.commitmentIndex');
 
           erc20CommitmentBatchTransfer.salt = res.body.data.salt; // set Salt from response to calculate and verify commitment.
+          erc20CommitmentBatchTransfer.address = erc20Address;
           expect(res.body.data.commitment).to.be.equal(erc20CommitmentBatchTransfer.commitment);
           expect(res.body.data.commitmentIndex).to.be.equal(
             erc20CommitmentBatchTransfer.commitmentIndex,
@@ -635,6 +651,7 @@ describe('****** Integration Test ******\n', function() {
           if (err) return done(err);
           expect(res.body.data.length).to.be.equal(2);
           erc20CommitmentBatchTransfer.transferData[0].salt = res.body.data[0].salt; // set Salt from response to calculate and verify commitment.
+          erc20CommitmentBatchTransfer.transferData[0].address = erc20Address;
 
           expect(res.body.data[0].commitment).to.be.equal(
             erc20CommitmentBatchTransfer.transferData[0].commitment,
