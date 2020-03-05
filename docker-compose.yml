@@ -192,7 +192,7 @@ services:
       - nightfall_network
 
   merkle-tree:
-    image: eyblockchain/timber:v1.3.0
+    image: eyblockchain/timber:v2.1.0
     restart: on-failure
     depends_on:
       - mongo-merkle-tree
@@ -202,9 +202,6 @@ services:
       - ./zkp/contracts/:/app/contracts:consistent # required if deploying contracts from within this service (if CONTRACT_LOCATION = 'default')
       - ./zkp/build/:/app/build:consistent # required if CONTRACT_LOCATION = 'default'
       - app/node_modules
-      - ~/nightfallmimc/timber/merkle-tree/src:/app/src # REMOVE before merge - non pkg timber vers
-      - ~/nightfallmimc/timber/merkle-tree/.babelrc:/app/.babelrc
-      - ~/nightfallmimc/timber/merkle-tree/setup-mongo-acl-for-new-users.js:/app/setup-mongo-acl-for-new-users.js
     ports:
       - '9000:80'
     environment:

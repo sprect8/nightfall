@@ -67,6 +67,7 @@ let Z_A_C;
 let zInd1;
 let zInd2;
 const outputCommitments = [];
+let consolidatedCommitment;
 let accounts;
 let fTokenShieldJson;
 let fTokenShieldAddress;
@@ -182,7 +183,7 @@ describe('f-token-controller.js tests', () => {
     }
     const outputCommitment = { value: C, salt: await utils.rndHex(32) };
 
-    await erc20.consolidationTransfer(
+    const response = await erc20.consolidationTransfer(
       inputCommitments,
       outputCommitment,
       pkE,
@@ -199,5 +200,6 @@ describe('f-token-controller.js tests', () => {
         pkPath: `${process.cwd()}/code/gm17/ft-consolidation-transfer/proving.key`,
       },
     );
+    consolidatedCommitment = response.outputCommitment;
   });
 });
