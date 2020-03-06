@@ -47,7 +47,7 @@
     "superagent-prefix": "0.0.2"
   },
   "dependencies": {
-    "@eyblockchain/nightlite": "file:.yalc/@eyblockchain/nightlite",
+    "@eyblockchain/nightlite": "^5.1.0",
     "fs-extra": "^8.1.0",
     "solc": "^0.6.2"
   }
