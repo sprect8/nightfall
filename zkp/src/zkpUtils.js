@@ -122,7 +122,7 @@ function powerMod(base, exponent, m) {
   let e = exponent;
   while (e > BigInt(0)) {
     if (e % BigInt(2) === BigInt(1)) result = (result * b) % m;
-    e >>= BigInt(1);
+    e >>= BigInt(1); // eslint-disable-line
     b = (b * b) % m;
   }
   return result;

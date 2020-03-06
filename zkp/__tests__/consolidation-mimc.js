@@ -67,7 +67,6 @@ let Z_A_C;
 let zInd1;
 let zInd2;
 const outputCommitments = [];
-let consolidatedCommitment;
 let accounts;
 let fTokenShieldJson;
 let fTokenShieldAddress;
@@ -200,6 +199,7 @@ describe('f-token-controller.js tests', () => {
         pkPath: `${process.cwd()}/code/gm17/ft-consolidation-transfer/proving.key`,
       },
     );
-    consolidatedCommitment = response.outputCommitment;
+    const consolidatedCommitment = response.outputCommitment;
+    console.log('Output commitment:', consolidatedCommitment.commitment);
   });
 });
