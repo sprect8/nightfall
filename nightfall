@@ -36,7 +36,6 @@ popd
 
 printf "${GREEN}*** Launching containerized ganache ***${NC}\n"
 docker-compose up -d ganache
-docker-compose run --rm hash-switch
 
 printf "${GREEN}*** Deploying all contracts ***${NC}\n"
 docker-compose run --rm truffle-offchain migrate --reset --network=default
