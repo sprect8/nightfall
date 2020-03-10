@@ -47,8 +47,6 @@ jobs:
         run: |
           docker stop $(docker ps -a -q)
           docker rm $(docker ps -a -q)
-      - name: Build zkp image
-        run: docker-compose build zkp
       - name: Setup ganache container, deploy zkp contracts
         run: |
           docker-compose run --rm truffle-zkp compile --all
