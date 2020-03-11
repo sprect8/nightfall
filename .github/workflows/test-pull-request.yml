@@ -39,7 +39,7 @@ jobs:
           grep SwapTotal /proc/meminfo
       - name: Build docker images
         run: docker-compose build
-      - name: Generate the keys and constraint files for Zero Knowledge Proofs
+      - name: Generate the keys and constraint files for Zero Knowledge Proofs (HASH_TYPE = sha)
         run: |
           chmod -R 777 zkp/code/
           npm run setupAll
@@ -55,6 +55,25 @@ jobs:
         run: docker-compose up -d merkle-tree
       - name: Run zkp unit tests
         run: docker-compose run --rm zkp npm test
+      - name: Stop all Docker Containers
+        run: docker-compose down -v
+      - name: Generate the keys and constraint files for Zero Knowledge Proofs (HASH_TYPE = mimc)
+        run: npm run setupAll-mimc
+      - name: Remove ZoKrates Containers
+        run: |
+          docker stop $(docker ps -a -q)
+          docker rm $(docker ps -a -q)
+      - name: Rename mimc docker-compose yml file
+        run: mv docker-compose.override.mimc.yml docker-compose.override.yml
+      - name: Setup ganache container, deploy zkp contracts
+        run: |
+          docker-compose run --rm truffle-zkp compile --all
+          docker-compose run --rm truffle-zkp migrate --reset --network=default
+      - name: Start merkle-tree microservice
+        run: docker-compose up -d merkle-tree
+      - name: Run zkp unit tests
+        run: docker-compose run --rm zkp npm test
+
 
   integration-test:
     name: Run integration test
@@ -77,7 +96,7 @@ jobs:
           grep SwapTotal /proc/meminfo
       - name: Build docker images
         run: docker-compose build
-      - name: Generate the keys and constraint files for Zero Knowledge Proofs
+      - name: Generate the keys and constraint files for Zero Knowledge Proofs (HASH_TYPE = sha)
         run: |
           chmod -R 777 zkp/code/
           npm run setupAll
@@ -85,6 +104,22 @@ jobs:
         run: |
           docker stop $(docker ps -a -q)
           docker rm $(docker ps -a -q)
+      - name: Run integration test
+        run: ./nightfall-test
+      - name: If integration test failed, upload logs files as artifacts
+        if: failure()
+        uses: actions/upload-artifact@master
+        with:
+          name: integration-test-logs
+          path: nightfall_test.log
+      - name: Generate the keys and constraint files for Zero Knowledge Proofs (HASH_TYPE = mimc)
+        run: npm run setupAll-mimc
+      - name: Remove ZoKrates Containers
+        run: |
+          docker stop $(docker ps -a -q)
+          docker rm $(docker ps -a -q)
+       - name: Rename mimc docker-compose yml file
+        run: mv docker-compose.override.mimc.yml docker-compose.override.yml
       - name: Run integration test
         run: ./nightfall-test
       - name: If integration test failed, upload logs files as artifacts
