@@ -54,6 +54,9 @@
   },
   "jest": {
     "globalSetup": "/app/__tests__/globalSetup.js",
+    "testPathIgnorePatterns": [
+      "/app/__tests__/globalSetup.js"
+    ],
     "setupFilesAfterEnv": [
       "jest-expect-message"
     ]
