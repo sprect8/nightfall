@@ -7,7 +7,7 @@ import utils from '../src/zkpUtils';
 if (process.env.HASH_TYPE === 'mimc') {
   let accounts;
   let contractInstance;
-  beforeAll(async (done) => {
+  beforeAll(async done => {
     if (!(await bc.isConnected())) await bc.connect();
     accounts = await (await bc.connection()).eth.getAccounts();
 
@@ -16,7 +16,7 @@ if (process.env.HASH_TYPE === 'mimc') {
     contractInstance.setProvider(bc.connect());
 
     const verifierAddress = await getContractAddress('Verifier');
-    contractInstance = await contractInstance.new(verifierAddress, {from: accounts[0]});
+    contractInstance = await contractInstance.new(verifierAddress, { from: accounts[0] });
     done();
   });
 
