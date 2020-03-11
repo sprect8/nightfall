@@ -18,8 +18,8 @@ jobs:
       - name: Run check for ESLint errors
         run: npm run lint
 
-  zkp-unit-test:
-    name: ZKP microservice unit test
+  zkp-unit-test-sha:
+    name: ZKP microservice unit test (HASH_TYPE = sha)
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v1
@@ -39,7 +39,7 @@ jobs:
           grep SwapTotal /proc/meminfo
       - name: Build docker images
         run: docker-compose build
-      - name: Generate the keys and constraint files for Zero Knowledge Proofs (HASH_TYPE = sha)
+      - name: Generate the keys and constraint files for Zero Knowledge Proofs
         run: |
           chmod -R 777 zkp/code/
           npm run setupAll
@@ -55,10 +55,32 @@ jobs:
         run: docker-compose up -d merkle-tree
       - name: Run zkp unit tests
         run: docker-compose run --rm zkp npm test
-      - name: Stop all Docker Containers
-        run: docker-compose down -v
-      - name: Generate the keys and constraint files for Zero Knowledge Proofs (HASH_TYPE = mimc)
-        run: npm run setupAll-mimc
+
+  zkp-unit-test-mimc:
+    name: ZKP microservice unit test (HASH_TYPE = mimc)
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '10.15.3'
+      - name: Pull docker image
+        run: docker pull zokrates/zokrates:0.5.1
+      - name: Increase swap memory
+        run: |
+          sudo usermod -a -G sudo runner
+          sudo swapoff -a
+          sudo fallocate -l 12G /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
+          swapon --show
+          grep SwapTotal /proc/meminfo
+      - name: Build docker images
+        run: docker-compose build
+      - name: Generate the keys and constraint files for Zero Knowledge Proofs
+        run: |
+          chmod -R 777 zkp/code/
+          npm run setupAll-mimc
       - name: Remove ZoKrates Containers
         run: |
           docker stop $(docker ps -a -q)
@@ -74,9 +96,8 @@ jobs:
       - name: Run zkp unit tests
         run: docker-compose run --rm zkp npm test
 
-
-  integration-test:
-    name: Run integration test
+  integration-test-sha:
+    name: Run integration test (HASH_TYPE = sha)
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v1
@@ -96,7 +117,7 @@ jobs:
           grep SwapTotal /proc/meminfo
       - name: Build docker images
         run: docker-compose build
-      - name: Generate the keys and constraint files for Zero Knowledge Proofs (HASH_TYPE = sha)
+      - name: Generate the keys and constraint files for Zero Knowledge Proofs
         run: |
           chmod -R 777 zkp/code/
           npm run setupAll
@@ -112,8 +133,32 @@ jobs:
         with:
           name: integration-test-logs
           path: nightfall_test.log
-      - name: Generate the keys and constraint files for Zero Knowledge Proofs (HASH_TYPE = mimc)
-        run: npm run setupAll-mimc
+
+  integration-test-mimc:
+    name: Run integration test (HASH_TYPE = mimc)
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '10.15.3'
+      - name: Pull docker image
+        run: docker pull zokrates/zokrates:0.5.1
+      - name: Increase swap memory
+        run: |
+          sudo usermod -a -G sudo runner
+          sudo swapoff -a
+          sudo fallocate -l 12G /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
+          swapon --show
+          grep SwapTotal /proc/meminfo
+      - name: Build docker images
+        run: docker-compose build
+      - name: Generate the keys and constraint files for Zero Knowledge Proofs
+        run: |
+          chmod -R 777 zkp/code/
+          npm run setupAll-mimc
       - name: Remove ZoKrates Containers
         run: |
           docker stop $(docker ps -a -q)
