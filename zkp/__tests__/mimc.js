@@ -15,7 +15,7 @@ if (process.env.HASH_TYPE === 'mimc') {
   const commitment1 = utils.utf8StringToHex('2', 32);
   const commitment2 = utils.utf8StringToHex('3', 32);
 
-// NOTE - the MerkleTree.sol tests will not work without a newly deployed shield contract
+  // NOTE - the MerkleTree.sol tests will not work without a newly deployed shield contract
   describe('MiMC hash function tests', () => {
     test('HASH_TYPE should be set to MiMC', async () => {
       expect(process.env.HASH_TYPE).toEqual('mimc');
