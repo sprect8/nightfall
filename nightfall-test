@@ -10,9 +10,6 @@ declare isTestFailed=false
 printf "${GREEN}*** Cleaning up all test containers ***${NC}\n"
 docker-compose down -v || true
 
-printf "${GREEN}*** Build image for all Containers ***${NC}\n"
-docker-compose build
-
 printf "${GREEN}*** Pull zokrates docker image ***${NC}\n"
 docker pull zokrates/zokrates:0.5.1
 
