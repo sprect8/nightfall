@@ -1,15 +1,23 @@
-import { getTruffleContractInstance } from '../src/contractUtils';
-import bc from '../src/web3';
+import contract from 'truffle-contract';
 
+import { getContractAddress, getContractInterface } from '../src/contractUtils';
+import bc from '../src/web3';
 import utils from '../src/zkpUtils';
 
 if (process.env.HASH_TYPE === 'mimc') {
   let accounts;
   let contractInstance;
-  beforeAll(async () => {
+  beforeAll(async (done) => {
     if (!(await bc.isConnected())) await bc.connect();
     accounts = await (await bc.connection()).eth.getAccounts();
-    ({ contractInstance } = await getTruffleContractInstance('FTokenShield'));
+
+    const contractJson = await getContractInterface('FTokenShield');
+    contractInstance = contract(contractJson);
+    contractInstance.setProvider(bc.connect());
+
+    const verifierAddress = await getContractAddress('Verifier');
+    contractInstance = await contractInstance.new(verifierAddress, {from: accounts[0]});
+    done();
   });
 
   const commitment1 = utils.utf8StringToHex('2', 32);
