@@ -70,6 +70,8 @@ jobs:
       - name: Pull docker image
         run: |
           docker images -a
+          docker rmi $(docker images -aq)
+          ps aux
           docker pull zokrates/zokrates:0.5.1
       - name: Increase swap memory
         run: |
@@ -99,8 +101,6 @@ jobs:
         run: |
           docker-compose run --rm truffle-zkp compile --all
           docker-compose run --rm truffle-zkp migrate --reset --network=default
-          docker-compose ps
-          docker ps -aq
       - name: Start merkle-tree microservice
         run: docker-compose up -d merkle-tree
       - name: Run zkp unit tests
