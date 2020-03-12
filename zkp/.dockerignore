@@ -92,6 +92,6 @@ typings/
 
 #other zkp files
 #ensures users who do their own local 'trusted setups' don't 'corrupt' the shared zkp files in the opensource repo.
-**/gm17/*/**
+#**/gm17/*/**
 !**/*.pcode
 !**/aux-*code
