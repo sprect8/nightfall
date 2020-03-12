@@ -47,7 +47,7 @@ jobs:
         run: |
           docker stop $(docker ps -a -q)
           docker rm $(docker ps -a -q)
-          free
+          free -h
           df -h
           du -h -d 1 zkp/code/gm17
       - name: Setup ganache container, deploy zkp contracts
@@ -92,7 +92,8 @@ jobs:
         run: |
           docker stop $(docker ps -a -q)
           docker rm $(docker ps -a -q)
-          free
+          sudo echo 3 > /proc/sys/vm/drop_caches
+          free -h
           df -h
           du -h -d 1 zkp/code/gm17
       - name: Rename mimc docker-compose yml file
