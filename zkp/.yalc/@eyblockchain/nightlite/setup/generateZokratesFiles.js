@@ -79,22 +79,27 @@ async function generateZokratesFiles(outputDirectory, codeName) {
     ? outputDirectory
     : `${outputDirectory}/`;
 
+  let hashDir = process.env.COMPLIANCE === 'true' ? '/rc' : '';
+  hashDir = process.env.HASH_TYPE === 'mimc' ? '/mimc' : hashDir;
+
   // Path to code files within this module.
-  const gm17Path = path.join(__dirname, './gm17');
-  logger.debug(`looking for files in ${gm17Path}`);
+  const gm17Path = path.join(__dirname, `./gm17`, hashDir);
 
   // If there's a codeName, only compile that. Otherwise, compile everything.
   const codeFiles = codeName ? [codeName] : await readdirAsync(gm17Path);
-  logger.debug(`Processing these zokrates dsl files: ${codeFiles}.zok`);
+
   // Generate all code files. This function is non-concurrent on purpose.
   // Running these functions concurrently is too much for most computers.
   for (let i = 0; i < codeFiles.length; i += 1) {
     const codeFile = codeFiles[i];
 
-    // Strip .code from code file name.
+    // Strip .zok from code file name.
     const codeFileName = codeFile.split('.')[0];
     const codeFileDirectory = `${outputDirWithSlash}${codeFileName}`;
-
+    if (codeFileName === 'common' || codeFileName === 'mimc') {
+      // eslint-disable-next-line
+      continue
+    }
     // Create a directory
     try {
       await mkdir(codeFileDirectory);
@@ -103,9 +108,9 @@ async function generateZokratesFiles(outputDirectory, codeName) {
     }
 
     // Create files
-    logger.info('Compiling', `${gm17Path}/${codeFileName}.zok`);
+    logger.info('Compiling', `${outputDirWithSlash}${codeFile}`);
 
-    // // Generate out.code and out in the same directory.
+    // // Generate out.ztf and out in the same directory.
     const compileOutput = await compile(
       `${gm17Path}/${codeFileName}.zok`,
       codeFileDirectory,
@@ -145,7 +150,7 @@ async function generateZokratesFiles(outputDirectory, codeName) {
     const vkJson = await keyExtractor(`${codeFileDirectory}/verifier.sol`, true);
 
     logger.info(`Writing ${codeFileDirectory}/${codeFile.split('.')[0]}-vk.json`);
-    // Create a JSON with the file name but without .code
+    // Create a JSON with the file name but without .zok
     fs.writeFileSync(`${codeFileDirectory}/${codeFile.split('.')[0]}-vk.json`, vkJson, err => {
       if (err) {
         logger.error(err);

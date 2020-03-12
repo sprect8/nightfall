@@ -55,17 +55,39 @@ contract calls will use.
 
 ## Trusted Setup
 
-The `setup/gm17` directory contains the .code files that you need in order to run the Nightfall
-functions.
+The `setup/gm17` directory contains the .zok files that you need in order to run the Nightfall
+functions. The `generateZokratesFiles()` function completes the setup for you, skipping the `common`
+folder, containing shared functions, and the `mimc` folder, containing the equivalent .zok files
+which use MiMC hashing.
 
-TEMP: Copy these files (e.g., `ft-burn.code`) over to your project. In a future update,
+All the .zok files need to have the `generateZokratesFiles()` function run on them. This will
+generate the files you need for the rest of the Nightfall protocol to work. If you are running
+Nightfall, the `./nightfall-generate-trusted-setup` command calls this function for you.
 
-These .code files need to have the `generateZokratesFiles()` function run on them. This will
-generate the files you need for the rest of the Nightfall protocol to work. See the specific
-documentation in `setup/generateZokratesFiles()` for usage instructions.
+Otherwise, `generateZokratesFiles()` requires a directory argument telling it where to output the
+files. It can take a second optional argument telling it which file to set up. For example:
+
+```sh
+generateZokratesFiles('zkp/gm17', 'ft-transfer')
+```
+
+will set up only `ft-transfer.zok` and output the files in your `zkp/gm17` directory. If `HASH_TYPE`
+is set to `mimc`, the function will automatically set up `mimc/ft-transfer.zok`.
+
+By default, Nightlite will use SHA-256 for merkle tree calculations. If you would like to use MiMC
+instead, change the `HASH_TYPE` value in `config.js` and set up the files as normal.
+
+Using Nightfall, you can choose whether to use MiMC hashing or SHA-256 hashing within the
+application. It will automatically set up the correct files for you. Take a look at the
+[Nightfall](https://github.com/EYBlockchain/nightfall/tree/master/zkp) `zkp/README` for more
+information.
+
+Similarly, you can set the COMPLIANCE environment variable to 'true'. This will set up the code to
+work with the circuits in `setup/gm17/rc`, which will enable blacklisting of users and decryption of
+transactions.
 
 The Trusted Setup step will take approximately one hour. The Trusted Setup step will need to be
-re-run for a given .code file whenever it is changed.
+re-run for a given .zok file whenever it is changed or whenever you change `HASH_TYPE`.
 
 ## ZKP Public/Private Keys
 
@@ -127,6 +149,13 @@ When a commitment is generated (whether its through minting a commitment, or `ft
 "change" mechanic), it has a `salt`, a `commitment`, and a `commitmentIndex`. All of these things
 are required for later function calls. Refer to the documentation on each individual function for
 more information.
+
+A consolidation transfer (`ft-consolidation-transfer`), which takes 20 commitments and sends them in
+one proof, is only possible with MiMC hashing due to its efficiency in ZKP circuits. If you would
+like to use it, or MiMC hashing in general, be sure to
+[re-run](https://github.com/EYBlockchain/nightfall/tree/master/zkp) the trusted setup on the files
+in `gm17/mimc`. This can be done by changing the `HASH_TYPE` variable to `'mimc'` and proceeding as
+normal.
 
 ## To Do
 
