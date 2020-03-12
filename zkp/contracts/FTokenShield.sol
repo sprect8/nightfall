@@ -17,9 +17,9 @@ contract FTokenShield is Ownable, MerkleTree, PublicKeyTree {
 
   // EVENTS:
   // Observers may wish to listen for nullification of commitments:
-  event Transfer(bytes32[] publicInputs);
+  event TransferRC(bytes32[] publicInputs);
   event SimpleBatchTransfer(bytes32 nullifier);
-  event Burn(bytes32[] publicInputs);
+  event BurnRC(bytes32[] publicInputs);
 
   // Observers may wish to listen for zkSNARK-related changes:
   event VerifierChanged(address newVerifierContract);
@@ -89,7 +89,7 @@ contract FTokenShield is Ownable, MerkleTree, PublicKeyTree {
   /**
   The mint function accepts fungible tokens from the specified fToken ERC-20 contract and creates the same amount as a commitment.
   */
-  function mint(uint256[] calldata _proof, uint256[] calldata _inputs, uint128 _value, bytes32 _commitment, bytes32 zkpPublicKey) external {
+  function mintRC(uint256[] calldata _proof, uint256[] calldata _inputs, uint128 _value, bytes32 _commitment, bytes32 zkpPublicKey) external {
 
       // gas measurement:
       uint256 gasCheckpoint = gasleft();
@@ -134,7 +134,7 @@ contract FTokenShield is Ownable, MerkleTree, PublicKeyTree {
   /**
   The transfer function transfers a commitment to a new owner
   */
-  function transfer(uint256[] calldata _proof, uint256[] calldata _inputs, bytes32[] calldata publicInputs) external {
+  function transferRC(uint256[] calldata _proof, uint256[] calldata _inputs, bytes32[] calldata publicInputs) external {
 
       // gas measurement:
       uint256[3] memory gasUsed; // array needed to stay below local stack limit
@@ -186,7 +186,7 @@ contract FTokenShield is Ownable, MerkleTree, PublicKeyTree {
       latestRoot = insertLeaves(leaves); // recalculate the root of the merkleTree as it's now different
       roots[latestRoot] = latestRoot; // and save the new root to the list of roots
 
-      emit Transfer(publicInputs);
+      emit TransferRC(publicInputs);
 
       // gas measurement:
       gasUsed[1] = gasUsed[1] + gasUsed[0] - gasleft();
@@ -236,7 +236,7 @@ contract FTokenShield is Ownable, MerkleTree, PublicKeyTree {
   }
 
 
-  function burn(uint256[] calldata _proof, uint256[] calldata _inputs, bytes32[] calldata publicInputs) external {
+  function burnRC(uint256[] calldata _proof, uint256[] calldata _inputs, bytes32[] calldata publicInputs) external {
 
       // gas measurement:
       uint256 gasCheckpoint = gasleft();
@@ -278,7 +278,7 @@ contract FTokenShield is Ownable, MerkleTree, PublicKeyTree {
       address payToAddress = address(uint256(publicInputs[3])); // we passed _payTo as a bytes32, to ensure the packing was correct within the sha256() above
       fToken.transfer(payToAddress, uint256(publicInputs[2]));
 
-      emit Burn(publicInputs);
+      emit BurnRC(publicInputs);
 
       // gas measurement:
       gasUsedByShieldContract = gasUsedByShieldContract + gasCheckpoint - gasleft();
