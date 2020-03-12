@@ -68,7 +68,9 @@ jobs:
         with:
           node-version: '10.15.3'
       - name: Pull docker image
-        run: docker pull zokrates/zokrates:0.5.1
+        run: |
+          docker images -a
+          docker pull zokrates/zokrates:0.5.1
       - name: Increase swap memory
         run: |
           sudo usermod -a -G sudo runner
@@ -97,6 +99,8 @@ jobs:
         run: |
           docker-compose run --rm truffle-zkp compile --all
           docker-compose run --rm truffle-zkp migrate --reset --network=default
+          docker-compose ps
+          docker ps -aq
       - name: Start merkle-tree microservice
         run: docker-compose up -d merkle-tree
       - name: Run zkp unit tests
