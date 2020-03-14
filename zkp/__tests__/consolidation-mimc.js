@@ -205,8 +205,8 @@ if (process.env.HASH_TYPE === 'mimc') {
       );
       const consolidatedCommitment = response.outputCommitment;
       console.log('Output commitment:', consolidatedCommitment.commitment);
+      done();
     });
-    done();
   });
 } else {
   describe('Consolidation MIMC test disabled', () => {
