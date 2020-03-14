@@ -69,9 +69,7 @@ jobs:
           node-version: '10.15.3'
       - name: Pull docker image
         run: |
-          docker images -a
           docker rmi $(docker images -aq)
-          ps aux
           docker pull zokrates/zokrates:0.5.1
       - name: Increase swap memory
         run: |
@@ -119,7 +117,9 @@ jobs:
         with:
           node-version: '10.15.3'
       - name: Pull docker image
-        run: docker pull zokrates/zokrates:0.5.1
+        run: |
+          docker rmi $(docker images -aq)
+          docker pull zokrates/zokrates:0.5.1
       - name: Increase swap memory
         run: |
           sudo usermod -a -G sudo runner

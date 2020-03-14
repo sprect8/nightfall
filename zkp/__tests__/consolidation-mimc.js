@@ -73,7 +73,7 @@ let fTokenShieldAddress;
 let erc20Address;
 
 if (process.env.HASH_TYPE === 'mimc') {
-  beforeAll(async () => {
+  beforeAll(async done => {
     if (!(await bc.isConnected())) await bc.connect();
     accounts = await (await bc.connection()).eth.getAccounts();
     const { contractJson, contractInstance } = await getTruffleContractInstance('FTokenShield');
@@ -88,6 +88,7 @@ if (process.env.HASH_TYPE === 'mimc') {
     S_A_C = await utils.rndHex(32);
     pkA = utils.strip0x(utils.hash(skA));
     Z_A_C = utils.concatenateThenHash(erc20AddressPadded, C, pkA, S_A_C);
+    done();
   });
   // eslint-disable-next-line no-undef
   describe('f-token-controller.js tests', () => {
@@ -95,19 +96,20 @@ if (process.env.HASH_TYPE === 'mimc') {
     // Alice sends Bob E and gets F back (Bob has 40 ETH, Alice has 10 ETH)
     // Bob then has E+G at total of 70 ETH
     // Bob sends H to Alice and keeps I (Bob has 50 ETH and Alice has 10+20=30 ETH)
-    test('Should be correcly configurated to use MiMC', async () => {
+    test('Should be correcly configurated to use MiMC', () => {
       expect(process.env.HASH_TYPE).toEqual('mimc');
     });
-    test('Should create 10000 tokens in accounts[0]', async () => {
+    test('Should create 10000 tokens in accounts[0]', async done => {
       // fund some accounts with FToken
       const AMOUNT = 10000;
       const bal1 = await controller.getBalance(accounts[0]);
       await controller.buyFToken(AMOUNT, accounts[0]);
       const bal2 = await controller.getBalance(accounts[0]);
       expect(AMOUNT).toEqual(bal2 - bal1);
+      done();
     });
 
-    test('Should mint an ERC-20 commitment Z_A_C for Alice of value C', async () => {
+    test('Should mint an ERC-20 commitment Z_A_C for Alice of value C', async done => {
       const { commitment: zTest, commitmentIndex: zIndex } = await erc20.mint(
         C,
         pkA,
@@ -131,9 +133,10 @@ if (process.env.HASH_TYPE === 'mimc') {
       console.log('expected commitment:', Z_A_C);
       console.log('commitment index:', zInd1);
       expect(Z_A_C).toEqual(zTest);
+      done();
     });
 
-    test('Should transfer ERC-20 commitments of various values to ONE receipient and get change', async () => {
+    test('Should transfer ERC-20 commitments of various values to ONE receipient and get change', async done => {
       // the E's becomes Bobs'.
       const bal1 = await controller.getBalance(accounts[0]);
       const inputCommitment = { value: C, salt: S_A_C, commitment: Z_A_C, commitmentIndex: zInd1 };
@@ -167,9 +170,10 @@ if (process.env.HASH_TYPE === 'mimc') {
       console.log('gas consumed was', wei / 20e9);
       console.log('approx total cost in USD @$200/ETH was', wei * 200e-18);
       console.log('approx per transaction cost in USD @$200/ETH was', (wei * 200e-18) / 20);
+      done();
     });
 
-    test('Should consolidate the 20 commitments just created', async () => {
+    test('Should consolidate the 20 commitments just created', async done => {
       const pkE = await utils.rndHex(32); // public key of Eve, who we transfer to
       const inputCommitments = [];
       for (let i = 0; i < E.length; i++) {
@@ -202,6 +206,7 @@ if (process.env.HASH_TYPE === 'mimc') {
       const consolidatedCommitment = response.outputCommitment;
       console.log('Output commitment:', consolidatedCommitment.commitment);
     });
+    done();
   });
 } else {
   describe('Consolidation MIMC test disabled', () => {
