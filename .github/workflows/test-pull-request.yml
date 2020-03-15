@@ -71,6 +71,8 @@ jobs:
         run: |
           docker rmi $(docker images -aq)
           docker pull zokrates/zokrates:0.5.1
+          ps -A
+          sudo kill $(ps aux | grep '[p]hp' | awk '{print $2}') || true
       - name: Increase swap memory
         run: |
           sudo usermod -a -G sudo runner
@@ -108,7 +110,7 @@ jobs:
         run: |
           free -h
           df -h
-          ps
+           grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage "%"}'
 
   integration-test-sha:
     name: Run integration test (HASH_TYPE = sha)
