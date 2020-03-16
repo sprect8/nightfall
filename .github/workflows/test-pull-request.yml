@@ -72,11 +72,13 @@ jobs:
           docker rmi $(docker images -aq)
           docker pull zokrates/zokrates:0.5.1
           ps -A
+          grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage "%"}'
           sudo kill $(ps aux | grep '[p]hp' | awk '{print $2}') || true
           sudo kill $(ps aux | grep '[m]ysql' | awk '{print $2}') || true
           sudo kill $(ps aux | grep '[d]otnet' | awk '{print $2}') || true
           sudo kill $(ps aux | grep '[d]otnet' | awk '{print $2}') || true
           sudo kill $(ps aux | grep '[d]otnet' | awk '{print $2}') || true
+          grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage "%"}'
           ps -A
       - name: Increase swap memory
         run: |
@@ -99,7 +101,7 @@ jobs:
           docker rm $(docker ps -a -q)
           free -h
           df -h
-          ps
+          ps -A
       - name: Rename mimc docker-compose yml file
         run: mv docker-compose.override.mimc.yml docker-compose.override.yml
       - name: Setup ganache container, deploy zkp contracts
