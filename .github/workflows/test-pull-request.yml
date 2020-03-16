@@ -85,7 +85,7 @@ jobs:
       - name: Generate the keys and constraint files for Zero Knowledge Proofs
         run: |
           chmod -R 777 zkp/code/
-          npm run setupAll-mimc
+          yes | npm run setup-mimc ft-consolidation-transfer
       - name: Remove ZoKrates Containers
         run: |
           grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage "%"}'
