@@ -72,10 +72,13 @@ jobs:
           docker rmi $(docker images -aq)
           docker pull zokrates/zokrates:0.5.1
           ps -A
+          ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem | head
           grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage "%"}'
           sudo kill $(ps aux | grep '[p]hp' | awk '{print $2}') || true
           sudo kill $(ps aux | grep '[m]ysql' | awk '{print $2}') || true
           sudo kill $(ps aux | grep '[d]otnet' | awk '{print $2}') || true
+          sudo kill $(ps aux | grep '[c]ron' | awk '{print $2}') || true
+          sudo kill $(ps aux | grep '[p]ython3' | awk '{print $2}') || true
           ps -A
           grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage "%"}'
           ps aux
@@ -105,6 +108,7 @@ jobs:
           ps -A
           grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage "%"}'
           ps aux
+          ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem | head
       - name: Rename mimc docker-compose yml file
         run: mv docker-compose.override.mimc.yml docker-compose.override.yml
       - name: Setup ganache container, deploy zkp contracts
@@ -118,6 +122,7 @@ jobs:
       - name: debug
         if: failure()
         run: |
+          ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem | head
           free -h
           df -h
           grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage "%"}'
