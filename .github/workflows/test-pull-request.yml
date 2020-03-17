@@ -80,18 +80,18 @@ jobs:
           grep SwapTotal /proc/meminfo
       - name: Build docker images
         run: docker-compose build
-      - name: Give 'rwx' permission to 'gm17' folder
-        run: chmod -R 777 zkp/code/
-      - name: Generate the keys and constraint files for ft-consolidation-transfer
-        run: yes | sudo npm run setup-mimc ft-consolidation-transfer
       - name: Rename mimc docker-compose yml file
         run: mv docker-compose.override.mimc.yml docker-compose.override.yml
+      - name: Generate the keys and constraint files for Zero Knowledge Proofs
+        run: |
+          chmod -R 777 zkp/code/
+          npm run setupAll-mimc
       - name: Deploy zkp contracts
         run: |
           docker-compose run --rm truffle-zkp compile --all
           docker-compose run --rm truffle-zkp migrate --reset --network=default
       - name: Run zkp unit tests
-        run: docker-compose run --rm zkp node_modules/jest/bin/jest.js --verbose --runInBand --forceExit ./__tests__/consolidation-mimc.js
+        run: docker-compose run --rm zkp npm test
       - name: debug
         if: failure()
         run: |
