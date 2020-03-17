@@ -12,6 +12,7 @@ import jsonfile from 'jsonfile';
 import zkp from './f-token-zkp';
 import Web3 from './web3';
 import logger from './logger';
+import { getContractAddress } from './contractUtils';
 
 const FTokenShield = contract(jsonfile.readFileSync('./build/contracts/FTokenShield.json'));
 FTokenShield.setProvider(Web3.connect());
@@ -36,7 +37,7 @@ This function allocates a specific FTokenShield contract to a particular user
 @param {string} address - the Ethereum address of the user to whom this shieldAddress will apply
 */
 async function setShield(shieldAddress, address) {
-  if (shieldAddress === undefined) shield[address] = await FTokenShield.deployed();
+  if (shieldAddress === undefined) shield[address] = await getContractAddress('FTokenShield');
   else shield[address] = await FTokenShield.at(shieldAddress);
 }
 
@@ -48,7 +49,9 @@ function unSetShield(address) {
 return the address of the shield contract
 */
 async function getShieldAddress(account) {
-  const fTokenShieldInstance = shield[account] ? shield[account] : await FTokenShield.deployed();
+  const fTokenShieldInstance = shield[account]
+    ? shield[account]
+    : await getContractAddress('FTokenShield');
   return fTokenShieldInstance.address;
 }
 
@@ -57,17 +60,15 @@ return the balance of an account
 @param {string} address - the address of the Ethereum account
 */
 async function getBalance(address) {
-  const fTokenShieldInstance = shield[address] ? shield[address] : await FTokenShield.deployed();
-  const fToken = await FToken.at(await fTokenShieldInstance.getFToken.call());
+  const fToken = await FToken.at(await getContractAddress('FToken'));
   return fToken.balanceOf.call(address);
 }
 
 /**
 return the address of the ERC-20 token
 */
-async function getFTAddress(address) {
-  const fTokenShieldInstance = shield[address] ? shield[address] : await FTokenShield.deployed();
-  return fTokenShieldInstance.getFToken.call();
+async function getFTAddress() {
+  return getContractAddress('FToken');
 }
 
 /**
@@ -80,8 +81,7 @@ useful to be able to create coins for demonstration purposes.
 */
 async function buyFToken(amount, address) {
   logger.info('Buying ERC-20', amount, address);
-  const fTokenShieldInstance = shield[address] ? shield[address] : await FTokenShield.deployed();
-  const fToken = await FToken.at(await fTokenShieldInstance.getFToken.call());
+  const fToken = await FToken.at(await getContractAddress('FToken'));
   return fToken.mint(address, amount, {
     from: address,
     gas: 4000000,
@@ -97,10 +97,7 @@ to toAddress.  The tranaction fee will be taken from fromAddress
 */
 async function transferFToken(amount, fromAddress, toAddress) {
   logger.info('Transferring ERC-20', amount, toAddress);
-  const fTokenShieldInstance = shield[fromAddress]
-    ? shield[fromAddress]
-    : await FTokenShield.deployed();
-  const fToken = await FToken.at(await fTokenShieldInstance.getFToken.call());
+  const fToken = await FToken.at(await getContractAddress('FToken'));
   return fToken.transfer(toAddress, amount, {
     from: fromAddress,
     gas: 4000000,
@@ -119,8 +116,7 @@ Burning a commitment recovers the original ERC-20 value.
 */
 async function burnFToken(amount, address) {
   logger.info('Buying ERC-20', amount, address);
-  const fTokenShieldInstance = shield[address] ? shield[address] : await FTokenShield.deployed();
-  const fToken = await FToken.at(await fTokenShieldInstance.getFToken.call());
+  const fToken = await FToken.at(await getContractAddress('FToken'));
   return fToken.burn(address, amount, {
     from: address,
     gas: 4000000,
@@ -133,16 +129,16 @@ is utilising.
 @param address - the address of the user (different users may us different ERC-20 contracts)
 @returns - an object containing the token symbol and name.
 */
-async function getTokenInfo(address) {
+async function getTokenInfo() {
   logger.info('Getting ERC-20 info');
-  const fTokenShieldInstance = shield[address] ? shield[address] : await FTokenShield.deployed();
-  const fToken = await FToken.at(await fTokenShieldInstance.getFToken.call());
+  const fToken = await FToken.at(await getContractAddress('FToken'));
   const symbol = await fToken.symbol.call();
   const name = await fToken.name.call();
   return { symbol, name };
 }
 
 async function checkCorrectness(
+  erc20Address,
   amount,
   publicKey,
   salt,
@@ -154,6 +150,7 @@ async function checkCorrectness(
   const fTokenShieldInstance = shield[account] ? shield[account] : await FTokenShield.deployed();
 
   const results = await zkp.checkCorrectness(
+    erc20Address,
     amount,
     publicKey,
     salt,

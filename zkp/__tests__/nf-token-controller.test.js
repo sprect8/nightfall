@@ -4,93 +4,127 @@ import { erc721 } from '@eyblockchain/nightlite';
 import utils from '../src/zkpUtils';
 import bc from '../src/web3';
 import controller from '../src/nf-token-controller';
-import { getTruffleContractInstance } from '../src/contractUtils';
+import { getContractAddress, getTruffleContractInstance } from '../src/contractUtils';
 
 jest.setTimeout(7200000);
 
-let A;
-let B;
-let G;
-const skA = '0x0000000000111111111111111111111111111111111111111111111111111111';
-const skB = '0x0000000000222222222222222222222222222222222222222222222222222222';
+let tokenIdA;
+let tokenIdB;
+let tokenIdG;
+const secretKeyA = '0x0000000000111111111111111111111111111111111111111111111111111111';
+const secretKeyB = '0x0000000000222222222222222222222222222222222222222222222222222222';
 const A_URI = 'Pizza';
-let pkA;
-let pkB;
-let S_A_A;
-let S_A_G;
-let sAToBA;
-let sAToBG;
-let Z_A_A;
-let Z_A_G;
-let Z_B_A;
-let Z_B_G;
-let zIndA;
-let zIndG;
+let publicKeyA;
+let publicKeyB;
+let saltAliceA;
+let saltAliceG;
+let saltAliceToBobA;
+let saltAliceToBobG;
+let commitmentAliceA;
+let commitmentAliceG;
+let commitmentBobA;
+let commitmentBobG;
+let commitmentIndexA;
+let commitmentIndexG;
 
 let accounts;
 let nfTokenShieldJson;
 let nfTokenShieldAddress;
+let erc721Address;
 
 beforeAll(async () => {
   if (!(await bc.isConnected())) await bc.connect();
   accounts = await (await bc.connection()).eth.getAccounts();
   const { contractJson, contractInstance } = await getTruffleContractInstance('NFTokenShield');
+  erc721Address = await getContractAddress('NFTokenMetadata');
+  const erc721AddressPadded = `0x${utils.strip0x(erc721Address).padStart(64, '0')}`;
   nfTokenShieldAddress = contractInstance.address;
   nfTokenShieldJson = contractJson;
-  A = await utils.rndHex(32);
-  B = await utils.rndHex(32);
-  G = await utils.rndHex(32);
-  pkA = utils.ensure0x(utils.strip0x(utils.hash(skA)).padStart(32, '0'));
-  pkB = utils.ensure0x(utils.strip0x(utils.hash(skB)).padStart(32, '0'));
-  S_A_A = await utils.rndHex(32);
-  S_A_G = await utils.rndHex(32);
-  sAToBA = await utils.rndHex(32);
-  sAToBG = await utils.rndHex(32);
-  Z_A_A = utils.concatenateThenHash(utils.strip0x(A).slice(-32 * 2), pkA, S_A_A);
-  Z_A_G = utils.concatenateThenHash(utils.strip0x(G).slice(-32 * 2), pkA, S_A_G);
-  Z_B_A = utils.concatenateThenHash(utils.strip0x(A).slice(-32 * 2), pkB, sAToBA);
-  Z_B_G = utils.concatenateThenHash(utils.strip0x(G).slice(-32 * 2), pkB, sAToBG);
+  tokenIdA = await utils.rndHex(32);
+  tokenIdB = await utils.rndHex(32);
+  tokenIdG = await utils.rndHex(32);
+  publicKeyA = utils.ensure0x(utils.strip0x(utils.hash(secretKeyA)).padStart(32, '0'));
+  publicKeyB = utils.ensure0x(utils.strip0x(utils.hash(secretKeyB)).padStart(32, '0'));
+  saltAliceA = await utils.rndHex(32);
+  saltAliceG = await utils.rndHex(32);
+  saltAliceToBobA = await utils.rndHex(32);
+  saltAliceToBobG = await utils.rndHex(32);
+  commitmentAliceA = utils.concatenateThenHash(
+    erc721AddressPadded,
+    utils.strip0x(tokenIdA).slice(-32 * 2),
+    publicKeyA,
+    saltAliceA,
+  );
+  commitmentAliceG = utils.concatenateThenHash(
+    erc721AddressPadded,
+    utils.strip0x(tokenIdG).slice(-32 * 2),
+    publicKeyA,
+    saltAliceG,
+  );
+  commitmentBobA = utils.concatenateThenHash(
+    erc721AddressPadded,
+    utils.strip0x(tokenIdA).slice(-32 * 2),
+    publicKeyB,
+    saltAliceToBobA,
+  );
+  commitmentBobG = utils.concatenateThenHash(
+    erc721AddressPadded,
+    utils.strip0x(tokenIdG).slice(-32 * 2),
+    publicKeyB,
+    saltAliceToBobG,
+  );
 });
 
 describe('nf-token-controller.js tests', () => {
   test('Should mint ERC 721 token for Alice for asset A', async () => {
-    await controller.mintNFToken(A, A_URI, accounts[0]);
-    expect((await controller.getOwner(A, '')).toLowerCase()).toEqual(accounts[0].toLowerCase());
-    expect(await controller.getNFTURI(A, '')).toEqual(A_URI);
+    await controller.mintNFToken(tokenIdA, A_URI, accounts[0]);
+    expect((await controller.getOwner(tokenIdA, '')).toLowerCase()).toEqual(
+      accounts[0].toLowerCase(),
+    );
+    expect(await controller.getNFTURI(tokenIdA, '')).toEqual(A_URI);
   });
 
   test('Should mint ERC 721 token for Alice for asset B', async () => {
-    await controller.mintNFToken(B, '', accounts[0]);
-    expect((await controller.getOwner(B, '')).toLowerCase()).toEqual(accounts[0].toLowerCase());
+    await controller.mintNFToken(tokenIdB, '', accounts[0]);
+    expect((await controller.getOwner(tokenIdB, '')).toLowerCase()).toEqual(
+      accounts[0].toLowerCase(),
+    );
   });
 
   test('Should add Eve as approver for ERC 721 token for asset B', async () => {
-    await controller.addApproverNFToken(accounts[2], B, accounts[0]);
-    expect((await controller.getApproved(B, '')).toLowerCase()).toEqual(accounts[2].toLowerCase());
+    await controller.addApproverNFToken(accounts[2], tokenIdB, accounts[0]);
+    expect((await controller.getApproved(tokenIdB, '')).toLowerCase()).toEqual(
+      accounts[2].toLowerCase(),
+    );
   });
 
   test('Should mint ERC 721 token for Alice for asset G', async () => {
-    await controller.mintNFToken(G, '', accounts[0]);
-    expect((await controller.getOwner(G, '')).toLowerCase()).toEqual(accounts[0].toLowerCase());
+    await controller.mintNFToken(tokenIdG, '', accounts[0]);
+    expect((await controller.getOwner(tokenIdG, '')).toLowerCase()).toEqual(
+      accounts[0].toLowerCase(),
+    );
   });
 
   test('Should transfer ERC 721 token B from Alice to Bob', async () => {
-    await controller.transferNFToken(B, accounts[0], accounts[2]);
-    expect((await controller.getOwner(B, '')).toLowerCase()).toEqual(accounts[2].toLowerCase());
+    await controller.transferNFToken(tokenIdB, accounts[0], accounts[2]);
+    expect((await controller.getOwner(tokenIdB, '')).toLowerCase()).toEqual(
+      accounts[2].toLowerCase(),
+    );
   });
 
   test('Should burn ERC 721 token B of Bob', async () => {
     const countBefore = await controller.getBalance(accounts[2]);
-    await controller.burnNFToken(B, accounts[2]);
+    await controller.burnNFToken(tokenIdB, accounts[2]);
     expect((await controller.getBalance(accounts[2])).toNumber()).toEqual(countBefore - 1);
   });
 
   test('Should mint an ERC 721 commitment for Alice for asset A  (Z_A_A)', async () => {
     const { commitment: zTest, commitmentIndex: zIndex } = await erc721.mint(
-      A,
-      pkA,
-      S_A_A,
+      tokenIdA,
+      publicKeyA,
+      saltAliceA,
       {
+        erc721Address,
         account: accounts[0],
         nfTokenShieldJson,
         nfTokenShieldAddress,
@@ -101,16 +135,17 @@ describe('nf-token-controller.js tests', () => {
         pkPath: `${process.cwd()}/code/gm17/nft-mint/proving.key`,
       },
     );
-    zIndA = parseInt(zIndex, 10);
-    expect(Z_A_A).toEqual(zTest);
+    commitmentIndexA = parseInt(zIndex, 10);
+    expect(commitmentAliceA).toEqual(zTest);
   });
 
   test('Should mint an ERC 721 commitment for Alice for asset G (Z_A_G)', async () => {
     const { commitment: zTest, commitmentIndex: zIndex } = await erc721.mint(
-      G,
-      pkA,
-      S_A_G,
+      tokenIdG,
+      publicKeyA,
+      saltAliceG,
       {
+        erc721Address,
         account: accounts[0],
         nfTokenShieldJson,
         nfTokenShieldAddress,
@@ -121,20 +156,21 @@ describe('nf-token-controller.js tests', () => {
         pkPath: `${process.cwd()}/code/gm17/nft-mint/proving.key`,
       },
     );
-    zIndG = parseInt(zIndex, 10);
-    expect(Z_A_G).toEqual(zTest);
+    commitmentIndexG = parseInt(zIndex, 10);
+    expect(commitmentAliceG).toEqual(zTest);
   });
 
   test('Should transfer the ERC 721 commitment Z_A_A from Alice to Bob, creating Z_B_A', async () => {
     const { outputCommitment } = await erc721.transfer(
-      A,
-      pkB,
-      S_A_A,
-      sAToBA,
-      skA,
-      Z_A_A,
-      zIndA,
+      tokenIdA,
+      publicKeyB,
+      saltAliceA,
+      saltAliceToBobA,
+      secretKeyA,
+      commitmentAliceA,
+      commitmentIndexA,
       {
+        erc721Address,
         account: accounts[0],
         nfTokenShieldJson,
         nfTokenShieldAddress,
@@ -145,19 +181,20 @@ describe('nf-token-controller.js tests', () => {
         pkPath: `${process.cwd()}/code/gm17/nft-transfer/proving.key`,
       },
     );
-    expect(outputCommitment).toEqual(Z_B_A);
+    expect(outputCommitment).toEqual(commitmentBobA);
   });
 
   test('Should transfer the ERC 721 commitment Z_A_G from Alice to Bob, creating Z_B_G', async () => {
     const { outputCommitment } = await erc721.transfer(
-      G,
-      pkB,
-      S_A_G,
-      sAToBG,
-      skA,
-      Z_A_G,
-      zIndG,
+      tokenIdG,
+      publicKeyB,
+      saltAliceG,
+      saltAliceToBobG,
+      secretKeyA,
+      commitmentAliceG,
+      commitmentIndexG,
       {
+        erc721Address,
         account: accounts[0],
         nfTokenShieldJson,
         nfTokenShieldAddress,
@@ -168,17 +205,18 @@ describe('nf-token-controller.js tests', () => {
         pkPath: `${process.cwd()}/code/gm17/nft-transfer/proving.key`,
       },
     );
-    expect(outputCommitment).toEqual(Z_B_G);
+    expect(outputCommitment).toEqual(commitmentBobG);
   });
 
   test('Should burn the ERC 721 commitment for Bob for asset Z_B_A to return A ERC-721 Token', async () => {
     await erc721.burn(
-      A,
-      skB,
-      sAToBA,
-      Z_B_A,
-      zIndA + 2,
+      tokenIdA,
+      secretKeyB,
+      saltAliceToBobA,
+      commitmentBobA,
+      commitmentIndexA + 2,
       {
+        erc721Address,
         account: accounts[0],
         tokenReceiver: accounts[2],
         nfTokenShieldJson,
@@ -190,6 +228,8 @@ describe('nf-token-controller.js tests', () => {
         pkPath: `${process.cwd()}/code/gm17/nft-burn/proving.key`,
       },
     );
-    expect((await controller.getOwner(A, '')).toLowerCase()).toEqual(accounts[2].toLowerCase());
+    expect((await controller.getOwner(tokenIdA, '')).toLowerCase()).toEqual(
+      accounts[2].toLowerCase(),
+    );
   });
 });

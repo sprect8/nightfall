@@ -188,8 +188,7 @@ services:
       - nightfall_network
 
   merkle-tree:
-    image:
-      docker.pkg.github.com/eyblockchain/timber/timber:v1.3.0
+    image: eyblockchain/timber:v1.3.0
     restart: on-failure
     depends_on:
       - mongo-merkle-tree
@@ -199,7 +198,7 @@ services:
       - ./zkp/contracts/:/app/contracts:consistent # required if deploying contracts from within this service (if CONTRACT_LOCATION = 'default')
       - ./zkp/build/:/app/build:consistent # required if CONTRACT_LOCATION = 'default'
     ports:
-      - "9000:80"
+      - '9000:80'
     environment:
       BLOCKCHAIN_HOST: ws://ganache
       BLOCKCHAIN_PORT: 8545

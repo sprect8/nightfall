@@ -16,6 +16,7 @@ import logger from './logger';
 checks the details of an incoming (newly transferred token), to ensure the data we have received is correct and legitimate!!
 */
 async function checkCorrectness(
+  erc721Address,
   asset,
   publicKey,
   salt,
@@ -26,6 +27,7 @@ async function checkCorrectness(
 ) {
   logger.info('Checking h(A|pk|S) = z...');
   const commitmentCheck = utils.concatenateThenHash(
+    `0x${utils.strip0x(erc721Address).padStart(64, '0')}`,
     utils.strip0x(asset).slice(-(config.LEAF_HASHLENGTH * 2)),
     publicKey,
     salt,

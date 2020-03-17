@@ -12,9 +12,9 @@ import jsonfile from 'jsonfile';
 import zkp from './nf-token-zkp';
 import Web3 from './web3';
 import logger from './logger';
+import { getContractAddress } from './contractUtils';
 
 const NFTokenShield = contract(jsonfile.readFileSync('./build/contracts/NFTokenShield.json'));
-
 NFTokenShield.setProvider(Web3.connect());
 
 const Verifier = contract(jsonfile.readFileSync('./build/contracts/Verifier.json'));
@@ -32,7 +32,7 @@ This function allocates a specific NFTokenShield contract to a particular user
 @param {string} address - the Ethereum address of the user to whom this shieldAddress will apply
 */
 async function setShield(shieldAddress, address) {
-  if (shieldAddress === undefined) shield[address] = await NFTokenShield.deployed();
+  if (shieldAddress === undefined) shield[address] = await getContractAddress('NFTokenShield');
   else shield[address] = await NFTokenShield.at(shieldAddress);
 }
 
@@ -44,42 +44,40 @@ function unSetShield(address) {
 return the address of the shield contract
 */
 async function getShieldAddress(account) {
-  const nfTokenShield = shield[account] ? shield[account] : await NFTokenShield.deployed();
+  const nfTokenShield = shield[account]
+    ? shield[account]
+    : await getContractAddress('NFTokenShield');
   return nfTokenShield.address;
 }
 
 /**
 return the name of the ERC-721 tokens
 */
-async function getNFTName(address) {
-  const nfTokenShield = shield[address] ? shield[address] : await NFTokenShield.deployed();
-  const nfToken = await NFTokenMetadata.at(await nfTokenShield.getNFToken.call());
+async function getNFTName() {
+  const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));
   return nfToken.name.call();
 }
 
 /**
 return the symbol of the ERC-721 tokens
 */
-async function getNFTSymbol(address) {
-  const nfTokenShield = shield[address] ? shield[address] : await NFTokenShield.deployed();
-  const nfToken = await NFTokenMetadata.at(await nfTokenShield.getNFToken.call());
+async function getNFTSymbol() {
+  const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));
   return nfToken.symbol.call();
 }
 
 /**
 return the address of the ERC-721 token
 */
-async function getNFTAddress(address) {
-  const nfTokenShield = shield[address] ? shield[address] : await NFTokenShield.deployed();
-  return nfTokenShield.getNFToken.call();
+async function getNFTAddress() {
+  return getContractAddress('NFTokenMetadata');
 }
 
 /**
 return the symbol of the ERC-721 tokens
 */
-async function getNFTURI(tokenID, address) {
-  const nfTokenShield = shield[address] ? shield[address] : await NFTokenShield.deployed();
-  const nfToken = await NFTokenMetadata.at(await nfTokenShield.getNFToken.call());
+async function getNFTURI(tokenID) {
+  const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));
   return nfToken.tokenURI.call(tokenID);
 }
 
@@ -87,17 +85,15 @@ async function getNFTURI(tokenID, address) {
 return the number of tokens held by an account
 */
 async function getBalance(address) {
-  const nfTokenShield = shield[address] ? shield[address] : await NFTokenShield.deployed();
-  const nfToken = await NFTokenMetadata.at(await nfTokenShield.getNFToken.call());
+  const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));
   return nfToken.balanceOf.call(address);
 }
 
 /**
 return the number of tokens held by an account
 */
-async function getOwner(tokenID, address) {
-  const nfTokenShield = shield[address] ? shield[address] : await NFTokenShield.deployed();
-  const nfToken = await NFTokenMetadata.at(await nfTokenShield.getNFToken.call());
+async function getOwner(tokenID) {
+  const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));
   return nfToken.ownerOf.call(tokenID);
 }
 
@@ -106,8 +102,7 @@ create an ERC-721 Token in the account that calls the function
 */
 async function mintNFToken(tokenID, tokenURI, address) {
   logger.info('Minting NF Token', tokenID, address);
-  const nfTokenShield = shield[address] ? shield[address] : await NFTokenShield.deployed();
-  const nfToken = await NFTokenMetadata.at(await nfTokenShield.getNFToken.call());
+  const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));
   return nfToken.mint(tokenID, tokenURI, {
     from: address,
     gas: 4000000,
@@ -119,8 +114,7 @@ Transfer ERC-721 Token from the owner's account to another account
 */
 async function transferNFToken(tokenID, fromAddress, toAddress) {
   logger.info(`Transferring NF Token ${tokenID}from ${fromAddress}to ${toAddress}`);
-  const nfTokenShield = shield[fromAddress] ? shield[fromAddress] : await NFTokenShield.deployed();
-  const nfToken = await NFTokenMetadata.at(await nfTokenShield.getNFToken.call());
+  const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));
   return nfToken.safeTransferFrom(fromAddress, toAddress, tokenID, {
     from: fromAddress,
     gas: 4000000,
@@ -132,8 +126,7 @@ create an ERC-721 Token in the account that calls the function
 */
 async function burnNFToken(tokenID, address) {
   logger.info('Burning NF Token', tokenID, address);
-  const nfTokenShield = shield[address] ? shield[address] : await NFTokenShield.deployed();
-  const nfToken = await NFTokenMetadata.at(await nfTokenShield.getNFToken.call());
+  const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));
   return nfToken.burn(tokenID, {
     from: address,
     gas: 4000000,
@@ -145,8 +138,7 @@ Add an approver for an ERC-721 Token
 */
 async function addApproverNFToken(approved, tokenID, address) {
   logger.info('Adding Approver for an NF Token', approved, tokenID, address);
-  const nfTokenShield = shield[address] ? shield[address] : await NFTokenShield.deployed();
-  const nfToken = await NFTokenMetadata.at(await nfTokenShield.getNFToken.call());
+  const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));
   return nfToken.approve(approved, tokenID, {
     from: address,
     gas: 4000000,
@@ -156,14 +148,14 @@ async function addApproverNFToken(approved, tokenID, address) {
 /**
 Get an approver for an ERC-721 Token
 */
-async function getApproved(tokenID, address) {
+async function getApproved(tokenID) {
   logger.info('Getting Approver for an NF Token', tokenID);
-  const nfTokenShield = shield[address] ? shield[address] : await NFTokenShield.deployed();
-  const nfToken = await NFTokenMetadata.at(await nfTokenShield.getNFToken.call());
+  const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));
   return nfToken.getApproved.call(tokenID);
 }
 
 async function checkCorrectness(
+  erc721Address,
   tokenId,
   publicKey,
   salt,
@@ -175,6 +167,7 @@ async function checkCorrectness(
   const nfTokenShield = shield[account] ? shield[account] : await NFTokenShield.deployed();
 
   const results = await zkp.checkCorrectness(
+    erc721Address,
     tokenId,
     publicKey,
     salt,
