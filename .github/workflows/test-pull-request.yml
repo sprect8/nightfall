@@ -75,15 +75,13 @@ jobs:
           sudo swapon /mnt/swapfile
       - name: Rename mimc docker-compose yml file
         run: |
-          ls
           mv docker-compose.override.mimc.yml docker-compose.override.yml
-          ls
       - name: Build docker images
         run: docker-compose build
       - name: Generate the keys and constraint files for Zero Knowledge Proofs
         run: |
           chmod -R 777 zkp/code/
-          npm run setupAll-mimc
+          yes | sudo npm run setup-mimc ft-consolidation-transfer
       - name: Remove containers
         run: |
           docker stop $(docker ps -aq)
@@ -93,7 +91,7 @@ jobs:
           docker-compose run --rm truffle-zkp compile --all
           docker-compose run --rm truffle-zkp migrate --reset --network=default
       - name: Run zkp unit tests
-        run: docker-compose run --rm zkp npm test
+        run: docker-compose run --rm zkp node_modules/jest/bin/jest.js --verbose --runInBand --forceExit ./__tests__/mimc.js
 
   integration-test-sha:
     name: Run integration test (HASH_TYPE = sha)
