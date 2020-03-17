@@ -27,7 +27,9 @@ jobs:
         with:
           node-version: '10.15.3'
       - name: Pull docker image
-        run: docker pull zokrates/zokrates:0.5.1
+        run: |
+          docker rmi $(docker images -aq)
+          docker pull zokrates/zokrates:0.5.1
       - name: Increase swap memory
         run: |
           sudo usermod -a -G sudo runner
@@ -35,27 +37,20 @@ jobs:
           sudo fallocate -l 12G /mnt/swapfile
           sudo mkswap /mnt/swapfile
           sudo swapon /mnt/swapfile
-          swapon --show
-          grep SwapTotal /proc/meminfo
       - name: Build docker images
         run: docker-compose build
       - name: Generate the keys and constraint files for Zero Knowledge Proofs
         run: |
           chmod -R 777 zkp/code/
           npm run setupAll
-      - name: Remove ZoKrates Containers
+      - name: Remove containers
         run: |
-          docker stop $(docker ps -a -q)
-          docker rm $(docker ps -a -q)
-          free -h
-          df -h
-          du -h -d 1 zkp/code/gm17
-      - name: Setup ganache container, deploy zkp contracts
+          docker stop $(docker ps -aq)
+          docker rm $(docker ps -aq)
+      - name: Deploy zkp contracts
         run: |
           docker-compose run --rm truffle-zkp compile --all
           docker-compose run --rm truffle-zkp migrate --reset --network=default
-      - name: Start merkle-tree microservice
-        run: docker-compose up -d merkle-tree
       - name: Run zkp unit tests
         run: docker-compose run --rm zkp npm test
 
@@ -68,7 +63,9 @@ jobs:
         with:
           node-version: '10.15.3'
       - name: Pull docker image
-        run: docker pull zokrates/zokrates:0.5.1
+        run: |
+          docker rmi $(docker images -aq)
+          docker pull zokrates/zokrates:0.5.1
       - name: Increase swap memory
         run: |
           sudo usermod -a -G sudo runner
@@ -76,29 +73,27 @@ jobs:
           sudo fallocate -l 12G /mnt/swapfile
           sudo mkswap /mnt/swapfile
           sudo swapon /mnt/swapfile
-          swapon --show
-          grep SwapTotal /proc/meminfo
+      - name: Rename mimc docker-compose yml file
+        run: |
+          ls
+          mv docker-compose.override.mimc.yml docker-compose.override.yml
+          ls
       - name: Build docker images
         run: docker-compose build
-      - name: Rename mimc docker-compose yml file
-        run: mv docker-compose.override.mimc.yml docker-compose.override.yml
       - name: Generate the keys and constraint files for Zero Knowledge Proofs
         run: |
           chmod -R 777 zkp/code/
           npm run setupAll-mimc
+      - name: Remove containers
+        run: |
+          docker stop $(docker ps -aq)
+          docker rm $(docker ps -aq)
       - name: Deploy zkp contracts
         run: |
           docker-compose run --rm truffle-zkp compile --all
           docker-compose run --rm truffle-zkp migrate --reset --network=default
       - name: Run zkp unit tests
         run: docker-compose run --rm zkp npm test
-      - name: debug
-        if: failure()
-        run: |
-          ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem | head
-          free -h
-          df -h
-          grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage "%"}'
 
   integration-test-sha:
     name: Run integration test (HASH_TYPE = sha)
@@ -119,18 +114,16 @@ jobs:
           sudo fallocate -l 12G /mnt/swapfile
           sudo mkswap /mnt/swapfile
           sudo swapon /mnt/swapfile
-          swapon --show
-          grep SwapTotal /proc/meminfo
       - name: Build docker images
         run: docker-compose build
       - name: Generate the keys and constraint files for Zero Knowledge Proofs
         run: |
           chmod -R 777 zkp/code/
           npm run setupAll
-      - name: Remove ZoKrates Containers
+      - name: Remove containers
         run: |
-          docker stop $(docker ps -a -q)
-          docker rm $(docker ps -a -q)
+          docker stop $(docker ps -aq)
+          docker rm $(docker ps -aq)
       - name: Run integration test
         run: ./nightfall-test
       - name: If integration test failed, upload logs files as artifacts
@@ -149,7 +142,9 @@ jobs:
         with:
           node-version: '10.15.3'
       - name: Pull docker image
-        run: docker pull zokrates/zokrates:0.5.1
+        run: |
+          docker rmi $(docker images -aq)
+          docker pull zokrates/zokrates:0.5.1
       - name: Increase swap memory
         run: |
           sudo usermod -a -G sudo runner
@@ -157,17 +152,27 @@ jobs:
           sudo fallocate -l 12G /mnt/swapfile
           sudo mkswap /mnt/swapfile
           sudo swapon /mnt/swapfile
-          swapon --show
-          grep SwapTotal /proc/meminfo
+      - name: Rename mimc docker-compose yml file
+        run: mv docker-compose.override.mimc.yml docker-compose.override.yml
       - name: Build docker images
         run: docker-compose build
       - name: Generate the keys and constraint files for Zero Knowledge Proofs
         run: |
           chmod -R 777 zkp/code/
           npm run setupAll-mimc
-      - name: Remove ZoKrates Containers
+      - name: Remove containers
         run: |
-          docker stop $(docker ps -a -q)
+          docker stop $(docker ps -aq)
+          docker rm $(docker ps -aq)
+      - name: Run integration test
+        run: ./nightfall-test
+      - name: If integration test failed, upload logs files as artifacts
+        if: failure()
+        uses: actions/upload-artifact@master
+        with:
+          name: integration-test-logs
+          path: nightfall_test.log
+ -q)
           docker rm $(docker ps -a -q)
       - name: Rename mimc docker-compose yml file
         run: mv docker-compose.override.mimc.yml docker-compose.override.yml
