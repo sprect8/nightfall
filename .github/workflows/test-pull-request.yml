@@ -43,6 +43,10 @@ jobs:
         run: |
           chmod -R 777 zkp/code/
           npm run setupAll
+      - name: Remove containers
+        run: |
+          docker stop $(docker ps -aq)
+          docker rm $(docker ps -aq)
       - name: Deploy zkp contracts
         run: |
           docker-compose run --rm truffle-zkp compile --all
@@ -77,6 +81,10 @@ jobs:
         run: |
           chmod -R 777 zkp/code/
           npm run setupAll-mimc
+      - name: Remove containers
+        run: |
+          docker stop $(docker ps -aq)
+          docker rm $(docker ps -aq)
       - name: Deploy zkp contracts
         run: |
           docker-compose run --rm truffle-zkp compile --all
