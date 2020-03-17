@@ -109,7 +109,7 @@ jobs:
         run: |
           chmod -R 777 zkp/code/
           npm run setupAll
-       - name: Remove containers
+      - name: Remove containers
         run: |
           docker stop $(docker ps -aq)
           docker rm $(docker ps -aq)
