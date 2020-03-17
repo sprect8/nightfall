@@ -70,9 +70,9 @@ jobs:
         run: |
           sudo usermod -a -G sudo runner
           sudo swapoff -a
-          sudo fallocate -l 12G /mnt/swapfile
-          sudo mkswap /mnt/swapfile
-          sudo swapon /mnt/swapfile
+          sudo fallocate -l 12G /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
       - name: Rename mimc docker-compose yml file
         run: |
           mv docker-compose.override.mimc.yml docker-compose.override.yml
@@ -81,15 +81,15 @@ jobs:
       - name: Generate the keys and constraint files for Zero Knowledge Proofs
         run: |
           chmod -R 777 zkp/code/
-          docker-compose run zkp npm run setup-mimc -- -f ft-consolidation-transfer
-          docker-compose run zkp npm run setup-mimc -- -f ft-batch-transfer
-          docker-compose run zkp npm run setup-mimc -- -f ft-transfer
-          docker-compose run zkp npm run setup-mimc -- -f ft-burn
-          docker-compose run zkp npm run setup-mimc -- -f ft-mint
+          npm run setupAll-mimc
       - name: Remove containers
         run: |
           docker stop $(docker ps -aq)
           docker rm $(docker ps -aq)
+      - name: move and create symbolic link of gm17 folder
+        run: |
+          sudo mv zkp/code/gm17 /mnt/gm17
+          sudo ln -s /mnt/gm17 zkp/code/gm17
       - name: Deploy zkp contracts
         run: |
           docker-compose run --rm truffle-zkp compile --all
