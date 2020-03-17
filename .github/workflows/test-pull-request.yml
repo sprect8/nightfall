@@ -81,9 +81,6 @@ jobs:
       - name: Generate the keys and constraint files for Zero Knowledge Proofs
         run: |
           chmod -R 777 zkp/code/
-          sudo service docker stop
-          sudo rm /var/lib/docker/network/files/local-kv.db
-          sudo service docker start
           yes | npm run setup-mimc ft-consolidation-transfer
       - name: Remove containers
         run: |
