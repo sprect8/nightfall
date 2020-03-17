@@ -81,7 +81,7 @@ jobs:
       - name: Generate the keys and constraint files for Zero Knowledge Proofs
         run: |
           chmod -R 777 zkp/code/
-          yes | docker-compose run --rm zkp npm run setup-mimc -- -f ft-consolidation-transfer
+          yes | docker-compose run zkp npm run setup-mimc -- -f ft-consolidation-transfer
       - name: Remove containers
         run: |
           docker stop $(docker ps -aq)
