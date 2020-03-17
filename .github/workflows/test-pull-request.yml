@@ -91,7 +91,7 @@ jobs:
           docker-compose run --rm truffle-zkp compile --all
           docker-compose run --rm truffle-zkp migrate --reset --network=default
       - name: Run zkp unit tests
-        run: docker-compose run --rm zkp node_modules/jest/bin/jest.js --verbose --runInBand --forceExit ./__tests__/mimc.js
+        run: docker-compose run --rm zkp node_modules/jest/bin/jest.js --verbose --runInBand --forceExit ./__tests__/consolidation-mimc.js
 
   integration-test-sha:
     name: Run integration test (HASH_TYPE = sha)
