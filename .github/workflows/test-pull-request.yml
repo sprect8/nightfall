@@ -74,10 +74,7 @@ jobs:
           sudo mkswap /mnt/swapfile
           sudo swapon /mnt/swapfile
       - name: Rename mimc docker-compose yml file
-        run: |
-          ls
-          mv docker-compose.override.mimc.yml docker-compose.override.yml
-          ls
+        run: mv docker-compose.override.mimc.yml docker-compose.override.yml
       - name: Build docker images
         run: docker-compose build
       - name: Generate the keys and constraint files for Zero Knowledge Proofs
@@ -164,18 +161,6 @@ jobs:
         run: |
           docker stop $(docker ps -aq)
           docker rm $(docker ps -aq)
-      - name: Run integration test
-        run: ./nightfall-test
-      - name: If integration test failed, upload logs files as artifacts
-        if: failure()
-        uses: actions/upload-artifact@master
-        with:
-          name: integration-test-logs
-          path: nightfall_test.log
- -q)
-          docker rm $(docker ps -a -q)
-      - name: Rename mimc docker-compose yml file
-        run: mv docker-compose.override.mimc.yml docker-compose.override.yml
       - name: Run integration test
         run: ./nightfall-test
       - name: If integration test failed, upload logs files as artifacts
