@@ -65,7 +65,7 @@ let pkB = [];
 let Z_A_C;
 // storage for z indexes
 let zInd1;
-let zInd2;
+// let zInd2;
 const outputCommitments = [];
 let accounts;
 let fTokenShieldJson;
@@ -160,7 +160,7 @@ if (process.env.HASH_TYPE === 'mimc') {
         },
       );
 
-      zInd2 = parseInt(response.maxOutputCommitmentIndex, 10);
+      // zInd2 = parseInt(response.maxOutputCommitmentIndex, 10);
       outputCommitments.commitment = response.outputCommitments.commitment;
       const bal2 = await controller.getBalance(accounts[0]);
       const wei = parseInt(bal1, 10) - parseInt(bal2, 10);
