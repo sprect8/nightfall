@@ -12,12 +12,13 @@ import "./ERC20Interface.sol";
 
 contract FTokenShield is Ownable, MerkleTree {
   // ENUMS:
-  enum TransactionTypes { Mint, Transfer, Burn, SimpleBatchTransfer }
+  enum TransactionTypes { Mint, Transfer, Burn, SimpleBatchTransfer, ConsolidationTransfer }
 
   // EVENTS:
   // Observers may wish to listen for nullification of commitments:
   event Transfer(bytes32 nullifier1, bytes32 nullifier2);
   event SimpleBatchTransfer(bytes32 nullifier);
+  event ConsolidationTransfer(bytes32[] nullifiers);
   event Burn(bytes32 nullifier);
 
   // Observers may wish to listen for zkSNARK-related changes:
@@ -226,15 +227,49 @@ contract FTokenShield is Ownable, MerkleTree {
       emit GasUsed(gasUsedByShieldContract, gasUsedByVerifierContract);
   }
 
-  function burn(
-      bytes32 tokenContractAddress,
-      uint256[] calldata _proof,
-      uint256[] calldata _inputs,
-      bytes32 _root,
-      bytes32 _nullifier,
-      uint128 _value,
-      uint256 _payTo
-    ) external {
+  /**
+  This transfer function transfers 20 commitments to a new owner
+  */
+  function consolidationTransfer(uint256[] calldata _proof, uint256[] calldata _inputs, bytes32 _root, bytes32[] calldata _nullifiers, bytes32 _commitment) external {
+
+      // gas measurement:
+      uint256 gasCheckpoint = gasleft();
+
+      // Check that the publicInputHash equals the hash of the 'public inputs':
+      // bytes31 publicInputHash = bytes31(bytes32(_inputs[0]) << 8);
+      bytes31 publicInputHashCheck = bytes31(sha256(abi.encodePacked(_root, _nullifiers, _commitment)) << 8);
+      require(publicInputHashCheck == bytes31(bytes32(_inputs[0]) << 8), "publicInputHash cannot be reconciled");
+
+      // gas measurement:
+      uint256 gasUsedByShieldContract = gasCheckpoint - gasleft();
+      gasCheckpoint = gasleft();
+
+      // verify the proof
+      bool result = verifier.verify(_proof, _inputs, vks[uint(TransactionTypes.ConsolidationTransfer)]);
+      require(result, "The proof has not been verified by the contract");
+
+      // gas measurement:
+      uint256 gasUsedByVerifierContract = gasCheckpoint - gasleft();
+      gasCheckpoint = gasleft();
+
+      // check inputs vs on-chain states
+      require(roots[_root] == _root, "The input root has never been the root of the Merkle Tree");
+      for (uint i = 0; i < _nullifiers.length; i++) {
+        require(nullifiers[_nullifiers[i]] == 0, "The commitment being spent has already been nullified!");
+        nullifiers[_nullifiers[i]] = _nullifiers[i]; //remember we spent it
+      }
+
+      latestRoot = insertLeaf(_commitment);
+      roots[latestRoot] = latestRoot; //and save the new root to the list of roots
+
+      emit ConsolidationTransfer(_nullifiers);
+
+      // gas measurement:
+      gasUsedByShieldContract = gasUsedByShieldContract + gasCheckpoint - gasleft();
+      emit GasUsed(gasUsedByShieldContract, gasUsedByVerifierContract);
+  }
+
+  function burn(bytes32 tokenContractAddress, uint256[] calldata _proof, uint256[] calldata _inputs, bytes32 _root, bytes32 _nullifier, uint128 _value, uint256 _payTo) external {
 
       // gas measurement:
       uint256 gasCheckpoint = gasleft();

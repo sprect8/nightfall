@@ -86,7 +86,6 @@ describe('f-token-controller.js tests', () => {
   // Alice sends Bob E and gets F back (Bob has 40 ETH, Alice has 10 ETH)
   // Bob then has E+G at total of 70 ETH
   // Bob sends H to Alice and keeps I (Bob has 50 ETH and Alice has 10+20=30 ETH)
-
   test('Should create 10000 tokens in accounts[0] and accounts[1]', async () => {
     // fund some accounts with FToken
     const AMOUNT = 10000;
