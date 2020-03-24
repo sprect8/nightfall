@@ -80,6 +80,12 @@ async function burn(req, res, next) {
 
 /**
  * This function is to retrieve address of a non fungible token
+ * res.data :
+ * {
+ *    "balance":"0",
+ *    "nftName":"EYToken",
+ *    "nftSymbol":"EYT"
+ * }
  * @param {*} req
  * @param {*} res
  */
@@ -99,6 +105,12 @@ async function getAddress(req, res, next) {
 
 /**
  * This function is to retrieve information of a non fungible token
+ * res.data : {
+ *    "balance":"1",
+ *    "nftName":"EYToken",
+ *    "nftSymbol":"EYT"
+ * }
+ *
  * @param {*} req
  * @param {*} res
  */

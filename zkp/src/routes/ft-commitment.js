@@ -171,8 +171,25 @@ async function burn(req, res, next) {
   }
 }
 
+/**
+ * This function is to check correctness for a fungible token commitment
+ * req.body:{
+ *    "value":"0x0000000000000000000000000000000f",
+ *    "salt":"0xd9bd557d3cba0980416a2d6010fee1c5e36b18fe68e3ec77423f7f5c5fe746ef",
+ *    "publicKey":"0xae22455cb4090418171c20246ac53400e5ea9ecd573c5f58995487fe0b6c1a7e",
+ *    "commitment":"0x9652aa4eb5d06a220245f391fe615a3c1d4a35e314e2d3ae817deee5c65161b3",
+ *    "commitmentIndex":2,
+ *    "blockNumber":51
+ * }
+ * 
+ * res.data: {
+ *    "zCorrect":true,
+ *    "zOnchainCorrect":true
+ * }
+ * @param {*} req
+ * @param {*} res
+ */
 async function checkCorrectness(req, res, next) {
-  console.log('\nzkp/src/routes/ft-commitment', '\n/checkCorrectness', '\nreq.body', req.body);
 
   try {
     const { address } = req.headers;
@@ -196,6 +213,14 @@ async function checkCorrectness(req, res, next) {
   }
 }
 
+/**
+ * This function is to set fungible token commitment shield address
+ * res.data: {
+ *     message: 'FTokenShield Address Set.',
+ * }
+ * @param {*} req
+ * @param {*} res
+ */
 async function setFTCommitmentShieldAddress(req, res, next) {
   const { address } = req.headers;
   const { ftCommitmentShield } = req.body;
@@ -212,6 +237,15 @@ async function setFTCommitmentShieldAddress(req, res, next) {
   }
 }
 
+/**
+ * This function is to get fungible token commitment shield address
+ * res.data: {
+ *   shieldAddress : '0x5fA02b865d83566b6E1D95728cf2A520B6Ec6683',
+ *   name : 'EYT',
+ * }
+ * @param {*} req
+ * @param {*} res
+ */
 async function getFTCommitmentShieldAddress(req, res, next) {
   const { address } = req.headers;
 
@@ -228,6 +262,14 @@ async function getFTCommitmentShieldAddress(req, res, next) {
   }
 }
 
+/**
+ * This function is to unset fungible token commitment shield address
+ * res.data: {
+ *     message: 'CoinShield Address Unset.',
+ * }
+ * @param {*} req
+ * @param {*} res
+ */
 async function unsetFTCommitmentShieldAddress(req, res, next) {
   const { address } = req.headers;
 

@@ -72,6 +72,10 @@ async function burn(req, res, next) {
 
 /**
  * This function is to retrieve address of a fungible token
+ * res.data = {
+ *   ftAddress : 0xa34eaa922ae0039f6e1dc1216aba285f4b161cf408eb3966f597114b0f6abd72
+ * }
+ *
  * @param {*} req
  * @param {*} res
  */
@@ -91,6 +95,12 @@ async function getAddress(req, res, next) {
 
 /**
  * This function is to retrieve information of a fungible token
+ * res.data : {
+ *  "balance":"0",
+ *  "symbol":"OPS",
+ *  "name":"EY OpsCoin"
+ * }
+ *
  * @param {*} req
  * @param {*} res
  */

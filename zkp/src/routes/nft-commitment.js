@@ -196,9 +196,26 @@ async function burn(req, res, next) {
   }
 }
 
+/**
+ * This function is to check correctness of a non fungible token
+ * req.body : {
+ *    "tokenId":"0x1f1f064ff9929000000000000000000000000000000000000000000000000000",
+ *    "publicKey":"0x595bc1c5e581d3c199c3856f24db488f9caa936ddc61f68977fe84d57900f4f3",
+ *    "salt":"0x5a664629b72adec1a6c3df820c86228198f93eedc5c76447c0090a585ad0e14a",
+ *    "commitment":"0x8136a1d95ff7825445506ebbc9748a5e749f333faf4943a1a8e58ca54675d0da",
+ *    "commitmentIndex":1,
+ *    "blockNumber":209
+ * }
+ *
+ * res.data :
+ * {
+ *    "zCorrect":true,
+ *    "zOnchainCorrect":true
+ * }
+ * @param {*} req
+ * @param {*} res
+ */
 async function checkCorrectness(req, res, next) {
-  console.log('\nzkp/src/routes/nft-commitment', '\n/checkCorrectness', '\nreq.body', req.body);
-
   try {
     const { address } = req.headers;
     const { tokenId, publicKey, salt, commitment, commitmentIndex, blockNumber } = req.body;
@@ -221,6 +238,15 @@ async function checkCorrectness(req, res, next) {
   }
 }
 
+/**
+ * This function is to set a non fungible token commitment shield address
+ * res.data :
+ * {
+ *    message: 'NFTokenShield Address Set.'
+ * }
+ * @param {*} req
+ * @param {*} res
+ */
 async function setNFTCommitmentShieldAddress(req, res, next) {
   const { address } = req.headers;
   const { nftCommitmentShield } = req.body;
@@ -237,6 +263,16 @@ async function setNFTCommitmentShieldAddress(req, res, next) {
   }
 }
 
+/**
+ * This function is to get a non fungible token commitment shield address
+ * res.data :
+ * {
+ *    shieldAddress: 0x95569f2eb9845E436993EcCc93B003273deef780,
+ *    name: sample,
+ * }
+ * @param {*} req
+ * @param {*} res
+ */
 async function getNFTCommitmentShieldAddress(req, res, next) {
   const { address } = req.headers;
 
@@ -253,6 +289,15 @@ async function getNFTCommitmentShieldAddress(req, res, next) {
   }
 }
 
+/**
+ * This function is to unset a non fungible token commitment shield address
+ * res.data :
+ * {
+ *    message: 'TokenShield Address Unset.'
+ * }
+ * @param {*} req
+ * @param {*} res
+ */
 async function unsetNFTCommitmentShieldAddress(req, res, next) {
   const { address } = req.headers;
 
