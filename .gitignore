@@ -3,4 +3,6 @@ mochawesome-report
 *.DS_Store
 nightfall_test.log
 docker-compose.override.yml
+zkp/contracts/MerkleTree.sol
+zkp/contracts/MiMC.sol
 temp
