@@ -7,8 +7,10 @@
   "scripts": {
     "setup": "NODE_ENV=setup babel-node code/index.js",
     "setup-mimc": "NODE_ENV=setup HASH_TYPE=mimc babel-node code/index.js",
+    "setup-rc": "NODE_ENV=setup COMPLIANCE=true babel-node code/index.js",
     "setup-all": "yes | NODE_ENV=setup babel-node code/index.js",
     "setup-all-mimc": "yes | NODE_ENV=setup HASH_TYPE=mimc babel-node code/index.js",
+    "setup-all-rc": "yes | NODE_ENV=setup COMPLIANCE=true babel-node code/index.js",
     "start": "nodemon --ignore stats-config/ --ignore code/ --exec babel-node ./src/index.js",
     "test": "jest --verbose --runInBand --forceExit ./__tests__/*.js"
   },
@@ -18,7 +20,7 @@
     "Mohammed Shameem <Mohammed.Shameem@uk.ey.com>",
     "Michael Connor <Michael.Connor@uk.ey.com>",
     "Liju Jose <Liju.Jose@gds.ey.com>",
-    "Asish A Prema <Asish.Prema@gds.ey.com>",
+    "Asish A Prema",
     "A.J. May <aj.may@ey.com>",
     "Kartheek Solipuram <Kartheek.Solipuram@ey.com>"
   ],

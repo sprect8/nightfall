@@ -11,9 +11,9 @@ import "./Verifier_Interface.sol";
 import "./ERC20Interface.sol";
 import "./PublicKeyTree.sol";
 
-contract FTokenShield is Ownable, MerkleTree {
+contract FTokenShield is Ownable, MerkleTree, PublicKeyTree {
   // ENUMS:
-  enum TransactionTypes { Mint, Transfer, Burn, SimpleBatchTransfer, ConsolidationTransfer }
+  enum TransactionTypes { Mint, Transfer, Burn, SimpleBatchTransfer, ConsolidationTransfer, MintRC, TransferRC, BurnRC}
 
   // EVENTS:
   // Observers may wish to listen for nullification of commitments:
@@ -315,14 +315,21 @@ contract FTokenShield is Ownable, MerkleTree {
   /**
   The mint function accepts fungible tokens from the specified fToken ERC-20 contract and creates the same amount as a commitment.
   */
-  function mint(uint256[] calldata _proof, uint256[] calldata _inputs, uint128 _value, bytes32 _commitment, bytes32 zkpPublicKey) external {
+  function mintRC(
+    bytes32 tokenContractAddress, // Take in as bytes32 for consistent hashing
+    uint256[] calldata _proof,
+    uint256[] calldata _inputs,
+    uint128 _value,
+    bytes32 _commitment,
+    bytes32 zkpPublicKey)
+    external {
 
       // gas measurement:
       uint256 gasCheckpoint = gasleft();
 
       // Check that the publicInputHash equals the hash of the 'public inputs':
       bytes31 publicInputHash = bytes31(bytes32(_inputs[0]) << 8);
-      bytes31 publicInputHashCheck = bytes31(sha256(abi.encodePacked(uint128(_value), _commitment, zkpPublicKey)) << 8); // Note that we force the _value to be left-padded with zeros to fill 128-bits, so as to match the padding in the hash calculation performed within the zokrates proof.
+      bytes31 publicInputHashCheck = bytes31(sha256(abi.encodePacked(tokenContractAddress, uint128(_value), _commitment, zkpPublicKey)) << 8); // Note that we force the _value to be left-padded with zeros to fill 128-bits, so as to match the padding in the hash calculation performed within the zokrates proof.
       require(publicInputHashCheck == publicInputHash, "publicInputHash cannot be reconciled");
 
       // Check that we're not blacklisted and, if not, add us to the public key Merkle tree
@@ -350,7 +357,10 @@ contract FTokenShield is Ownable, MerkleTree {
       roots[latestRoot] = latestRoot; // and save the new root to the list of roots
 
       // Finally, transfer the fTokens from the sender to this contract
-      fToken.transferFrom(msg.sender, address(this), _value);
+      // Need to cast from bytes32 to address.
+      ERC20Interface tokenContract = ERC20Interface(address(uint160(uint256(tokenContractAddress))));
+      bool transferCheck = tokenContract.transferFrom(msg.sender, address(this), _value);
+      require(transferCheck, "Commitment cannot be minted");
 
       // gas measurement:
       gasUsedByShieldContract = gasUsedByShieldContract + gasCheckpoint - gasleft();
@@ -360,7 +370,7 @@ contract FTokenShield is Ownable, MerkleTree {
   /**
   The transfer function transfers a commitment to a new owner
   */
-  function transfer(uint256[] calldata _proof, uint256[] calldata _inputs, bytes32[] calldata publicInputs) external {
+  function transferRC(uint256[] calldata _proof, uint256[] calldata _inputs, bytes32[] calldata publicInputs) external {
 
       // gas measurement:
       uint256[3] memory gasUsed; // array needed to stay below local stack limit
@@ -418,7 +428,7 @@ contract FTokenShield is Ownable, MerkleTree {
       gasUsed[1] = gasUsed[1] + gasUsed[0] - gasleft();
       emit GasUsed(gasUsed[1], gasUsed[2]);
   }
-  function burn(uint256[] calldata _proof, uint256[] calldata _inputs, bytes32[] calldata publicInputs) external {
+  function burnRC(uint256[] calldata _proof, uint256[] calldata _inputs, bytes32[] calldata publicInputs) external {
 
       // gas measurement:
       uint256 gasCheckpoint = gasleft();
@@ -442,23 +452,25 @@ contract FTokenShield is Ownable, MerkleTree {
       gasCheckpoint = gasleft();
 
       // Unfortunately stack depth constraints mandate an array, so we can't use more friendly names.
-      // publicInputs[0] - root (of the commitment Merkle tree)
-      // publicInputs[1] - nullifier
-      // publicInputs[2] - value
-      // publicInputs[3] - payTo address
-      // publicInputs[4] - root (of public key Merkle tree)
-      // publicInputs[5:11] - elGamal (6 elements)
+      // publicInputs[0] - tokenContractAddress (left-padded with 0s)
+      // publicInputs[1] - root (of the commitment Merkle tree)
+      // publicInputs[2] - nullifier
+      // publicInputs[3] - value
+      // publicInputs[4] - payTo address
+      // publicInputs[5] - root (of public key Merkle tree)
+      // publicInputs[6:12] - elGamal (6 elements)
 
       // check inputs vs on-chain states
-      require(roots[publicInputs[0]] == publicInputs[0], "The input root has never been the root of the Merkle Tree");
-      require(nullifiers[publicInputs[1]]==0, "The commitment being spent has already been nullified!");
-      require(publicKeyRoots[publicInputs[4]] == publicInputs[4],"The input public key root has never been a root of the Merkle Tree");
+      require(roots[publicInputs[1]] == publicInputs[1], "The input root has never been the root of the Merkle Tree");
+      require(nullifiers[publicInputs[2]]==0, "The commitment being spent has already been nullified!");
+      require(publicKeyRoots[publicInputs[5]] == publicInputs[5],"The input public key root has never been a root of the Merkle Tree");
 
-      nullifiers[publicInputs[1]] = publicInputs[1]; // add the nullifier to the list of nullifiers
+      nullifiers[publicInputs[2]] = publicInputs[2]; // add the nullifier to the list of nullifiers
 
-      //Finally, transfer the fungible tokens from this contract to the nominated address
-      address payToAddress = address(uint256(publicInputs[3])); // we passed _payTo as a bytes32, to ensure the packing was correct within the sha256() above
-      fToken.transfer(payToAddress, uint256(publicInputs[2]));
+      // Need to cast from bytes32 to address.
+      ERC20Interface tokenContract = ERC20Interface(address(uint160(uint256(publicInputs[0]))));
+      bool transferCheck = tokenContract.transfer(address(uint256(publicInputs[4])), uint256(publicInputs[3]));
+      require(transferCheck, "Commitment cannot be burned");
 
       emit BurnRC(publicInputs);
 

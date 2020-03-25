@@ -1,38 +1,39 @@
 /* eslint-disable import/no-unresolved */
 
-import { erc20 } from '@eyblockchain/nightlite';
+import { erc20, elgamal } from '@eyblockchain/nightlite';
 import bc from '../src/web3';
-
 import utils from '../src/zkpUtils';
 import controller from '../src/f-token-controller';
 import { getTruffleContractInstance, getContractAddress } from '../src/contractUtils';
-
+// import { setAuthorityPrivateKeys, rangeGenerator } from '../src/el-gamal';
+console.log('erc20', erc20);
+console.log('elgamal', elgamal);
 jest.setTimeout(7200000);
 
-const amountC = '0x00000000000000000000000000000020'; // 128 bits = 16 bytes = 32 chars
-const amountD = '0x00000000000000000000000000000030';
-const amountE = '0x00000000000000000000000000000040';
-const amountF = '0x00000000000000000000000000000010'; // don't forget to make C+D=E+F
-const amountG = '0x00000000000000000000000000000030';
-const amountH = '0x00000000000000000000000000000020'; // these constants used to enable a second transfer
-const amountI = '0x00000000000000000000000000000050';
-const secretKeyA = '0x1111111111111111111111111111111111111111111111111111111111111111';
-const secretKeyB = '0x2222222222222222222222222222222222222222222222222222222222222222';
-let saltAliceC;
-let saltAliceD;
-let saltAliceToBobE;
-let saltAliceToAliceF;
-let publicKeyA;
-let publicKeyB;
-const publicKeyE = '0x1111111111111111111111111111111111111111111111111111111111111112';
-let commitmentAliceC;
-let commitmentAliceD;
-let saltBobG;
-let saltBobToEveH;
-let saltBobToBobI;
-let commitmentBobG;
-let commitmentBobE;
-let commitmentAliceF;
+const C = '0x00000000000000000000000000000020'; // 128 bits = 16 bytes = 32 chars
+const D = '0x00000000000000000000000000000030';
+const E = '0x00000000000000000000000000000040';
+const F = '0x00000000000000000000000000000010'; // don't forget to make C+D=E+F
+const G = '0x00000000000000000000000000000030';
+const H = '0x00000000000000000000000000000020'; // these constants used to enable a second transfer
+const I = '0x00000000000000000000000000000050';
+const skA = '0x1111111111111111111111111111111111111111111111111111111111111111';
+const skB = '0x2222222222222222222222222222222222222222222222222222222222222222';
+let S_A_C;
+let S_A_D;
+let sAToBE;
+let sAToAF;
+let pkA;
+let pkB;
+const pkE = '0x1111111111111111111111111111111111111111111111111111111111111112';
+let Z_A_C;
+let Z_A_D;
+let S_B_G;
+let sBToEH;
+let sBToBI;
+let Z_B_G;
+let Z_B_E;
+let Z_A_F;
 // storage for z indexes
 let zInd1;
 let zInd2;
@@ -41,53 +42,37 @@ let zInd3;
 let accounts;
 let fTokenShieldJson;
 let fTokenShieldAddress;
+let fTokenShieldInstance;
 let erc20Address;
-if (process.env.COMPLIANCE !== 'true') {
+if (process.env.COMPLIANCE === 'true') {
   beforeAll(async () => {
+    elgamal.setAuthorityPrivateKeys(); // setup test keys
     if (!(await bc.isConnected())) await bc.connect();
     accounts = await (await bc.connection()).eth.getAccounts();
-
     const { contractJson, contractInstance } = await getTruffleContractInstance('FTokenShield');
     fTokenShieldAddress = contractInstance.address;
     fTokenShieldJson = contractJson;
+    fTokenShieldInstance = contractInstance;
 
     erc20Address = await getContractAddress('FToken');
     const erc20AddressPadded = `0x${utils.strip0x(erc20Address).padStart(64, '0')}`;
 
-    saltAliceC = await utils.rndHex(32);
-    saltAliceD = await utils.rndHex(32);
-    saltAliceToBobE = await utils.rndHex(32);
-    saltAliceToAliceF = await utils.rndHex(32);
-    publicKeyA = utils.hash(secretKeyA);
-    publicKeyB = utils.hash(secretKeyB);
-    commitmentAliceC = utils.concatenateThenHash(
-      erc20AddressPadded,
-      amountC,
-      publicKeyA,
-      saltAliceC,
-    );
-    commitmentAliceD = utils.concatenateThenHash(
-      erc20AddressPadded,
-      amountD,
-      publicKeyA,
-      saltAliceD,
-    );
-    saltBobG = await utils.rndHex(32);
-    saltBobToEveH = await utils.rndHex(32);
-    saltBobToBobI = await utils.rndHex(32);
-    commitmentBobG = utils.concatenateThenHash(erc20AddressPadded, amountG, publicKeyB, saltBobG);
-    commitmentBobE = utils.concatenateThenHash(
-      erc20AddressPadded,
-      amountE,
-      publicKeyB,
-      saltAliceToBobE,
-    );
-    commitmentAliceF = utils.concatenateThenHash(
-      erc20AddressPadded,
-      amountF,
-      publicKeyA,
-      saltAliceToAliceF,
-    );
+    // blockchainOptions = { account, fTokenShieldJson, fTokenShieldAddress };
+    S_A_C = await utils.rndHex(32);
+    S_A_D = await utils.rndHex(32);
+    sAToBE = await utils.rndHex(32);
+    sAToAF = await utils.rndHex(32);
+    // pkA = utils.ensure0x(utils.strip0x(utils.hash(skA)).padStart(32, '0'));
+    pkA = utils.hash(skA);
+    pkB = utils.hash(skB);
+    Z_A_C = utils.concatenateThenHash(erc20AddressPadded, C, pkA, S_A_C);
+    Z_A_D = utils.concatenateThenHash(erc20AddressPadded, D, pkA, S_A_D);
+    S_B_G = await utils.rndHex(32);
+    sBToEH = await utils.rndHex(32);
+    sBToBI = await utils.rndHex(32);
+    Z_B_G = utils.concatenateThenHash(erc20AddressPadded, G, pkB, S_B_G);
+    Z_B_E = utils.concatenateThenHash(erc20AddressPadded, E, pkB, sAToBE);
+    Z_A_F = utils.concatenateThenHash(erc20AddressPadded, F, pkA, sAToAF);
   });
 
   // eslint-disable-next-line no-undef
@@ -96,6 +81,9 @@ if (process.env.COMPLIANCE !== 'true') {
     // Alice sends Bob E and gets F back (Bob has 40 ETH, Alice has 10 ETH)
     // Bob then has E+G at total of 70 ETH
     // Bob sends H to Alice and keeps I (Bob has 50 ETH and Alice has 10+20=30 ETH)
+    let transferTxReceipt;
+    let burnTxReceipt;
+
     test('Should create 10000 tokens in accounts[0] and accounts[1]', async () => {
       // fund some accounts with FToken
       const AMOUNT = 10000;
@@ -132,11 +120,12 @@ if (process.env.COMPLIANCE !== 'true') {
     });
 
     test('Should mint an ERC-20 commitment Z_A_C for Alice for asset C', async () => {
+      expect.assertions(1);
       console.log('Alices account ', (await controller.getBalance(accounts[0])).toNumber());
       const { commitment: zTest, commitmentIndex: zIndex } = await erc20.mint(
-        amountC,
-        publicKeyA,
-        saltAliceC,
+        C,
+        pkA,
+        S_A_C,
         {
           erc20Address,
           account: accounts[0],
@@ -150,15 +139,16 @@ if (process.env.COMPLIANCE !== 'true') {
         },
       );
       zInd1 = parseInt(zIndex, 10);
-      expect(commitmentAliceC).toEqual(zTest);
+      expect(Z_A_C).toEqual(zTest);
       console.log(`Alice's account `, (await controller.getBalance(accounts[0])).toNumber());
     });
 
     test('Should mint another ERC-20 commitment Z_A_D for Alice for asset D', async () => {
+      expect.assertions(1);
       const { commitment: zTest, commitmentIndex: zIndex } = await erc20.mint(
-        amountD,
-        publicKeyA,
-        saltAliceD,
+        D,
+        pkA,
+        S_A_D,
         {
           erc20Address,
           account: accounts[0],
@@ -172,25 +162,22 @@ if (process.env.COMPLIANCE !== 'true') {
         },
       );
       zInd2 = parseInt(zIndex, 10);
-      expect(commitmentAliceD).toEqual(zTest);
+      expect(Z_A_D).toEqual(zTest);
       console.log(`Alice's account `, (await controller.getBalance(accounts[0])).toNumber());
     });
 
     test('Should transfer a ERC-20 commitment to Bob (two coins get nullified, two created; one coin goes to Bob, the other goes back to Alice as change)', async () => {
       // E becomes Bob's, F is change returned to Alice
       const inputCommitments = [
-        { value: amountC, salt: saltAliceC, commitment: commitmentAliceC, commitmentIndex: zInd1 },
-        { value: amountD, salt: saltAliceD, commitment: commitmentAliceD, commitmentIndex: zInd2 },
+        { value: C, salt: S_A_C, commitment: Z_A_C, commitmentIndex: zInd1 },
+        { value: D, salt: S_A_D, commitment: Z_A_D, commitmentIndex: zInd2 },
       ];
-      const outputCommitments = [
-        { value: amountE, salt: saltAliceToBobE },
-        { value: amountF, salt: saltAliceToAliceF },
-      ];
-      await erc20.transfer(
+      const outputCommitments = [{ value: E, salt: sAToBE }, { value: F, salt: sAToAF }];
+      ({ txReceipt: transferTxReceipt } = await erc20.transfer(
         inputCommitments,
         outputCommitments,
-        publicKeyB,
-        secretKeyA,
+        pkB,
+        skA,
         {
           erc20Address,
           account: accounts[0],
@@ -202,15 +189,16 @@ if (process.env.COMPLIANCE !== 'true') {
           outputDirectory: `${process.cwd()}/code/gm17/ft-transfer`,
           pkPath: `${process.cwd()}/code/gm17/ft-transfer/proving.key`,
         },
-      );
+      ));
       // now Bob should have 40 (E) ETH
     });
 
     test('Should mint another ERC-20 commitment Z_B_G for Bob for asset G', async () => {
+      expect.assertions(1);
       const { commitment: zTest, commitmentIndex: zIndex } = await erc20.mint(
-        amountG,
-        publicKeyB,
-        saltBobG,
+        G,
+        pkB,
+        S_B_G,
         {
           erc20Address,
           account: accounts[1],
@@ -224,30 +212,69 @@ if (process.env.COMPLIANCE !== 'true') {
         },
       );
       zInd3 = parseInt(zIndex, 10);
-      expect(commitmentBobG).toEqual(zTest);
+      expect(Z_B_G).toEqual(zTest);
     });
 
-    test('Should transfer an ERC-20 commitment to Eve', async () => {
+    test(`Should blacklist Bob so he can't transfer an ERC-20 commitment to Eve`, async () => {
+      expect.assertions(1);
+      await fTokenShieldInstance.blacklistAddress(accounts[1], {
+        from: accounts[0],
+        gas: 6500000,
+        gasPrice: 20000000000,
+      });
+
       // H becomes Eve's, I is change returned to Bob
       const inputCommitments = [
-        {
-          value: amountE,
-          salt: saltAliceToBobE,
-          commitment: commitmentBobE,
-          commitmentIndex: zInd1 + 2,
-        },
-        { value: amountG, salt: saltBobG, commitment: commitmentBobG, commitmentIndex: zInd3 },
+        { value: E, salt: sAToBE, commitment: Z_B_E, commitmentIndex: zInd1 + 2 },
+        { value: G, salt: S_B_G, commitment: Z_B_G, commitmentIndex: zInd3 },
       ];
-      const outputCommitments = [
-        { value: amountH, salt: saltBobToEveH },
-        { value: amountI, salt: saltBobToBobI },
+      const outputCommitments = [{ value: H, salt: sBToEH }, { value: I, salt: sBToBI }];
+      expect.assertions(1);
+      try {
+        await erc20.transfer(
+          inputCommitments,
+          outputCommitments,
+          pkE,
+          skB,
+          {
+            erc20Address,
+            account: accounts[1],
+            fTokenShieldJson,
+            fTokenShieldAddress,
+          },
+          {
+            codePath: `${process.cwd()}/code/gm17/ft-transfer/out`,
+            outputDirectory: `${process.cwd()}/code/gm17/ft-transfer`,
+            pkPath: `${process.cwd()}/code/gm17/ft-transfer/proving.key`,
+          },
+        );
+      } catch (e) {
+        console.log(e);
+        expect(e.message).toMatch(
+          'Returned error: VM Exception while processing transaction: revert The proof has not been verified by the contract -- Reason given: The proof has not been verified by the contract.',
+        );
+      }
+    });
+
+    test(`Should unblacklist Bob so he can transfer an ERC-20 commitment to Eve`, async () => {
+      await fTokenShieldInstance.unBlacklistAddress(accounts[1], {
+        from: accounts[0],
+        gas: 6500000,
+        gasPrice: 20000000000,
+      });
+
+      // H becomes Eve's, I is change returned to Bob
+      const inputCommitments = [
+        { value: E, salt: sAToBE, commitment: Z_B_E, commitmentIndex: zInd1 + 2 },
+        { value: G, salt: S_B_G, commitment: Z_B_G, commitmentIndex: zInd3 },
       ];
+      const outputCommitments = [{ value: H, salt: sBToEH }, { value: I, salt: sBToBI }];
 
       await erc20.transfer(
         inputCommitments,
         outputCommitments,
-        publicKeyE,
-        secretKeyB,
+        pkE,
+        skB,
         {
           erc20Address,
           account: accounts[1],
@@ -263,15 +290,16 @@ if (process.env.COMPLIANCE !== 'true') {
     });
 
     test(`Should burn Alice's remaining ERC-20 commitment`, async () => {
+      expect.assertions(1);
       const bal1 = await controller.getBalance(accounts[3]);
       const bal = await controller.getBalance(accounts[0]);
       console.log('accounts[3]', bal1.toNumber());
       console.log('accounts[0]', bal.toNumber());
-      await erc20.burn(
-        amountF,
-        secretKeyA,
-        saltAliceToAliceF,
-        commitmentAliceF,
+      ({ txReceipt: burnTxReceipt } = await erc20.burn(
+        F,
+        skA,
+        sAToAF,
+        Z_A_F,
         zInd2 + 2,
         {
           erc20Address,
@@ -285,16 +313,36 @@ if (process.env.COMPLIANCE !== 'true') {
           outputDirectory: `${process.cwd()}/code/gm17/ft-burn`,
           pkPath: `${process.cwd()}/code/gm17/ft-burn/proving.key`,
         },
-      );
+      ));
       const bal2 = await controller.getBalance(accounts[3]);
       console.log('accounts[3]', bal2.toNumber());
-      expect(parseInt(amountF, 16)).toEqual(bal2 - bal1);
+      expect(parseInt(F, 16)).toEqual(bal2 - bal1);
+    });
+
+    test(`Should decrypt Alice's Transfer commitment to Bob`, () => {
+      expect.assertions(3);
+      const decrypt = erc20.decryptTransaction(transferTxReceipt, {
+        type: 'TransferRC',
+        guessers: [elgamal.rangeGenerator(1000000), [pkA, pkB, pkE], [pkA, pkB, pkE]],
+      });
+      expect(BigInt(decrypt[0])).toEqual(BigInt(E));
+      expect(decrypt[1]).toMatch(pkA);
+      expect(decrypt[2]).toMatch(pkB);
+    });
+
+    test(`Should decrypt Alice's Burn commitment`, () => {
+      expect.assertions(1);
+      const decrypt = erc20.decryptTransaction(burnTxReceipt, {
+        type: 'BurnRC',
+        guessers: [[pkA, pkB, pkE]],
+      });
+      expect(decrypt[0]).toMatch(pkA);
     });
   });
 } else {
-  describe('Conventional fungible tests disabled', () => {
-    test('COMPLIANCE env variable is set to `true`', () => {
-      expect(process.env.COMPLIANCE).toEqual('true');
+  describe('Compliance-mode fungible tests disabled', () => {
+    test('COMPLIANCE env variable is not set to `true`', () => {
+      expect(process.env.COMPLIANCE).toNotEqual('true');
     });
   });
 }
