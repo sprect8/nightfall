@@ -181,7 +181,7 @@ async function burn(req, res, next) {
  *    "commitmentIndex":2,
  *    "blockNumber":51
  * }
- * 
+ *
  * res.data: {
  *    "zCorrect":true,
  *    "zOnchainCorrect":true
@@ -190,7 +190,6 @@ async function burn(req, res, next) {
  * @param {*} res
  */
 async function checkCorrectness(req, res, next) {
-
   try {
     const { address } = req.headers;
     const { value, salt, publicKey, commitment, commitmentIndex, blockNumber } = req.body;
