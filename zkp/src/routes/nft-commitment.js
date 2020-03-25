@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { erc721 } from '@eyblockchain/nightlite';
 import utils from '../zkpUtils';
 import nfController from '../nf-token-controller';
-import { getTruffleContractInstance } from '../contractUtils';
+import { getTruffleContractInstance, getContractAddress } from '../contractUtils';
 
 const router = Router();
 /**
@@ -29,6 +29,7 @@ async function mint(req, res, next) {
     contractJson: nfTokenShieldJson,
     contractInstance: nfTokenShield,
   } = await getTruffleContractInstance('NFTokenShield');
+  const nfTokenAddress = await getContractAddress('NFTokenMetadata');
 
   try {
     const { commitment, commitmentIndex } = await erc721.mint(
@@ -36,6 +37,7 @@ async function mint(req, res, next) {
       publicKey,
       salt,
       {
+        erc721Address: nfTokenAddress,
         nfTokenShieldJson,
         nfTokenShieldAddress: nfTokenShield.address,
         account: address,
@@ -93,6 +95,7 @@ async function transfer(req, res, next) {
     contractJson: nfTokenShieldJson,
     contractInstance: nfTokenShield,
   } = await getTruffleContractInstance('NFTokenShield');
+  const erc721Address = await getContractAddress('NFTokenMetadata');
 
   try {
     const { outputCommitment, outputCommitmentIndex, txReceipt } = await erc721.transfer(
@@ -104,6 +107,7 @@ async function transfer(req, res, next) {
       commitment,
       commitmentIndex,
       {
+        erc721Address,
         nfTokenShieldJson,
         nfTokenShieldAddress: nfTokenShield.address,
         account: address,
@@ -160,6 +164,7 @@ async function burn(req, res, next) {
     contractJson: nfTokenShieldJson,
     contractInstance: nfTokenShield,
   } = await getTruffleContractInstance('NFTokenShield');
+  const erc721Address = await getContractAddress('NFTokenMetadata');
 
   try {
     const { txReceipt } = await erc721.burn(
@@ -169,6 +174,7 @@ async function burn(req, res, next) {
       commitment,
       commitmentIndex,
       {
+        erc721Address,
         nfTokenShieldJson,
         nfTokenShieldAddress: nfTokenShield.address,
         account: address,
@@ -196,8 +202,10 @@ async function checkCorrectness(req, res, next) {
   try {
     const { address } = req.headers;
     const { tokenId, publicKey, salt, commitment, commitmentIndex, blockNumber } = req.body;
+    const erc721Address = await getContractAddress('NFTokenMetadata');
 
     const results = await nfController.checkCorrectness(
+      erc721Address,
       tokenId,
       publicKey,
       salt,
