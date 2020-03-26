@@ -177,7 +177,7 @@ services:
       - ./zkp/contracts/:/truffle/contracts:cached,ro
       - /truffle/contracts/mimc
       - /truffle/contracts/sha
-      - ./zkp/contracts/sha/MerkleTree.sol:/truffle/contracts/MerkleTree.sol:delegated      
+      - ./zkp/contracts/sha/MerkleTree.sol:/truffle/contracts/MerkleTree.sol      
       - ./zkp/migrations/:/truffle/migrations:cached,ro
       - ./zkp/build/contracts/:/truffle/build/contracts:delegated 
       - ./zkp/test/:/truffle/test:cached,ro
