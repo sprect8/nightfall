@@ -13,7 +13,11 @@ contract PublicKeyTree is MiMC, Ownable {
   mapping (address => bytes32) internal keyLookup; // stores a lookup of the zkp public key if you know the ETH address
   uint256 internal nextAvailableIndex = FIRST_LEAF_INDEX; //holds the next empty slot that we can store a key in
   mapping (address => uint256) internal blacklist;
-  mapping (bytes32 => bytes32) internal publicKeyRoots; //list of all valid roots
+  mapping (bytes32 => bytes32) public publicKeyRoots; //linked list of all valid roots each value points to the previous root to enable them all to be deleted
+  bytes32 private constant ONE = 0x0000000000000000000000000000000000000000000000000000000000000001;
+  bytes32 public currentPublicKeyRoot = ONE;
+  uint256 public rootPruningInterval = 50; // the number of historic roots that are remembered
+  uint256 public publicKeyRootComputations; // the total number of roots currently
 
   /**
   This function adds a key to the Merkle tree at the next available leaf
@@ -27,7 +31,26 @@ contract PublicKeyTree is MiMC, Ownable {
     M[nextAvailableIndex] = key;
     L[key] = nextAvailableIndex; // reverse lookup for a leaf
     bytes32 root = updatePathToRoot(nextAvailableIndex++);
-    publicKeyRoots[root] = root;
+    updatePublicKeyRootsLinkedList(root);
+  }
+
+  /**
+  This modifier registers a new user (adds them to the Public Key Tree provided they
+  are not previously registed and are not on a blacklist). If they are an existing
+  user, it just does the blacklist check
+  */
+  function checkUser(bytes32 zkpPublicKey) public {
+    if (keyLookup[msg.sender] == 0) {
+      keyLookup[msg.sender] = zkpPublicKey; // add unknown user to key lookup
+      addPublicKeyToTree(zkpPublicKey); // update the Merkle tree with the new leaf
+    }
+    require (keyLookup[msg.sender] == zkpPublicKey, "The ZKP public key has not been registered to this address");
+    require (blacklist[msg.sender] == 0, "This address is blacklisted - transaction stopped");
+  }
+
+  modifier onlyCheckedUser(bytes32 zkpPublicKey) {
+    checkUser(zkpPublicKey);
+    _;
   }
 
   function blacklistAddress(address addr) external onlyOwner {
@@ -41,7 +64,42 @@ contract PublicKeyTree is MiMC, Ownable {
     delete M[blacklistedIndex];
     // and recalculate the root
     bytes32 root = updatePathToRoot(blacklistedIndex);
-    publicKeyRoots[root] = root;
+    // next, traverse the linked list, deleting each element (could be expensive if we have many transactions)
+    deleteHistoricRoots(currentPublicKeyRoot);
+    publicKeyRoots[root] = ONE; //we're starting a new list of historic roots have to label it with something other than 0
+    currentPublicKeyRoot = root;
+    publicKeyRootComputations = 1; //have to reset this so we prune correctly
+  }
+
+  /**
+  function to recursively delete historic roots. Normally called automatically by `blacklistAddress`
+  However, if we ever had so many roots that we exceeded the block gas limit, we could call this
+  function directly to iteratively remove roots. This is public onlyOwner, rather than private so
+  it can be called directly in case of emergency (e.g. some bug prevents it working as part of blacklisting).
+  */
+  function deleteHistoricRoots(bytes32 publicKeyRoot) public onlyOwner {
+    bytes32 nextPublicKeyRoot = publicKeyRoots[publicKeyRoot];
+    delete publicKeyRoots[publicKeyRoot];
+    if (nextPublicKeyRoot != 0) deleteHistoricRoots(nextPublicKeyRoot);
+    return;  // we've deleted the whole linked list
+  }
+
+  /**
+  To avoid having so many roots stored that deleting them (in the event of a blacklisting)
+  would be very expensive, we only keep publicKeyRootComputations of them.  Once we have that
+  many, we need to remove the oldest one each time we add a new one.
+  */
+  function pruneOldestRoot(bytes32 publicKeyRoot) private {
+    //note, we must have at least two historic roots for this to work
+    bytes32 nextPublicKeyRoot = publicKeyRoot;
+    bytes32 nextNextPublicKeyRoot = ONE;
+    while(nextNextPublicKeyRoot != 0) { // decend to the end of the list, remembering the previous item
+      publicKeyRoot = nextPublicKeyRoot;
+      nextPublicKeyRoot = publicKeyRoots[publicKeyRoot];
+      nextNextPublicKeyRoot = publicKeyRoots[nextPublicKeyRoot];
+    }
+    delete publicKeyRoots[publicKeyRoot]; //remove the oldest (non-zero) root
+    return;
   }
 
   function unBlacklistAddress(address addr) external onlyOwner {
@@ -55,7 +113,21 @@ contract PublicKeyTree is MiMC, Ownable {
     M[blacklistedIndex] = blacklistedKey;
     // and recalculate the root
     bytes32 root = updatePathToRoot(blacklistedIndex);
-    publicKeyRoots[root] = root;
+    updatePublicKeyRootsLinkedList(root);
+  }
+
+  /**
+  A function to update the linked list of roots and associated state variables
+  */
+  function updatePublicKeyRootsLinkedList(bytes32 root) private {
+    publicKeyRoots[root] = currentPublicKeyRoot;
+    currentPublicKeyRoot = root;
+    publicKeyRootComputations++;
+    if (publicKeyRootComputations > rootPruningInterval) pruneOldestRoot(currentPublicKeyRoot);
+  }
+
+  function setRootPruningInterval(uint256 interval) external onlyOwner {
+    rootPruningInterval = interval;
   }
 
   /**

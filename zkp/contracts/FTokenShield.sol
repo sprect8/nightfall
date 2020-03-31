@@ -322,7 +322,7 @@ contract FTokenShield is Ownable, MerkleTree, PublicKeyTree {
     uint128 _value,
     bytes32 _commitment,
     bytes32 zkpPublicKey)
-    external {
+    external onlyCheckedUser(zkpPublicKey) {
 
       // gas measurement:
       uint256 gasCheckpoint = gasleft();
@@ -331,14 +331,6 @@ contract FTokenShield is Ownable, MerkleTree, PublicKeyTree {
       bytes31 publicInputHash = bytes31(bytes32(_inputs[0]) << 8);
       bytes31 publicInputHashCheck = bytes31(sha256(abi.encodePacked(tokenContractAddress, uint128(_value), _commitment, zkpPublicKey)) << 8); // Note that we force the _value to be left-padded with zeros to fill 128-bits, so as to match the padding in the hash calculation performed within the zokrates proof.
       require(publicInputHashCheck == publicInputHash, "publicInputHash cannot be reconciled");
-
-      // Check that we're not blacklisted and, if not, add us to the public key Merkle tree
-      if (keyLookup[msg.sender] == 0) {
-        keyLookup[msg.sender] = zkpPublicKey; // add unknown user to key lookup
-        addPublicKeyToTree(zkpPublicKey); // update the Merkle tree with the new leaf
-      }
-      require (keyLookup[msg.sender] == zkpPublicKey, "The ZKP public key has not been registered to this address");
-      require (blacklist[msg.sender] == 0, "This address is blacklisted - transaction stopped");
 
       // gas measurement:
       uint256 gasUsedByShieldContract = gasCheckpoint - gasleft();
@@ -410,7 +402,7 @@ contract FTokenShield is Ownable, MerkleTree, PublicKeyTree {
       require(publicInputs[3] != publicInputs[4], "The new commitments (commitmentE and commitmentF) must be different!");
       require(nullifiers[publicInputs[1]] == 0, "The commitment being spent (commitmentE) has already been nullified!");
       require(nullifiers[publicInputs[2]] == 0, "The commitment being spent (commitmentF) has already been nullified!");
-      require(publicKeyRoots[publicInputs[5]] == publicInputs[5],"The input public key root has never been a root of the Merkle Tree");
+      require(publicKeyRoots[publicInputs[5]] != 0,"The input public key root has never been a root of the Merkle Tree");
       // update contract states
       nullifiers[publicInputs[1]] = publicInputs[1]; //remember we spent it
       nullifiers[publicInputs[2]] = publicInputs[2]; //remember we spent it
@@ -463,7 +455,7 @@ contract FTokenShield is Ownable, MerkleTree, PublicKeyTree {
       // check inputs vs on-chain states
       require(roots[publicInputs[1]] == publicInputs[1], "The input root has never been the root of the Merkle Tree");
       require(nullifiers[publicInputs[2]]==0, "The commitment being spent has already been nullified!");
-      require(publicKeyRoots[publicInputs[5]] == publicInputs[5],"The input public key root has never been a root of the Merkle Tree");
+      require(publicKeyRoots[publicInputs[5]] != 0,"The input public key root has never been a root of the Merkle Tree");
 
       nullifiers[publicInputs[2]] = publicInputs[2]; // add the nullifier to the list of nullifiers
 
