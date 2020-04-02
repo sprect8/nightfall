@@ -18,6 +18,7 @@ contract PublicKeyTree is MiMC, Ownable {
   bytes32 public currentPublicKeyRoot = ONE;
   uint256 public rootPruningInterval = 50; // the number of historic roots that are remembered
   uint256 public publicKeyRootComputations; // the total number of roots currently
+  bytes32[3] public compressedAdminPublicKeys;
 
   /**
   This function adds a key to the Merkle tree at the next available leaf
@@ -107,7 +108,7 @@ contract PublicKeyTree is MiMC, Ownable {
     delete blacklist[addr];
     // add them back to the Merkle tree
     bytes32 blacklistedKey = bytes32(uint256(keyLookup[addr]) % q); //keyLookup stores the key before conversition to Fq
-    require(uint256(blacklistedKey) != 0, 'The key being blacklisted does not exist');
+    require(uint256(blacklistedKey) != 0, 'The key being unblacklisted does not exist');
     uint256 blacklistedIndex = L[blacklistedKey];
     require(blacklistedIndex >= FIRST_LEAF_INDEX, 'The blacklisted index is not that of a leaf');
     M[blacklistedIndex] = blacklistedKey;
@@ -128,6 +129,10 @@ contract PublicKeyTree is MiMC, Ownable {
 
   function setRootPruningInterval(uint256 interval) external onlyOwner {
     rootPruningInterval = interval;
+  }
+
+  function setCompressedAdminPublicKeys(bytes32[3] calldata keys) external onlyOwner {
+    compressedAdminPublicKeys = keys;
   }
 
   /**

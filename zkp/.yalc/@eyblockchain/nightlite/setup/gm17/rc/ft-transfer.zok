@@ -50,7 +50,7 @@ import "../common/merkle-tree/pk-root" as pkroot
 
 // Each field element passed to main() can be at most 128bits, to make use of unpack128() so most variables occupy two fields (except the publicInputHash, which we maximize as 248-bits)
 
-def main(field publicInputHash, private field contractAddress, private field valueC, private field[2] secretKeyA, private field[2] saltC, private field[32] pathC, private field orderC, private field valueD, private field[2] saltD, private field[32] pathD, private field orderD, private field[2] nullifierC, private field[2] nullifierD, private field valueE, private field[2] publicKeyB, private field[2] saltE, private field[2] commitmentE, private field valueF, private field[2] saltF, private field[2] commitmentF, private field[2] root, private field publicKeyRoot, private field[32] pathPublicKey, private field orderPublicKey, private field[8] encryption, private field[2] authorityPublicKey1, private field[2] authorityPublicKey2, private field[2] authorityPublicKey3, private field randomSecret)->():
+def main(field publicInputHash, private field contractAddress, private field valueC, private field[2] secretKeyA, private field[2] saltC, private field[32] pathC, private field orderC, private field valueD, private field[2] saltD, private field[32] pathD, private field orderD, private field[2] nullifierC, private field[2] nullifierD, private field valueE, private field[2] publicKeyB, private field[2] saltE, private field[2] commitmentE, private field valueF, private field[2] saltF, private field[2] commitmentF, private field[2] root, private field publicKeyRoot, private field[32] pathPublicKeyA, private field orderPublicKeyA, private field[32] pathPublicKeyB, private field orderPublicKeyB, private field[8] encryption, private field[2] authorityPublicKey1, private field[2] authorityPublicKey2, private field[2] authorityPublicKey3, private field randomSecret)->():
 
 	// Unpack the inputs of main() to 128 bits. We'll unpack each field to its own 128 bit string for simplicity for now. Later efficiencies could be made by grouping some inputs.
 
@@ -129,7 +129,11 @@ def main(field publicInputHash, private field contractAddress, private field val
 
 	// Now we need to prove that the zkp public key which we are using is whitelisted
 	field publicKeyACommitment = pack256(publicKeyABits) // this converts the public key array into something that looks like a MiMC hash
-	field publicKeyRootCheck = pkroot(pathPublicKey, orderPublicKey, publicKeyACommitment)
+	field publicKeyARootCheck = pkroot(pathPublicKeyA, orderPublicKeyA, publicKeyACommitment)
+
+	// And that the public key of the recipient is also whitelisted
+	field publicKeyBCommitment = pack256(publicKeyBBits) // this converts the public key array into something that looks like a MiMC hash
+	field publicKeyBRootCheck = pkroot(pathPublicKeyB, orderPublicKeyB, publicKeyBCommitment)
 
 	// Now check the inputs:
 
@@ -141,7 +145,8 @@ def main(field publicInputHash, private field contractAddress, private field val
 	commitmentFBits == commitmentFBitsCheck
 	sumIn == sumOut
 	encryptionCheck == encryption
-	publicKeyRoot == publicKeyRootCheck
+	publicKeyRoot == publicKeyARootCheck
+	publicKeyRoot == publicKeyBRootCheck
 
 	// Overflow prevention:
 	valueCBits[0] == 0

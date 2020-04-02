@@ -403,6 +403,9 @@ contract FTokenShield is Ownable, MerkleTree, PublicKeyTree {
       require(nullifiers[publicInputs[1]] == 0, "The commitment being spent (commitmentE) has already been nullified!");
       require(nullifiers[publicInputs[2]] == 0, "The commitment being spent (commitmentF) has already been nullified!");
       require(publicKeyRoots[publicInputs[5]] != 0,"The input public key root has never been a root of the Merkle Tree");
+      require(publicInputs[10] == compressedAdminPublicKeys[0], 'Admin public key 0 does not match');
+      require(publicInputs[11] == compressedAdminPublicKeys[1], 'Admin public key 1 does not match');
+      require(publicInputs[12] == compressedAdminPublicKeys[2], 'Admin public key 2 does not match');
       // update contract states
       nullifiers[publicInputs[1]] = publicInputs[1]; //remember we spent it
       nullifiers[publicInputs[2]] = publicInputs[2]; //remember we spent it
@@ -456,6 +459,7 @@ contract FTokenShield is Ownable, MerkleTree, PublicKeyTree {
       require(roots[publicInputs[1]] == publicInputs[1], "The input root has never been the root of the Merkle Tree");
       require(nullifiers[publicInputs[2]]==0, "The commitment being spent has already been nullified!");
       require(publicKeyRoots[publicInputs[5]] != 0,"The input public key root has never been a root of the Merkle Tree");
+      require(publicInputs[8] == compressedAdminPublicKeys[0], 'Admin public key 0 does not match');
 
       nullifiers[publicInputs[2]] = publicInputs[2]; // add the nullifier to the list of nullifiers
 

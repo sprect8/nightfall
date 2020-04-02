@@ -9,7 +9,8 @@ returned as element 0 of the sibling path.
 @param {string} key - the public key leaf that the path is to be computed for
 */
 async function getPublicKeyTreeData(contractInstance, _key) {
-  const key = `0x${(BigInt(_key) % ZOKRATES_PRIME).toString(16)}`;
+  const key = `0x${(BigInt(_key) % ZOKRATES_PRIME).toString(16).padStart(64, '0')}`;
+  console.log('KEY LENGTH WAS', key.length - 2, key);
   const commitmentIndex = await contractInstance.L.call(key);
   const siblingPath = []; // sibling path
   let s = 0; // index of sibling path node in the merkle tree
