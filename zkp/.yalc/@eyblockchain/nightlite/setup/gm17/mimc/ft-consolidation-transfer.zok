@@ -68,7 +68,7 @@ endfor
 //check that each commitment is in the merkle tree
 for field i in 0..20 do
   total = total + inputValues[i]
-
+  0 == if inputValues[i] < 2**128 then 0 else 1 fi
   //commitment[i] = H(value[i]|publicKeyA|inputSalts[i])
 
   field[128] inputValueBits = unpack128(inputValues[i])
@@ -81,8 +81,6 @@ for field i in 0..20 do
   field mimcHash = pack256(shaHash)
   mimcHash = mimcroot(paths[i], order[i], mimcHash) //root calculated from inputCommitment[i]
   root == mimcHash //root check
-
-  inputValueBits[0] == 0 // overflow check
 endfor
 
 //check that values match
@@ -90,6 +88,7 @@ total == outputValue
 
 //check output commitment
 //commitment = H(value|publicKeyA|outputSalt)
+0 == if outputValue < 2**128 then 0 else 1 fi
 field[128] outputValueBits = unpack128(outputValue)
 field[256] publicKeyBits = unpack2x128To256(publicKey)
 field[256] outputSaltBits = unpack2x128To256(outputSalt)
@@ -99,7 +98,6 @@ field[256] commitmentBitsCheck = sha256of1024(preimage1024[0..256], preimage1024
 field[256] outputCommitmentBits = unpack2x128To256(outputCommitment)
 outputCommitmentBits == commitmentBitsCheck
 
-outputValueBits[0] == 0 // overflow check
 
 // Check that the 'public inputs' hash to the publicInputHash
 // publicInputHash = H(root, ...nullifiers, outputCommitment)

@@ -53,6 +53,10 @@ import "../common/merkle-tree/mimc-root.zok" as mimcroot
 
 def main(field publicInputHash, private field contractAddress, private field inputValue, private field[2] secretKeyA, private field[2] inputSalt, private field[32] path, private field order, private field[2] nullifier, private field[20] outputValues, private field[20][2] publicKeys, private field[20][2] outputSalts, private field[20][2] outputCommitments, private field root)->():
 
+     // Check the commitment value will not overflow the 128 bits
+
+    0 == if inputValue < 2**128 then 0 else 1 fi
+
     field[256] publicInputHashBits = unpack256(publicInputHash)
     field[256] contractAddressBits = unpack256(contractAddress)
 	// First we construct a proof that the nullifier of the input coin is correct:
@@ -96,6 +100,7 @@ def main(field publicInputHash, private field contractAddress, private field inp
 	field total = 0
 	for field i in 0..20 do
         field[256] outputCommitment = unpack2x128To256(outputCommitments[i])
+        0 == if outputValues[i] < 2**128 then 0 else 1 fi
         field[128] outputValueBits = unpack128(outputValues[i])
         field[256] publicKeyBits = unpack2x128To256(publicKeys[i])
         field[256] outputSaltBits = unpack2x128To256(outputSalts[i])

@@ -2,7 +2,7 @@
   "name": "@eyblockchain/nightlite",
   "description": "Minimal required library for the Nightfall protocol",
   "license": "MIT",
-  "version": "0.0.0-59af166f",
+  "version": "0.0.0-22e9a0f9",
   "scripts": {
     "start": "node build/index.js",
     "dev": "nodemon build/index.js",

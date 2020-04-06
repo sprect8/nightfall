@@ -58,6 +58,13 @@ import "../common/merkle-tree/mimc-root.zok" as mimcroot
 
 def main(field publicInputHash,  private field contractAddress, private field valueC, private field[2] secretKeyA, private field[2] saltC, private field[32] pathC, private field orderC, private field valueD, private field[2] saltD, private field[32] pathD, private field orderD, private field[2] nullifierC, private field[2] nullifierD, private field valueE, private field[2] publicKeyB, private field[2] saltE, private field[2] commitmentE, private field valueF, private field[2] saltF, private field[2] commitmentF, private field root)->():
 
+	// Check the commitment value will not overflow the 128 bits
+
+	0 == if valueC < 2**128 then 0 else 1 fi
+	0 == if valueD < 2**128 then 0 else 1 fi
+	0 == if valueE < 2**128 then 0 else 1 fi
+	0 == if valueF < 2**128 then 0 else 1 fi
+
 	// Unpack the inputs of main() to 128 bits. We'll unpack each field to its own 128 bit string for simplicity for now. Later efficiencies could be made by grouping some inputs.
 
 	field[256] publicInputHashBits = unpack256(publicInputHash)
@@ -159,12 +166,6 @@ def main(field publicInputHash,  private field contractAddress, private field va
 	commitmentEBits == commitmentEBitsCheck
 	commitmentFBits == commitmentFBitsCheck
 	sumIn == sumOut
-
-	// Overflow prevention:
-	valueCBits[0] == 0
-	valueDBits[0] == 0
-	valueEBits[0] == 0
-	valueFBits[0] == 0
 
 
 	// Check that the 'public inputs' hash to the publicInputHash:
