@@ -1,13 +1,13 @@
 /* eslint-disable import/no-unresolved */
 
 import { erc20, elgamal } from '@eyblockchain/nightlite';
-import bc from '../src/web3';
+import Web3 from '../src/web3';
 import utils from '../src/zkpUtils';
 import controller from '../src/f-token-controller';
 import { getTruffleContractInstance, getContractAddress } from '../src/contractUtils';
 // import { setAuthorityPrivateKeys, rangeGenerator } from '../src/el-gamal';
 jest.setTimeout(7200000);
-
+const web3 = Web3.connection();
 const C = '0x00000000000000000000000000000020'; // 128 bits = 16 bytes = 32 chars
 const D = '0x00000000000000000000000000000030';
 const E = '0x00000000000000000000000000000040';
@@ -45,8 +45,7 @@ let erc20Address;
 if (process.env.COMPLIANCE === 'true') {
   beforeAll(async () => {
     elgamal.setAuthorityPrivateKeys(); // setup test keys
-    if (!(await bc.isConnected())) await bc.connect();
-    accounts = await (await bc.connection()).eth.getAccounts();
+    accounts = await web3.eth.getAccounts();
     console.log('Number of test accounts', accounts.length);
     const { contractJson, contractInstance } = await getTruffleContractInstance('FTokenShield');
     fTokenShieldAddress = contractInstance.address;

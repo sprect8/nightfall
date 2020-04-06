@@ -78,7 +78,7 @@ function setAuthorityPrivateKeys(keys = TEST_PRIVATE_KEYS) {
   if (keys[0] === TEST_PRIVATE_KEYS[0])
     console.log('DANGER, WILL ROBINSON! INSECURE TEST-KEYS ARE BEING USED!');
   for (let i = 0; i < keys.length; i++) {
-    AUTHORITY_PRIVATE_KEYS.push(utils.ensure0x(keys[i]));
+    AUTHORITY_PRIVATE_KEYS[i] = utils.ensure0x(keys[i]);
   }
   setAuthorityPublicKeys();
 }

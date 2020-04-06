@@ -7,7 +7,6 @@ import fTokenController from '../f-token-controller';
 import { getTruffleContractInstance, getContractAddress } from '../contractUtils';
 
 const router = Router();
-elgamal.setAuthorityPrivateKeys(); // setup test keys
 
 /**
  * This function is to mint a fungible token commitment

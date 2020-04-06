@@ -376,7 +376,7 @@ async function transfer(
   );
 
   // compute the encryption of the transfer values
-  const randomSecret = BigInt(await utils.randomHex(27)); // ideally needs to be smaller than Fq TODO - try 32 bytes when it works
+  const randomSecret = BigInt(await utils.randomHex(31, config.ZOKRATES_PRIME)); // 31 bytes will be smaller than Fq, but this makes it clear we are choosing a large secret < Fq
   const encryption = enc(randomSecret, [
     outputCommitments[0].value,
     senderPublicKey,
@@ -548,6 +548,14 @@ async function transfer(
   ];
 
   logger.debug('array of compressed public inputs', compressedPublicInputsArray);
+  logger.debug(
+    'encryption',
+    encryption.map(pt => edwardsCompress(pt)),
+  );
+  logger.debug(
+    'admin keys',
+    AUTHORITY_PUBLIC_KEYS.map(pt => edwardsCompress(pt)),
+  );
 
   const publicInputHash = utils.concatenateThenHash(...compressedPublicInputsArray);
   logger.debug(
@@ -732,7 +740,7 @@ async function burn(
   const nullifier = utils.concatenateThenHash(salt, receiverZkpPrivateKey);
   // compute the encryption of the transfer values
   const receiverPublicKey = utils.hash(receiverZkpPrivateKey); // TODO this is really the sender - rename
-  const randomSecret = BigInt(await utils.randomHex(27)); // ideally needs to be smaller than Fq TODO - try 32 bytes when it works
+  const randomSecret = BigInt(await utils.randomHex(31, config.ZOKRATES_PRIME)); // 31 bytes will be smaller than Fq, but this makes it clear we are choosing a large secret < Fq
   const encryption = enc(randomSecret, [receiverPublicKey]);
 
   // compute the sibling path for the zkp public key Merkle tree used for whitelisting

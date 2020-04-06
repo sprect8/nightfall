@@ -5,8 +5,6 @@ services:
   zkp:
     environment:
       COMPLIANCE: 'true'
-    depends_on:
-      - merkle-tree
   # we need many accounts to be able to run the compliance unit tests
   ganache:
     command: ganache-cli --accounts=110 --defaultBalanceEther=1000
