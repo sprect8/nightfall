@@ -479,7 +479,7 @@ if (process.env.COMPLIANCE === 'true') {
 } else {
   describe('Compliance-mode fungible tests disabled', () => {
     test('COMPLIANCE env variable is not set to `true`', () => {
-      expect(process.env.COMPLIANCE).toNotEqual('true');
+      expect(process.env.COMPLIANCE).not.toEqual('true');
     });
   });
 }
