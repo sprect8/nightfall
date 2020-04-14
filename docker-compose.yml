@@ -85,7 +85,6 @@ services:
       - ./zkp/__tests__:/app/__tests__
       - ./zkp/config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./zkp/.yalc:/app/.yalc
     environment:
       HASH_TYPE: 'sha' #override this with docker-compose.override.mimc
       BLOCKCHAIN_HOST: ws://ganache

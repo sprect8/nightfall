@@ -1,2 +1,0 @@
-def main(field[128] a, field[256] b)->(field[384]):
-	return [...a, ...b]
