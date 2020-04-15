@@ -316,7 +316,7 @@ export default class UserService {
    * Method to decrypt and view the transaction details
    */
   getAndDecodeTransaction(txHash, type) {
-    const url = config.apiGateway.root + 'getAndDecodeTransaction?txHash=' + txHash + '&type=' + type;
+    const url = config.apiGateway.root + 'getAndDecodeTransaction?txHash=' + txHash + '&type=' + type + 'RC';
     return this.http.get(url).pipe(
       tap(data => console.log())
     );

@@ -403,7 +403,7 @@ export async function getAndDecodeTransaction(req, res, next) {
       publicKeys,
     });
 
-    if (type === 'Transfer') {
+    if (type === 'TransferRC') {
       [value, sender.publicKey, receiver.publicKey] = data;
       receiver.name = await offchain.getNameFromZkpPublicKey(receiver.publicKey);
     } else {

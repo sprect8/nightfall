@@ -393,7 +393,7 @@ async function unsetAddressFromBlacklist(req, res, next) {
  * This function return transaction object from transaction hash.
  * req.body {
  *    txHash: "0xb7b47b1ac480694ccf196b31ebffb114e9cb4630fa9f132baf037fc475c3bc1d",
- *  ` type: Transfer`
+ *  ` type: TransferRC`
  * }
  * @param {*} req
  * @param {*} res
@@ -402,7 +402,7 @@ async function decodeTransaction(req, res, next) {
   const { txHash, type, publicKeys } = req.body;
   let guessers = [];
 
-  if (type === 'Transfer') {
+  if (type === 'TransferRC') {
     guessers = [elgamal.rangeGenerator(1000000000), publicKeys, publicKeys];
   } else {
     // case burn
