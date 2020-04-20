@@ -334,8 +334,10 @@ export async function setAddressToBlacklist(req, res, next) {
     const malfeasantAddress = await offchain.getAddressFromName(name);
     res.data = await zkp.setAddressToBlacklist(req.user, { malfeasantAddress });
     await db.setUserToBlacklist(req.user, {
-      name,
-      address: malfeasantAddress,
+      blacklist: {
+        name,
+        address: malfeasantAddress,
+      },
     });
     next();
   } catch (err) {
@@ -357,8 +359,10 @@ export async function unsetAddressFromBlacklist(req, res, next) {
     const blacklistedAddress = await offchain.getAddressFromName(name);
     res.data = await zkp.unsetAddressFromBlacklist(req.user, { blacklistedAddress });
     await db.unsetUserFromBlacklist(req.user, {
-      name,
-      address: blacklistedAddress,
+      unBlacklist: {
+        name,
+        address: malfeasantAddress,
+      },
     });
     next();
   } catch (err) {

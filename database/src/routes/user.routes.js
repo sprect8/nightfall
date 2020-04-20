@@ -236,8 +236,10 @@ async function getBlacklistedUsers(req, res, next) {
 /**
  * this function is used to add a user to the blacklist
  * req.body = {
- *  name,
- *  address,
+ *  blacklist :  {
+ *   name,
+ *   address,
+ *  }
  * }
  * @param {*} req
  * @param {*} res
@@ -245,7 +247,7 @@ async function getBlacklistedUsers(req, res, next) {
 async function setUserToBlacklist(req, res, next) {
   const blacklistService = new BlacklistService(req.user.db);
   try {
-    await blacklistService.setUserToBlacklist(req.body);
+    await blacklistService.setUserToBlacklist(req.body.blacklist);
     res.data = { message: 'added to blacklist' };
     next();
   } catch (err) {
@@ -256,7 +258,10 @@ async function setUserToBlacklist(req, res, next) {
 /**
  * this function is used to remove a user from the blacklist
  * req.body = {
- *  name,
+ *  unBlacklist :  {
+ *   name,
+ *   address,
+ *  }
  * }
  * @param {*} req
  * @param {*} res
@@ -264,7 +269,7 @@ async function setUserToBlacklist(req, res, next) {
 async function unsetUserFromBlacklist(req, res, next) {
   const blacklistService = new BlacklistService(req.user.db);
   try {
-    await blacklistService.unsetUserFromBlacklist(req.body);
+    await blacklistService.unsetUserFromBlacklist(req.body.unBlacklist);
     res.data = { message: 'removed from blacklist' };
     next();
   } catch (err) {
