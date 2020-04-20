@@ -361,7 +361,7 @@ export async function unsetAddressFromBlacklist(req, res, next) {
     await db.unsetUserFromBlacklist(req.user, {
       unBlacklist: {
         name,
-        address: malfeasantAddress,
+        address: blacklistedAddress,
       },
     });
     next();
