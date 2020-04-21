@@ -97,7 +97,7 @@ export default class NftCommitmentTransferComponent implements OnInit, AfterCont
     } = this;
     const selectedCommitment = this.selectedCommitmentList[0];
     if (!selectedCommitment || !receiverName) {
-      this.toastr.warning('All fields are mandatory');
+      this.toastr.warning('All fields are mandatory', 'Warning');
       return;
     }
 
@@ -159,7 +159,7 @@ export default class NftCommitmentTransferComponent implements OnInit, AfterCont
       }
     }, error => {
       this.isRequesting = false;
-      this.toastr.error('Please try again.', error);
+      this.toastr.error('Please try again.', 'Error');
     });
   }
 

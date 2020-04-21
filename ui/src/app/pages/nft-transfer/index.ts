@@ -106,7 +106,7 @@ export default class NftTransferComponent implements OnInit, AfterContentInit {
         this.router.navigate(['/overview'], { queryParams: { selectedTab: 'nft' } });
       }, error => {
         this.isRequesting = false;
-        this.toastr.error('Please try again.', error);
+        this.toastr.error('Please try again.', 'Error');
     });
   }
 

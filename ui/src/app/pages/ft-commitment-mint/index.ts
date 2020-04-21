@@ -81,7 +81,7 @@ export default class FtCommitmentMintComponent implements OnInit {
     const amountToMint = this.ftCommitmentMintForm.controls['A'].value;
     if (!amountToMint) { return; }
     if (amountToMint > this.ftBalance) {
-      return this.toastr.warning('You do not have enough ERC-20 tokens.');
+      return this.toastr.warning('You do not have enough ERC-20 tokens.', 'Warning');
     }
     this.isRequesting = true;
     const hexValue = (this.ftCommitmentMintForm.controls['A'].value).toString(16);

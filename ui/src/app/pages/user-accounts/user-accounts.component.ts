@@ -191,7 +191,7 @@ export class UserAccountsComponent extends Config implements OnInit {
    */
   addAccount(event) {
     if (!this.isValidAccountForm(event.newData)) {
-      this.toastr.warning('Please fill all the fields.');
+      this.toastr.warning('Please fill all the fields.', 'Warning');
       event.confirm.reject(event.newData);
       return;
     }
@@ -211,7 +211,7 @@ export class UserAccountsComponent extends Config implements OnInit {
    */
   editAccount(event) {
     if (!this.isValidAccountForm(event.newData)) {
-      this.toastr.warning('Please fill all the fields.');
+      this.toastr.warning('Please fill all the fields.', 'Warning');
       event.confirm.reject(event.newData);
       return;
     }
@@ -231,7 +231,7 @@ export class UserAccountsComponent extends Config implements OnInit {
    */
   deleteAccount(event) {
     if (!this.isValidAccountForm(event.data)) {
-      this.toastr.warning('Please fill all the fields.');
+      this.toastr.warning('Please fill all the fields.', 'Warning');
       event.confirm.reject(event.data);
       return;
     }

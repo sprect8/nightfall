@@ -150,7 +150,7 @@ export default class FtCommitmentBatchTrasnferComponent implements OnInit , Afte
     let emptyInputFlag: boolean;
     const count = this.selectedCommitmentList.length;
     if (!count || count !== 1) {
-      this.toastr.warning('Invalid commitment Selection.');
+      this.toastr.warning('Invalid commitment Selection.', 'Warning');
       return;
     }
     this.transferData = this.transferDetails.value.map(({value, receiverName}) => {
@@ -167,7 +167,7 @@ export default class FtCommitmentBatchTrasnferComponent implements OnInit , Afte
     });
     const { transactions } = this;
     if (emptyInputFlag === true) {
-      this.toastr.warning('All fields are mandatory.');
+      this.toastr.warning('All fields are mandatory.', 'Warning');
       return;
     }
     this.isRequesting = true;

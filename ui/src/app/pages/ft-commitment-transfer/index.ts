@@ -131,7 +131,7 @@ export default class FtCommitmentTrasnferComponent implements OnInit , AfterCont
   initiateTransfer () {
     const count = this.selectedCommitmentList.length;
     if (!count || count !== 2) {
-      this.toastr.warning('Invalid commitment Selection.');
+      this.toastr.warning('Invalid commitment Selection.', 'Warning');
       return;
     }
     const [commitment1, commitment2] = this.selectedCommitmentList;
@@ -141,7 +141,7 @@ export default class FtCommitmentTrasnferComponent implements OnInit , AfterCont
     } = this;
 
     if (!transferValue || !this.receiverName) {
-      this.toastr.warning('All fields are mandatory.');
+      this.toastr.warning('All fields are mandatory.', 'Warning');
       return;
     }
 

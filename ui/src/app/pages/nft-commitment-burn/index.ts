@@ -86,7 +86,7 @@ export default class NftCommitmentBurnComponent implements OnInit, AfterContentI
     } = this;
     const selectedCommitment = this.selectedCommitmentList[0];
     if (!selectedCommitment) {
-      this.toastr.warning('All fields are mandatory.');
+      this.toastr.warning('All fields are mandatory.','Warning');
       return;
     }
     this.isRequesting = true;
@@ -131,7 +131,7 @@ export default class NftCommitmentBurnComponent implements OnInit, AfterContentI
       }
     }, error => {
       this.isRequesting = false;
-      this.toastr.error('Please Enter a valid SKU.', error);
+      this.toastr.error('Please Enter a valid SKU.', 'Error');
     });
   }
 

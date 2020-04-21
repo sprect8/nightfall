@@ -71,7 +71,7 @@ export default class FtBurnComponent implements OnInit {
   burnFToken() {
     if (!this.amount) { return; }
     if (this.amount > this.erc20Balance) {
-      return this.toastr.warning('You do not have enough ERC-20 tokens.');
+      return this.toastr.warning('You do not have enough ERC-20 tokens.', 'Warning');
     }
     this.isRequesting = true;
     this.ftService.burnFToken(this.amount).subscribe(transaction => {
