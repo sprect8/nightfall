@@ -499,16 +499,16 @@ describe('****** Integration Test ******\n', function() {
           })
           .set('Accept', 'application/json')
           .set('Authorization', bob.token)
-          .end((err, res) => {
+          .end(err => {
             if (err) return done(err);
-            request
+            return request
               .post('/mintFTCommitment')
               .use(prefix(apiServerURL))
               .send({ outputCommitments: [erc20Commitments.mint[0]] })
               .set('Accept', 'application/json')
               .set('Authorization', bob.token)
-              .end(err => {
-                if (err) return done(err);
+              .end(_err => {
+                if (_err) return done(_err);
                 return done();
               });
           });
