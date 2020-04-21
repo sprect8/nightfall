@@ -88,8 +88,8 @@ export default class FtCommitmentMintComponent implements OnInit {
     const hexString = '0x' + hexValue.padStart(32, '0');
     this.ftCommitmentService.mintFTCommitment(hexString).subscribe(tokenDetails => {
       this.isRequesting = false;
-      this.toastr.success('Minted fungible token commitment successfully.', 'Success');
-      this.router.navigate(['/overview'], { queryParams: { selectedTab: 'ft-commitment' } });
+      this.toastr.info('Minting.');
+      this.createForm();
     }, error => {
         this.isRequesting = false;
         this.toastr.error('Please try again.', 'Error');

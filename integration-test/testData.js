@@ -48,6 +48,7 @@ export default {
       // commitment while mint
       get mintCommitment() {
         return utils.concatenateThenHash(
+          `0x${utils.strip0x(this.address).padStart(64, '0')}`,
           utils.strip0x(this.tokenId).slice(-(LEAF_HASHLENGTH * 2)),
           alice.pk,
           this.salt, // salt - set at erc-721 commitment mint (step 4)
@@ -57,6 +58,7 @@ export default {
       // commitment while transfer
       get transferCommitment() {
         return utils.concatenateThenHash(
+          `0x${utils.strip0x(this.address).padStart(64, '0')}`,
           utils.strip0x(this.tokenId).slice(-(LEAF_HASHLENGTH * 2)),
           bob.pk,
           this.transferredSalt, // S_B - set at erc-721 commitment transfer to bob (step 5)
@@ -76,6 +78,7 @@ export default {
           commitmentIndex: 0,
           get commitment() {
             return utils.concatenateThenHash(
+              `0x${utils.strip0x(this.address).padStart(64, '0')}`,
               this.value,
               alice.pk,
               this.salt === undefined ? '0x0' : this.salt, // salt - set at erc-20 commitment mint (step 10)
@@ -87,6 +90,7 @@ export default {
           commitmentIndex: 1,
           get commitment() {
             return utils.concatenateThenHash(
+              `0x${utils.strip0x(this.address).padStart(64, '0')}`,
               this.value,
               alice.pk,
               this.salt === undefined ? '0x0' : this.salt, // S_A - set at erc-20 commitment mint (step 11)
@@ -99,6 +103,7 @@ export default {
         commitmentIndex: 2,
         get commitment() {
           return utils.concatenateThenHash(
+            `0x${utils.strip0x(this.address).padStart(64, '0')}`,
             this.value,
             bob.pk,
             this.salt === undefined ? '0x0' : this.salt, // S_E - set at erc-20 commitment transfer (step 12)
@@ -110,6 +115,7 @@ export default {
         commitmentIndex: 3,
         get commitment() {
           return utils.concatenateThenHash(
+            `0x${utils.strip0x(this.address).padStart(64, '0')}`,
             this.value,
             alice.pk,
             this.salt === undefined ? '0x0' : this.salt, // S_F - set at erc-20 commitment transfer (step 12)
@@ -128,6 +134,7 @@ export default {
       },
       get commitment() {
         return utils.concatenateThenHash(
+          `0x${utils.strip0x(this.address).padStart(64, '0')}`,
           this.value,
           alice.pk,
           this.salt === undefined ? '0x0' : this.salt, // S_A - set at erc-20 commitment mint (step 18)
@@ -141,6 +148,7 @@ export default {
           commitmentIndex: 5,
           get commitment() {
             return utils.concatenateThenHash(
+              `0x${utils.strip0x(this.address).padStart(64, '0')}`,
               this.value,
               bob.pk,
               this.salt === undefined ? '0x0' : this.salt, // salt - set at erc-20 commitment mint (step 18)
@@ -153,6 +161,7 @@ export default {
           commitmentIndex: 6,
           get commitment() {
             return utils.concatenateThenHash(
+              `0x${utils.strip0x(this.address).padStart(64, '0')}`,
               this.value,
               alice.pk,
               this.salt === undefined ? '0x0' : this.salt, // salt - set at erc-20 commitment mint (step 18)

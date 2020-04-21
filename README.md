@@ -37,12 +37,6 @@ These instructions give the most direct path to a working Nightfall setup. The a
 compute-intensive and so a high-end processor is preferred. Depending on your machine, setup can
 take one to several hours.
 
-### Truffle
-
-If you are familiar with [Truffle](https://github.com/trufflesuite/truffle#readme) and would like a
-Truffle-specific way to get started, check out the
-[Nightfall Truffle Box](https://github.com/truffle-box/nightfall-box#nightfall-truffle-box).
-
 ### Supported hardware & prerequisites
 
 Mac and Linux machines with at least 16GB of memory and 10GB of disk space are supported.
@@ -125,9 +119,7 @@ that you have provisioned enough memory for Docker, as described above:
 ./nightfall-generate-trusted-setup
 ```
 
-Note that this is a completely automated run: although questions will be asked by the script they
-will automatically receive a 'yes' answer. Further documentation on the setup process is in
-[the zkp module documentation](zkp/README.md).
+Note that this is an automated run. For an initial installation, select the option to generate all files. For more information on the MiMC hashing option and further documentation on the setup process, see [the zkp module documentation](zkp/README.md).
 
 Please be patient - you can check progress in the terminal window and by using `docker stats` in
 another terminal.
@@ -147,17 +139,19 @@ then you might need to 're-install' certain features due to code changes. First 
 docker-compose -f docker-compose.yml build
 ```
 
-It's important to re-run the trusted setup if any of the `.code` files have been modified since your
-last pull of the repo. You can check with:
+It's important to re-run the trusted setup if any of the `.zok` files have been modified since your last pull of the repo. You can check by comparing the latest version of Nightlite (where the `.zok` files are stored):
 
 ```sh
-git diff master@{1} master ./zkp/code/gm17
+npm info @eyblockchain/nightlite version
+```
+with the version you are using:
+
+```sh
+cd zkp
+npm list @eyblockchain/nightlite
 ```
 
-_(Press `q` to exit this log at any time)._
-
-If this shows that some files have been changed, then before anything else, you will also need to
-re-run:
+If this shows that your version is behind, then you may need to re-install, as above, then re-run:
 
 ```sh
 ./nightfall-generate-trusted-setup
