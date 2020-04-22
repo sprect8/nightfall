@@ -14,7 +14,7 @@ const router = express.Router();
  * @apiName Login
  * @apiGroup User
  *
- * @apiParam (Request body) {String} name The User name
+ * @apiParam (Request body) {String} name     The User name
  * @apiParam (Request body) {String} password The User Password
  *
  * @apiExample {js} Example usage:
@@ -55,8 +55,8 @@ router.route('/login').post(loginHandler);
  * @apiName SignUp
  * @apiGroup User
  *
- * @apiParam (Request body) {String} name The User name
- * @apiParam (Request body) {String} email The User Email
+ * @apiParam (Request body) {String} name     The User name
+ * @apiParam (Request body) {String} email    The User Email
  * @apiParam (Request body) {String} password The User Password
  *
  * @apiExample {js} Example usage:
@@ -101,8 +101,8 @@ router.route('/createAccount').post(createAccountHandler);
  *   .success((res, status) => doSomethingHere())
  *   .error((err, status) => doSomethingHere());
  *
- * @apiSuccess (Success 200) {Number} nftCommitmentCount Total no. of ERC-721 commitments.
- * @apiSuccess (Success 200) {Number} ftCommitmentCount Total no. of ERC-20 commitments.
+ * @apiSuccess (Success 200) {Number} nftCommitmentCount  Total no. of ERC-721 commitments.
+ * @apiSuccess (Success 200) {Number} ftCommitmentCount   Total no. of ERC-20 commitments.
  *
  * @apiSuccessExample {json} Success response:
  *     HTTPS 200 OK
