@@ -1,9 +1,9 @@
 name: Run Nightfall test suite
 
 on:
-  pull_request:
+  push:
     branches:
-      - master
+      - liju.jose/test-westlad/kyc2
 
 jobs:
   eslint-test:
@@ -44,11 +44,14 @@ jobs:
           chmod -R 777 zkp/code/
           npm run setupAll
       - name: Remove containers
-        run: docker-compose down -v
+        run: |
+          docker-compose down -v
+          df -h
       - name: Deploy zkp contracts
         run: |
           docker-compose run --rm truffle-zkp compile --all
           docker-compose run --rm truffle-zkp migrate --reset --network=default
+          df -h
       - name: Run zkp unit tests
         run: docker-compose run --rm zkp npm test
 
