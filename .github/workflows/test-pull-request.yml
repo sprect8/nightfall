@@ -167,3 +167,42 @@ jobs:
         with:
           name: integration-test-logs
           path: nightfall_test.log
+
+  integration-test-compliance:
+    name: Run integration test (compliance)
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '10.15.3'
+      - name: Pull docker image
+        run: |
+          docker rmi $(docker images -aq)
+          docker pull zokrates/zokrates:0.5.1
+      - name: Increase swap memory
+        run: |
+          sudo usermod -a -G sudo runner
+          sudo swapoff -a
+          sudo fallocate -l 12G /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
+      - name: Generate the keys and constraint files for Zero Knowledge Proofs
+        run: |
+          chmod -R 777 zkp/code/
+          npm run setupAll-rc
+      - name: Remove containers
+        run: docker-compose down -v
+      - name: Move ft-batch-transfer to make space
+        run: |
+          sudo mv zkp/code/gm17/ft-batch-transfer /dev/ft-batch-transfer
+          sudo ln -s /dev/ft-batch-transfer zkp/code/gm17/ft-batch-transfer
+          df -h
+      - name: Run integration test
+        run: ./nightfall-test compliance
+      - name: If integration test failed, upload logs files as artifacts
+        if: failure()
+        uses: actions/upload-artifact@master
+        with:
+          name: integration-test-logs
+          path: nightfall_test.log
