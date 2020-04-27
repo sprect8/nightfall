@@ -12,8 +12,11 @@ contract PKD{
     bytes32 ZkpPublicKey;
   }
 
-  mapping(address => User) users;
-  mapping(bytes32 => address) byName;
+  mapping (address => User) private users;
+
+  mapping (bytes32 => address) private byName;
+  mapping (bytes32 => address) private byZkpPublicKey;
+
   bytes32[] private names;
 
   function getWhisperPublicKeyFromName(bytes32 name) public view returns(string memory){
@@ -38,10 +41,15 @@ contract PKD{
 
   function setZkpPublicKey(bytes32 pk) public{
     users[msg.sender].ZkpPublicKey = pk;
+    byZkpPublicKey[pk] = msg.sender;
   }
 
   function getNameFromAddress(address addr) public view returns(bytes32){
     return users[addr].name;
+  }
+
+  function getNameFromZkpPublicKey(bytes32 pk) public view returns(bytes32){
+    return users[byZkpPublicKey[pk]].name;
   }
 
   function getAddressFromName(bytes32 name) public view returns(address){
