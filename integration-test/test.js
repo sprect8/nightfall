@@ -127,6 +127,11 @@ describe('****** Integration Test ******\n', function() {
    *  Finally, Alice burns the received ERC-721 token.
    */
   describe('*** ERC-721 and ERC-721 Commitment ***', function() {
+    before(function() {
+      if (process.env.COMPLIANCE) {
+        this.skip();
+      }
+    });
     context(`${alice.name} tasks: `, function() {
       /*
        * Step 3.
@@ -340,6 +345,35 @@ describe('****** Integration Test ******\n', function() {
    *  Finally, Alice burns her received ERC-20 tokens and her remaining ERC-20 token commitment.
    */
   describe('*** ERC-20 and ERC-20 Commitment ***', function() {
+    /*
+     *  Mint ERC-20 helper token commitment, so that bob publickey is added to public-key-tree contract
+     */
+    before(done => {
+      if (!process.env.COMPLIANCE) {
+        return done();
+      }
+      return request
+        .post('/mintFToken')
+        .use(prefix(apiServerURL))
+        .send({
+          value: erc20.mint,
+        })
+        .set('Accept', 'application/json')
+        .set('Authorization', bob.token)
+        .end(err => {
+          if (err) return done(err);
+          return request
+            .post('/mintFTCommitment')
+            .use(prefix(apiServerURL))
+            .send({ outputCommitments: [erc20Commitments.mint[0]] })
+            .set('Accept', 'application/json')
+            .set('Authorization', bob.token)
+            .end(_err => {
+              if (_err) return done(_err);
+              return done();
+            });
+        });
+    });
     context(`${alice.name} tasks: `, function() {
       /*
        * Step 9.
@@ -391,10 +425,9 @@ describe('****** Integration Test ******\n', function() {
 
             erc20Commitments.mint[0].salt = res.body.data.salt; // set Salt from response to calculate and verify commitment.
             erc20Commitments.mint[0].address = erc20Address;
+            erc20Commitments.mint[0].commitmentIndex = res.body.data.commitmentIndex;
+
             expect(res.body.data.commitment).to.be.equal(erc20Commitments.mint[0].commitment);
-            expect(res.body.data.commitmentIndex).to.be.equal(
-              erc20Commitments.mint[0].commitmentIndex,
-            );
             return done();
           });
       });
@@ -417,10 +450,10 @@ describe('****** Integration Test ******\n', function() {
 
             erc20Commitments.mint[1].salt = res.body.data.salt; // set Salt from response to calculate and verify commitment.
             erc20Commitments.mint[1].address = erc20Address;
+            erc20Commitments.mint[1].commitmentIndex = res.body.data.commitmentIndex;
+
             expect(res.body.data.commitment).to.be.equal(erc20Commitments.mint[1].commitment);
-            expect(res.body.data.commitmentIndex).to.be.equal(
-              erc20Commitments.mint[1].commitmentIndex,
-            );
+
             return done();
           });
       });
@@ -447,17 +480,21 @@ describe('****** Integration Test ******\n', function() {
             erc20Commitments.transfer.address = erc20Address;
             erc20Commitments.change.salt = outputCommitments[1].salt; // set Salt from response to calculate and verify commitment.
             erc20Commitments.change.address = erc20Address;
+            erc20Commitments.change.commitmentIndex = outputCommitments[1].commitmentIndex;
 
             expect(outputCommitments[0].commitment).to.be.equal(
               erc20Commitments.transfer.commitment,
             );
             expect(outputCommitments[0].commitmentIndex).to.be.equal(
-              erc20Commitments.transfer.commitmentIndex,
+              erc20Commitments.mint[1].commitmentIndex + 1,
             );
             expect(outputCommitments[1].commitment).to.be.equal(erc20Commitments.change.commitment);
             expect(outputCommitments[1].commitmentIndex).to.be.equal(
-              erc20Commitments.change.commitmentIndex,
+              erc20Commitments.mint[1].commitmentIndex + 2,
             );
+
+            erc20Commitments.transfer.commitmentIndex = outputCommitments[0].commitmentIndex;
+            erc20Commitments.change.commitmentIndex = outputCommitments[1].commitmentIndex;
             return done();
           });
       });
@@ -487,10 +524,6 @@ describe('****** Integration Test ******\n', function() {
       });
     });
     context(`${bob.name} tasks: `, function() {
-      /*
-       * This acts as a delay, which is needed to ensure that the recipient will be able to receive transferred data through Whisper.
-       */
-      before(done => setTimeout(done, 10000));
       /*
        * Step 14.
        * Burn ERC-20 Commitment.
@@ -567,6 +600,11 @@ describe('****** Integration Test ******\n', function() {
   });
 
   describe('*** Batch ERC 20 commitment transfer ***', function() {
+    before(function() {
+      if (process.env.COMPLIANCE) {
+        this.skip();
+      }
+    });
     /*
      * Step 17.
      * Mint ERC-20 token,
@@ -612,10 +650,9 @@ describe('****** Integration Test ******\n', function() {
 
           erc20CommitmentBatchTransfer.salt = res.body.data.salt; // set Salt from response to calculate and verify commitment.
           erc20CommitmentBatchTransfer.address = erc20Address;
+          erc20CommitmentBatchTransfer.commitmentIndex = res.body.data.commitmentIndex;
+
           expect(res.body.data.commitment).to.be.equal(erc20CommitmentBatchTransfer.commitment);
-          expect(res.body.data.commitmentIndex).to.be.equal(
-            erc20CommitmentBatchTransfer.commitmentIndex,
-          );
           return done();
         });
     });
@@ -657,7 +694,7 @@ describe('****** Integration Test ******\n', function() {
             erc20CommitmentBatchTransfer.transferData[0].commitment,
           );
           expect(res.body.data[0].commitmentIndex).to.be.equal(
-            erc20CommitmentBatchTransfer.transferData[0].commitmentIndex,
+            erc20CommitmentBatchTransfer.commitmentIndex + 1,
           );
           return done();
         });
