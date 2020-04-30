@@ -11,6 +11,7 @@ import { ftCommitmentRoutes, ftRoutes, nftCommitmentRoutes, nftRoutes } from './
 import vkController from './vk-controller'; // this import TRIGGERS the runController() script within.
 import { formatResponse, formatError, errorHandler } from './middlewares';
 import logger from './logger';
+import complianceInit from './compliance-init';
 
 const app = express();
 
@@ -78,6 +79,7 @@ We TRIGGER the merkle-tree microservice's event filter from here.
 TODO: consider whether there is a better way to do this when the application starts-up.
 */
 if (process.env.NODE_ENV !== 'test') merkleTree.startEventFilter();
+if (process.env.COMPLIANCE === 'true') complianceInit.startCompliance();
 
 const server = app.listen(80, '0.0.0.0', () =>
   logger.info('Zero-Knowledge-Proof RESTful API server started on ::: 80'),

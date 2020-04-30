@@ -4,6 +4,7 @@ import {
   transferEtherToAccount,
   getBalance,
   unlockAccount,
+  getCoinbaseAddress,
 } from '../services/accounts';
 import logger from '../logger';
 
@@ -56,9 +57,19 @@ async function unlockUserAccount(req, res, next) {
   }
 }
 
+async function getCoinbase(req, res, next) {
+  try {
+    res.data = await getCoinbaseAddress();
+    next();
+  } catch (err) {
+    next(err);
+  }
+}
+
 router.post('/createAccount', createAccount);
 router.get('/getAccountBalance', getAccountBalance);
 router.post('/unlockAccount', unlockUserAccount);
 router.post('/transferEther', transferEther);
+router.get('/getCoinbase', getCoinbase);
 
 export default router;

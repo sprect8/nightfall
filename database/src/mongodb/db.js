@@ -10,6 +10,7 @@ import {
   ftTransactionSchema,
   ftCommitmentSchema,
   ftCommitmentTransactionSchema,
+  blacklistSchema,
 } from '../models';
 
 const mongo = config.get('mongo');
@@ -48,6 +49,7 @@ export default class DB {
         `${username}_${COLLECTIONS.FT_COMMITMENT_TRANSACTION}`,
         ftCommitmentTransactionSchema,
       ),
+      blacklist: database.model(`${username}_${COLLECTIONS.BLACKLIST}`, blacklistSchema),
     };
   }
 
@@ -62,10 +64,10 @@ export default class DB {
     }
   }
 
-  async getData(modelName, query = {}) {
+  async getData(modelName, query = {}, projection) {
     try {
       const model = this.Models[modelName];
-      const data = await model.find(query).exec();
+      const data = await model.find(query, projection).exec();
       return Promise.resolve(data);
     } catch (e) {
       logger.error('DB error', e);
