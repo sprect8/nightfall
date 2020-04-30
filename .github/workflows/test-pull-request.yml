@@ -1,9 +1,9 @@
 name: Run Nightfall test suite
 
 on:
-  pull_request:
+  push:
     branches:
-      - master
+      - liju.jose/node-package-bug-fix
 
 jobs:
   eslint-test:
