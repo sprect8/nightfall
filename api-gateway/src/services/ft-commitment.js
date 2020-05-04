@@ -614,6 +614,14 @@ export async function consolidationTransfer(req, res, next) {
     res.data = outputCommitments;
     next();
   } catch (err) {
+    // insert failed transaction into db.
+    await db.insertFTCommitmentTransaction(req.user, {
+      ...req.body,
+      sender: req.user,
+      isTransferred: true,
+      isFailed: true,
+    });
+    logger.error(err);
     next(err);
   }
 }
