@@ -16,7 +16,7 @@ import { NgSelectComponent } from '@ng-select/ng-select';
   styleUrls: ['./index.css']
 })
 
-export default class FtCommitmentTrasnferComponent implements OnInit , AfterContentInit {
+export default class FtCommitmentConsolidationTrasnferComponent implements OnInit , AfterContentInit {
 
   /**
    *  To store ERC-20 token commitment transaction objects
@@ -129,50 +129,30 @@ export default class FtCommitmentTrasnferComponent implements OnInit , AfterCont
   /**
    * Method to transfer two ERC-20 token commitement to selected user.
    */
-  initiateTransfer () {
+  initiateConsolidationTransfer () {
     const count = this.selectedCommitmentList.length;
     console.log('count', count, this.selectedCommitmentList);
-    if (!count || count !== 2) {
-      this.toastr.error('Invalid commitment Selection.');
+    if (!count || count !== 20) {
+      this.toastr.warning('Invalid commitment Selection.', 'Warning');
       return;
-    }
-    const [commitment1, commitment2] = this.selectedCommitmentList;
-    const {
-      transferValue,
-      transactions
-    } = this;
+    } 
 
-    if (!transferValue || !this.receiverName) {
-      this.toastr.error('All fields are mandatory');
+    if (!this.receiverName) {
+      this.toastr.warning('All fields are mandatory', 'Warning');
       return;
     }
 
     this.isRequesting = true;
-    let returnValue = Number(commitment1['value']) + Number(commitment2['value']);
-    returnValue -= transferValue;
-    console.log('RETURNVALUE', returnValue, transferValue, this.toHex(returnValue), this.toHex(transferValue));
-    this.ftCommitmentService.transferFTCommitment(
-      [commitment1, commitment2],
-      [{value: this.toHex(transferValue)}, {value: this.toHex(returnValue)}],
-      this.receiverName
+    const receiver = { name: this.receiverName };
+    this.ftCommitmentService.consolidationFTCommitmentTransfer(
+      this.selectedCommitmentList,
+      {value: this.toHex(this.transferValue)},
+      receiver,
     ).subscribe( data => {
         this.isRequesting = false;
-        this.toastr.info(`Transferring to ${this.receiverName}.`);
-
-        // delete used commitments from commitment list
-        transactions.splice(transactions.indexOf(commitment1), 1);
-        transactions.splice(transactions.indexOf(commitment2), 1);
-        this.transactions = [ ...this.transactions ];
-
-        // reset the form
-        this.selectedCommitmentList = [];
-        this.transferValue = null;
-        this.receiverName = null;
-
-        // navigate to overview page if no more commitment left
-        if (!transactions.length) {
-          this.router.navigate(['/overview'], { queryParams: { selectedTab: 'ft-commitment' } });
-        }
+        this.toastr.success('Transferred fungible token commitments to '+this.receiverName, 'Success');
+        this.getFTCommitments();
+        this.router.navigate(['/overview'], { queryParams: { selectedTab: 'ft-commitment' } });
       }, error => {
         this.isRequesting = false;
         this.toastr.error('Please try again', 'Error');
@@ -218,6 +198,19 @@ export default class FtCommitmentTrasnferComponent implements OnInit , AfterCont
     }
     const hexValue = (num).toString(16);
     return '0x' + hexValue.padStart(32, '0');
+  }
+
+  /**
+   * Method to sum total number of tokens selected for transactions
+   *
+   */
+  getTotalTransferValue() {
+    let total = 0;
+    this.selectedCommitmentList.map(item => {
+    total += this.utilService.convertToNumber(item.value);
+    });
+    this.transferValue = total;
+    return total;
   }
 
 }
