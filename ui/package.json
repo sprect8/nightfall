@@ -45,7 +45,7 @@
     "minimist": ">=1.2.3",
     "ng2-completer": "^2.0.8",
     "ng2-simple-global": "^1.2.5",
-    "ng2-smart-table": "^1.4.0",
+    "ng2-smart-table": "1.4.0",
     "ngx-toastr": "^10.0.4",
     "popper.js": "^1.12.3",
     "rxjs": "^6.5.2",
@@ -73,6 +73,6 @@
     "protractor": "6.0.0",
     "ts-node": "~4.1.0",
     "tslint": "^5.18.0",
-    "typescript": "^3.1.6"
+    "typescript": "3.1.6"
   }
 }
