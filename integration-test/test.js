@@ -668,7 +668,7 @@ describe('****** Integration Test ******\n', function() {
       if (!process.env.MIMC) {
         this.skip();
       }
-      setTimeout(done, 30000);
+      setTimeout(done, 10000);
     });
     context(`${bob.name} tasks: `, function() {
       /*
