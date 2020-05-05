@@ -388,7 +388,7 @@ export async function burnFTCommitment(req, res, next) {
  */
 export async function simpleFTCommitmentBatchTransfer(req, res, next) {
   let changeIndex;
-  let changeData = {};
+  let changeData;
 
   const {
     inputCommitments: [inputCommitment],
@@ -476,6 +476,8 @@ export async function simpleFTCommitmentBatchTransfer(req, res, next) {
       });
     }
 
+    if (changeIndex) commitments.push(changeData);
+
     await db.insertFTCommitmentTransaction(req.user, {
       inputCommitments: [inputCommitment],
       outputCommitments: commitments,
@@ -554,6 +556,13 @@ export async function simpleFTCommitmentBatchTransfer(req, res, next) {
 export async function consolidationTransfer(req, res, next) {
   const { receiver, inputCommitments } = req.body;
 
+  // send empty response if NODE_ENV is not set
+  // this is case where we want implement RabbitMQ
+  // NODE_ENV is only set to value 'test' at time integration test suit run.
+  if (!process.env.NODE_ENV) {
+    res.send();
+  }
+
   try {
     // Generate a new one-time-use Ethereum address for the sender to use
     const password = (req.user.address + Date.now()).toString();
@@ -567,34 +576,28 @@ export async function consolidationTransfer(req, res, next) {
     req.body.sender = {};
     req.body.sender.secretKey = (await db.fetchUser(req.user)).secretKey;
 
-    const {
-      consolidatedCommitment: outputCommitments,
-      txReceipt,
-    } = await zkp.consolidationTransfer({ address }, req.body);
-
-    const transferCommitment = outputCommitments;
-    transferCommitment.owner = receiver;
-    transferCommitment.commitmentIndex = parseInt(transferCommitment.commitmentIndex, 16);
+    const { outputCommitment, txReceipt } = await zkp.consolidationTransfer({ address }, req.body);
+    outputCommitment.owner = receiver;
 
     for (const inputCommitment of inputCommitments) {
       await db.updateFTCommitmentByCommitmentHash(req.user, inputCommitment.commitment, {
         outputCommitments: [{ owner: receiver }],
-        isTransferred: true,
+        isConsolidateTransferred: true,
       });
     }
 
     await db.insertFTCommitmentTransaction(req.user, {
       inputCommitments,
-      outputCommitments: [outputCommitments],
+      outputCommitments: [outputCommitment],
       receiver,
       sender: req.user,
-      isTransferred: true,
+      isConsolidateTransferred: true,
     });
 
     const user = await db.fetchUser(req.user);
 
     await sendWhisperMessage(user.shhIdentity, {
-      outputCommitments: [transferCommitment],
+      outputCommitments: [outputCommitment],
       blockNumber: txReceipt.receipt.blockNumber,
       receiver,
       sender: req.user,
@@ -602,9 +605,17 @@ export async function consolidationTransfer(req, res, next) {
       for: 'FTCommitment',
     });
 
-    res.data = outputCommitments;
+    res.data = outputCommitment;
     next();
   } catch (err) {
+    await db.insertFTCommitmentTransaction(req.user, {
+      inputCommitments,
+      outputCommitments: [req.body.outputCommitment],
+      receiver,
+      sender: req.user,
+      isConsolidateTransferred: true,
+      isFailed: true,
+    });
     next(err);
   }
 }
