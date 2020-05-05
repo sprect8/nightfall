@@ -159,7 +159,7 @@ export default {
 
   // dependent data
   async erc20CommitmentConsolidationTransfer() {
-    const { bob, erc20, erc20CommitmentBatchTransfer } = this;
+    const { alice, erc20, erc20CommitmentBatchTransfer } = this;
     return {
       mintCommitments: erc20CommitmentBatchTransfer.transferCommitments,
       transferCommitment: {
@@ -170,7 +170,7 @@ export default {
           return utils.concatenateThenHash(
             `0x${utils.strip0x(erc20.contractAddress).padStart(64, '0')}`,
             this.value,
-            bob.pk,
+            alice.pk,
             this.salt === undefined ? '0x0' : this.salt, // S_E - set at erc-20 commitment transfer (step 12)
           );
         },
