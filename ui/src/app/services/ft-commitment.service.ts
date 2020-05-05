@@ -39,12 +39,22 @@ export default class FtCommitmentService {
   /**
    * Method to initiate a HTTP request to fetch ERC-20 token commitments.
    *
+   * @param pageNo {Number} Page number
+   * @param limit {Number} Page limit
    */
-  getFTCommitments() {
+  getFTCommitments(pageNo?: number, limit?: number) {
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
     };
-    const url = config.apiGateway.root + 'getFTCommitments';
+    let url = config.apiGateway.root + 'getFTCommitments?';
+
+    if (pageNo) {
+      url += 'pageNo=' + pageNo + '&';
+    }
+
+    if (limit) {
+      url += 'limit=' + limit + '&';
+    }
 
     return this.http
       .get(url, httpOptions)

@@ -292,12 +292,13 @@ export default {
   },
 
   // fetch FT Commitments
-  getFTCommitments({ name }) {
+  getFTCommitments({ name }, qs) {
     const options = {
       url: `${url}/ft-commitments`,
       method: 'GET',
       json: true,
       headers: { loggedInUsername: name },
+      qs,
     };
     return requestWrapper(options);
   },
