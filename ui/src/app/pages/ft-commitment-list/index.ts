@@ -36,7 +36,7 @@ export default class FtCommitmentListComponent implements OnInit {
   /**
    * Total collection of objects to calculate pages for pagination.
    */
-  totalCollection: Promise<number>;
+  totalCollection: number;
 
   constructor(
     private toastr: ToastrService,
@@ -73,7 +73,7 @@ export default class FtCommitmentListComponent implements OnInit {
         data['data'] &&
         data['data']['data'] &&
         data['data']['data'].length) {
-          this.totalCollection = Promise.resolve(parseInt(data['data']['totalCount'], 10));
+          this.totalCollection = parseInt(data['data']['totalCount']);
           this.transactions = data['data']['data'].map((tx, indx) => {
             tx.selected = false;
             tx.id = indx;
