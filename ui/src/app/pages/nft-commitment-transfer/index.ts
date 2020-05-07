@@ -98,7 +98,7 @@ export default class NftCommitmentTransferComponent implements OnInit, AfterCont
     } = this;
     const selectedCommitment = this.selectedCommitmentList[0];
     if (!selectedCommitment || !receiverName) {
-      this.toastr.error('All fields are mandatory');
+      this.toastr.warning('All fields are mandatory', 'Warning');
       return;
     }
 
@@ -125,7 +125,7 @@ export default class NftCommitmentTransferComponent implements OnInit, AfterCont
         }
       }, error => {
         this.isRequesting = false;
-        this.toastr.error('Please try again', 'Error');
+        this.toastr.error('Please try again.', 'Error');
     });
   }
 
@@ -160,7 +160,7 @@ export default class NftCommitmentTransferComponent implements OnInit, AfterCont
       }
     }, error => {
       this.isRequesting = false;
-      this.toastr.error('Please try again.', error);
+      this.toastr.error('Please try again.', 'Error');
     });
   }
 
@@ -169,12 +169,10 @@ export default class NftCommitmentTransferComponent implements OnInit, AfterCont
    * @param item {Object} Item to be removed.
    */
   onRemove(item) {
-    console.log('selected items', this.selectedCommitmentList, item);
     const newList = this.selectedCommitmentList.filter((it) => {
       return item._id !== it._id;
     });
     this.selectedCommitmentList = newList;
-    console.log('selected new items', this.selectedCommitmentList);
   }
 
   /**

@@ -74,13 +74,13 @@ export class NavComponent implements OnInit, OnDestroy {
         if (data.error) {
           this.toastr.error(
             `ft commitment mint failed: ${data.error.message || placeholder}`,
-            null,
+            'Error',
             toasterSettings
           );
         } else {
           this.toastr.success(
             `ft commitment minted successfully.`,
-            null,
+            'Success',
             toasterSettings
           );
         }
@@ -91,13 +91,13 @@ export class NavComponent implements OnInit, OnDestroy {
         if (data.error) {
           this.toastr.error(
             `ft commitment transfer failed: ${data.error.message || placeholder}`,
-            null,
+            'Error',
             toasterSettings
           );
         } else {
           this.toastr.success(
             `ft commitment value ${Number(data[0].value)} transferred successfully to ${data[0].owner.name}`,
-            null,
+            'Success',
             toasterSettings
           );
         }
@@ -108,13 +108,13 @@ export class NavComponent implements OnInit, OnDestroy {
         if (data.error) {
           this.toastr.error(
             `ft commitment burn failed: ${data.error.message || placeholder}`,
-            null,
+            'Error',
             toasterSettings
           );
         } else {
           this.toastr.success(
             `ft commitment burned successfully.`,
-            null,
+            'Success',
             toasterSettings
           );
         }
@@ -125,13 +125,13 @@ export class NavComponent implements OnInit, OnDestroy {
           if (data.error) {
             this.toastr.error(
               `ft commitment batch transfer failed: ${data.error.message || placeholder}`,
-              null,
+              'Error',
               toasterSettings
             );
           } else {
             this.toastr.success(
               `ft commitment batch transferred successfully.`,
-              null,
+              'Success',
               toasterSettings
             );
           }
@@ -142,13 +142,13 @@ export class NavComponent implements OnInit, OnDestroy {
           if (data.error) {
             this.toastr.error(
               `nft commitment mint failed: ${data.error.message || placeholder}`,
-              null,
+              'Error',
               toasterSettings
             );
           } else {
             this.toastr.success(
               `nft commitment minted successfully.`,
-              null,
+              'Success',
               toasterSettings
             );
           }
@@ -159,13 +159,13 @@ export class NavComponent implements OnInit, OnDestroy {
           if (data.error) {
             this.toastr.error(
               `nft commitment transfer failed: ${data.error.message || placeholder}`,
-              null,
+              'Error',
               toasterSettings
             );
           } else {
             this.toastr.success(
               `nft commitment transferred successfully.`,
-              null,
+              'Success',
               toasterSettings
             );
           }
@@ -176,13 +176,13 @@ export class NavComponent implements OnInit, OnDestroy {
           if (data.error) {
             this.toastr.error(
               `nft commitment burn failed: ${data.error.message || placeholder}`,
-              null,
+              'Error',
               toasterSettings
             );
           } else {
             this.toastr.success(
               `nft commitment burned successfully.`,
-              null,
+              'Success',
               toasterSettings
             );
           }
