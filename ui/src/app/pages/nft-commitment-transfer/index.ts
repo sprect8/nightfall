@@ -5,6 +5,7 @@ import NftCommitmentService from '../../services/nft-commitment.service';
 import UserService from '../../services/user.service';
 import { UtilService } from '../../services/utils/util.service';
 import { NgSelectComponent } from '@ng-select/ng-select';
+import { toastrConfig } from '../../config/config';
 
 /**
  *  Spend token component, which is used for rendering the page of transfer ERC-721 token commitment to the selected receipent.
@@ -108,7 +109,7 @@ export default class NftCommitmentTransferComponent implements OnInit, AfterCont
     ).subscribe( data => {
         this.isRequesting = false;
 
-        this.toastr.info(`Transferring to ${receiverName}.`);
+        this.toastr.show(`Transferring to ${receiverName}.`, '', toastrConfig, 'transferNFTCommitment');
 
         // delete used commitment from commitment list
         transactions.splice(transactions.indexOf(selectedCommitment), 1);

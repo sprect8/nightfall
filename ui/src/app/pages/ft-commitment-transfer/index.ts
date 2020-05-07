@@ -5,6 +5,7 @@ import FtCommitmentService from '../../services/ft-commitment.service';
 import UserService from '../../services/user.service';
 import { UtilService } from '../../services/utils/util.service';
 import { NgSelectComponent } from '@ng-select/ng-select';
+import { toastrConfig } from '../../config/config'
 
 /**
  *  ft-commitment trasfer component, which is used for rendering the page of transfer ERC-20 token commitments to the selected receipent.
@@ -157,7 +158,7 @@ export default class FtCommitmentTrasnferComponent implements OnInit , AfterCont
       this.receiverName
     ).subscribe( data => {
         this.isRequesting = false;
-        this.toastr.info(`Transferring to ${this.receiverName}.`);
+        this.toastr.show(`Transferring to ${this.receiverName}.`, '', toastrConfig, 'transferFTCommitment');
 
         // delete used commitments from commitment list
         transactions.splice(transactions.indexOf(commitment1), 1);

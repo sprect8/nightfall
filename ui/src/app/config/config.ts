@@ -24,3 +24,12 @@ export class Config {
     Object.assign(this, config[_currency]);
   }
 }
+/**
+ * toastr configuration for info notification
+ */
+export const toastrConfig: object = {
+    disableTimeOut: true,
+    tapToDismiss: false,
+    closeMethod: 'fadeOut',
+    onclick: false,
+};

@@ -51,6 +51,16 @@ export class NavComponent implements OnInit, OnDestroy {
       this.parseDataAndShowToaster(data);
     });
   }
+  
+  toastRemover(action) {
+    const toast = this.toastr.toasts;
+    for (let i=0; i < toast.length; i++) {
+      if (toast[i].portal.instance.toastPackage.toastType == action) {
+        this.toastr.clear(toast[i].toastId);
+        break;
+      }
+    }
+  }
 
   parseDataAndShowToaster(data) {
     const placeholder = `Something went wrong.`;
@@ -60,6 +70,7 @@ export class NavComponent implements OnInit, OnDestroy {
 
     switch (data.type) {
       case '/mintFTCommitment':
+        this.toastRemover('mintFTCommitment');
         if (data.error) {
           this.toastr.error(
             `ft commitment mint failed: ${data.error.message || placeholder}`,
@@ -76,6 +87,7 @@ export class NavComponent implements OnInit, OnDestroy {
         break;
 
       case '/transferFTCommitment':
+        this.toastRemover('transferFTCommitment');
         if (data.error) {
           this.toastr.error(
             `ft commitment transfer failed: ${data.error.message || placeholder}`,
@@ -92,6 +104,7 @@ export class NavComponent implements OnInit, OnDestroy {
         break;
 
       case '/burnFTCommitment':
+        this.toastRemover('burnFTCommitment');
         if (data.error) {
           this.toastr.error(
             `ft commitment burn failed: ${data.error.message || placeholder}`,
@@ -108,6 +121,7 @@ export class NavComponent implements OnInit, OnDestroy {
         break;
 
         case '/simpleFTCommitmentBatchTransfer':
+          this.toastRemover('simpleFTCommitmentBatchTransfer');
           if (data.error) {
             this.toastr.error(
               `ft commitment batch transfer failed: ${data.error.message || placeholder}`,
@@ -124,6 +138,7 @@ export class NavComponent implements OnInit, OnDestroy {
           break;
 
         case '/mintNFTCommitment':
+          this.toastRemover('mintNFTCommitment');
           if (data.error) {
             this.toastr.error(
               `nft commitment mint failed: ${data.error.message || placeholder}`,
@@ -140,6 +155,7 @@ export class NavComponent implements OnInit, OnDestroy {
           break;
 
         case '/transferNFTCommitment':
+          this.toastRemover('transferNFTCommitment');
           if (data.error) {
             this.toastr.error(
               `nft commitment transfer failed: ${data.error.message || placeholder}`,
@@ -156,6 +172,7 @@ export class NavComponent implements OnInit, OnDestroy {
           break;
 
         case '/burnNFTCommitment':
+          this.toastRemover('burnNFTCommitment');
           if (data.error) {
             this.toastr.error(
               `nft commitment burn failed: ${data.error.message || placeholder}`,
@@ -172,6 +189,7 @@ export class NavComponent implements OnInit, OnDestroy {
           break;
 
         case '/consolidationTransfer':
+          this.toastRemover('consolidationTransfer');
           if (data.error) {
             this.toastr.error(
               `ft commitment consolidation transfer failed: ${data.error.message || placeholder}`,
