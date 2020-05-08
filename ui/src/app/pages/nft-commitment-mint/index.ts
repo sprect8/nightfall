@@ -5,6 +5,7 @@ import NftCommitmentService from '../../services/nft-commitment.service';
 import NftService from '../../services/nft.service';
 import { UtilService } from '../../services/utils/util.service';
 import { NgSelectComponent } from '@ng-select/ng-select';
+import { toastrConfig } from '../../config/config'
 
 /**
  *  Mint token component, which is used for rendering the page of Mint ERC-721 token commitment.
@@ -78,7 +79,7 @@ export default class NftCommitmentMintComponent implements OnInit, AfterContentI
       this.selectedCommitment = this.selectedCommitmentList[0];
       this.nftCommitmentService.mintNFTCommitment(this.selectedCommitment).subscribe(tokenDetails => {
         this.isRequesting = false;
-        this.toastr.info('Minting.');
+        this.toastr.show('Minting non-fungible token.', '', toastrConfig, 'mintNFTCommitment');
 
         // delete used non-fungible token from token list
         this.selectedCommitmentList = [];

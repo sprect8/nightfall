@@ -6,6 +6,7 @@ import UserService from '../../services/user.service';
 import { UtilService } from '../../services/utils/util.service';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
+import { toastrConfig } from '../../config/config'
 
 /**
  *  ft-commitment trasfer component, which is used for rendering the page of transfer ERC-20 token commitments to the selected receipent.
@@ -179,7 +180,7 @@ export default class FtCommitmentBatchTrasnferComponent implements OnInit , Afte
     ).subscribe( data => {
         this.isRequesting = false;
 
-        this.toastr.info(`Transferring to selected receivers`);
+        this.toastr.show(`Transferring fungible token commitments to the selected receiver(s)`, '', toastrConfig, 'simpleFTCommitmentBatchTransfer');
 
         // reset the form
         while (this.transferDetails.length !== 0) {

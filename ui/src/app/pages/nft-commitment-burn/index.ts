@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import NftCommitmentService from '../../services/nft-commitment.service';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import UserService from '../../services//user.service';
+import { toastrConfig } from '../../config/config'
 
 /**
  * Burn private token component, which is used for rendering the page of burn ERC-721 commitment.
@@ -95,7 +96,7 @@ export default class NftCommitmentBurnComponent implements OnInit, AfterContentI
       this.receiverName,
     ).subscribe( data => {
         this.isRequesting = false;
-        this.toastr.info(`Burning.`);
+        this.toastr.show(`Burning non-fungible token commitment.`, '', toastrConfig, 'burnNFTCommitment');
 
         // delete used commitment from commitment list
         transactions.splice(transactions.indexOf(selectedCommitment), 1);
