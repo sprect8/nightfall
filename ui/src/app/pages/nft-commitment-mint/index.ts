@@ -79,7 +79,7 @@ export default class NftCommitmentMintComponent implements OnInit, AfterContentI
       this.selectedCommitment = this.selectedCommitmentList[0];
       this.nftCommitmentService.mintNFTCommitment(this.selectedCommitment).subscribe(tokenDetails => {
         this.isRequesting = false;
-        this.toastr.show('Minting non-fungible token.', '', toastrConfig, 'mintNFTCommitment');
+        this.toastr.show('Minting non-fungible token commitment.', '', toastrConfig, 'mintNFTCommitment');
 
         // delete used non-fungible token from token list
         this.selectedCommitmentList = [];

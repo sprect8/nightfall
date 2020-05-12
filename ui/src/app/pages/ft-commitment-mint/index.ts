@@ -91,7 +91,7 @@ export default class FtCommitmentMintComponent implements OnInit {
     console.log('Hexstring::', hexString);
     this.ftCommitmentService.mintFTCommitment(hexString).subscribe(tokenDetails => {
       this.isRequesting = false;
-      this.toastr.show('Minting fungible token.', '', toastrConfig, 'mintFTCommitment');
+      this.toastr.show('Minting fungible token commitment.', '', toastrConfig, 'mintFTCommitment');
       this.createForm();
     }, error => {
         this.isRequesting = false;

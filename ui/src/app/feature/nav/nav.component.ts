@@ -73,13 +73,13 @@ export class NavComponent implements OnInit, OnDestroy {
         this.toastRemover('mintFTCommitment');
         if (data.error) {
           this.toastr.error(
-            `ft commitment mint failed: ${data.error.message || placeholder}`,
+            `Failed to mint fungible token commitment`,
             null,
             toasterSettings
           );
         } else {
           this.toastr.success(
-            `ft commitment minted successfully.`,
+            `Successfully minted fungible token commitment`,
             null,
             toasterSettings
           );
@@ -90,13 +90,13 @@ export class NavComponent implements OnInit, OnDestroy {
         this.toastRemover('transferFTCommitment');
         if (data.error) {
           this.toastr.error(
-            `ft commitment transfer failed: ${data.error.message || placeholder}`,
+            `Failed fungible token commitment transfer`,
             null,
             toasterSettings
           );
         } else {
           this.toastr.success(
-            `ft commitment value ${Number(data[0].value)} transferred successfully to ${data[0].owner.name}`,
+            `Successfully transferred fungible token commitment value ${Number(data[0].value)} to ${data[0].owner.name}`,
             null,
             toasterSettings
           );
@@ -107,13 +107,13 @@ export class NavComponent implements OnInit, OnDestroy {
         this.toastRemover('burnFTCommitment');
         if (data.error) {
           this.toastr.error(
-            `ft commitment burn failed: ${data.error.message || placeholder}`,
+            `Failed burning fungible token commitment`,
             null,
             toasterSettings
           );
         } else {
           this.toastr.success(
-            `ft commitment burned successfully.`,
+            `Successfully burned fungible token commitment`,
             null,
             toasterSettings
           );
@@ -124,13 +124,13 @@ export class NavComponent implements OnInit, OnDestroy {
           this.toastRemover('simpleFTCommitmentBatchTransfer');
           if (data.error) {
             this.toastr.error(
-              `ft commitment batch transfer failed: ${data.error.message || placeholder}`,
+              `Failed batch transfer of fungible token commitments`,
               null,
               toasterSettings
             );
           } else {
             this.toastr.success(
-              `ft commitment batch transferred successfully.`,
+              `Successfully transferred fungible token commitments to selected reciever(s) `,
               null,
               toasterSettings
             );
@@ -141,13 +141,13 @@ export class NavComponent implements OnInit, OnDestroy {
           this.toastRemover('mintNFTCommitment');
           if (data.error) {
             this.toastr.error(
-              `nft commitment mint failed: ${data.error.message || placeholder}`,
+              `Failed to mint non-fungible token commitment`,
               null,
               toasterSettings
             );
           } else {
             this.toastr.success(
-              `nft commitment minted successfully.`,
+              `Successfully minted non-fungible token commitment`,
               null,
               toasterSettings
             );
@@ -158,13 +158,13 @@ export class NavComponent implements OnInit, OnDestroy {
           this.toastRemover('transferNFTCommitment');
           if (data.error) {
             this.toastr.error(
-              `nft commitment transfer failed: ${data.error.message || placeholder}`,
+              `Failed to transfer non-fungible token commitment`,
               null,
               toasterSettings
             );
           } else {
             this.toastr.success(
-              `nft commitment transferred successfully.`,
+              `Successfully transferred non-fungible token commitment to reciever`,
               null,
               toasterSettings
             );
@@ -175,13 +175,13 @@ export class NavComponent implements OnInit, OnDestroy {
           this.toastRemover('burnNFTCommitment');
           if (data.error) {
             this.toastr.error(
-              `nft commitment burn failed: ${data.error.message || placeholder}`,
+              `Failed to burn non-fungible token commitment`,
               null,
               toasterSettings
             );
           } else {
             this.toastr.success(
-              `nft commitment burned successfully.`,
+              `Successfully burned non-fungible token commitment`,
               null,
               toasterSettings
             );
@@ -192,13 +192,13 @@ export class NavComponent implements OnInit, OnDestroy {
           this.toastRemover('consolidationTransfer');
           if (data.error) {
             this.toastr.error(
-              `ft commitment consolidation transfer failed: ${data.error.message || placeholder}`,
+              `Failed consolidation transfer of fungible token commitments to reciever`,
               null,
               toasterSettings
             );
           } else {
             this.toastr.success(
-              `ft commitment consolidation transferred successfully.`,
+              `Successfully transferred consolidated fungible token commitment to reciever`,
               null,
               toasterSettings
             );
