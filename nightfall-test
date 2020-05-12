@@ -18,6 +18,15 @@ launchContainersAndRunIntegrationTest(){
   docker-compose run --rm truffle-offchain migrate --reset --network=default
   docker-compose run --rm truffle-zkp migrate --reset --network=default
 
+  printf "${GREEN}*** Launching independent containers ***${NC}\n"
+  # these container take time to setup
+  # starting them first to avoid ECONNREFUSED error
+  # as other containers depends on them
+  docker-compose up -d mongo-merkle-tree
+  docker-compose up -d mongo-nightfall
+
+  sleep 10
+
   printf "${GREEN}*** Launching containerized microservices ***${NC}\n"
   if [[ -f docker-compose.override.yml ]]
   then

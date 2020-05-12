@@ -153,6 +153,7 @@ export default class FtCommitmentConsolidationTrasnferComponent implements OnIni
     ).subscribe( data => {
         this.isRequesting = false;
         this.toastr.show(`Transferring fungible token commitments to ${this.receiverName}`, '', toastrConfig, 'consolidationTransfer');
+
         this.getFTCommitments();
         this.router.navigate(['/overview'], { queryParams: { selectedTab: 'ft-commitment' } });
       }, error => {
