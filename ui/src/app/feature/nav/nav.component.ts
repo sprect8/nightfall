@@ -171,6 +171,22 @@ export class NavComponent implements OnInit, OnDestroy {
           }
           break;
 
+        case '/consolidationTransfer':
+          if (data.error) {
+            this.toastr.error(
+              `ft commitment consolidation transfer failed: ${data.error.message || placeholder}`,
+              null,
+              toasterSettings
+            );
+          } else {
+            this.toastr.success(
+              `ft commitment consolidation transferred successfully.`,
+              null,
+              toasterSettings
+            );
+          }
+          break;
+
       default:
         // code...
         break;
