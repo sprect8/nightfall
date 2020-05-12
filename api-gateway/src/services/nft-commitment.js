@@ -47,7 +47,6 @@ export async function insertNFTCommitmentToDb(req, res, next) {
 export async function getNFTCommitments(req, res, next) {
   try {
     res.data = await db.getNFTCommitments(req.user, req.query);
-    console.log(res.data);
     next();
   } catch (err) {
     next(err);
