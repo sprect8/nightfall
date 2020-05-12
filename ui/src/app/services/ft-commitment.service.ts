@@ -48,7 +48,7 @@ export default class FtCommitmentService {
 
     return this.http
       .get(url, httpOptions)
-      .pipe(tap(data => console.log(data)), catchError(this.handleError('getFTCommitments', [])));
+      .pipe(tap(data => console.log()), catchError(this.handleError('getFTCommitments', [])));
   }
 
   /**
@@ -95,7 +95,7 @@ export default class FtCommitmentService {
     const url = config.apiGateway.root + 'transferFTCommitment';
     return this.http
       .post(url, body, httpOptions)
-      .pipe(tap(data => console.log(data)));
+      .pipe(tap(data => console.log()));
   }
 
     /**
@@ -148,7 +148,7 @@ export default class FtCommitmentService {
     const url = config.apiGateway.root + 'simpleFTCommitmentBatchTransfer';
     return this.http
       .post(url, body, httpOptions)
-      .pipe(tap(data => console.log(data)));
+      .pipe(tap(data => console.log()));
   }
 
   /**

@@ -90,7 +90,7 @@ export class NavComponent implements OnInit, OnDestroy {
         this.toastRemover('transferFTCommitment');
         if (data.error) {
           this.toastr.error(
-            `Failed fungible token commitment transfer`,
+            `Failed to transfer fungible token commitment`,
             null,
             toasterSettings
           );

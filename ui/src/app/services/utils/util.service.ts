@@ -20,7 +20,6 @@ export class UtilService {
     for (let index = 0; index < 54; index++) {
       serialNumber += seed.charAt(Math.floor(Math.random() * seed.length));
     }
-    console.log('Serial Number ::: ' + serialNumber);
     return serialNumber;
   }
 
