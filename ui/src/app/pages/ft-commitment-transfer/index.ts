@@ -156,7 +156,7 @@ export default class FtCommitmentTrasnferComponent implements OnInit , AfterCont
       this.receiverName
     ).subscribe( data => {
         this.isRequesting = false;
-        this.toastr.show(`Transferring fungible token commitments to ${this.receiverName}.`, '', toastrConfig, 'transferFTCommitment');
+        this.toastr.show(`Transferring fungible token commitment to ${this.receiverName}.`, '', toastrConfig, 'transferFTCommitment');
 
         // delete used commitments from commitment list
         transactions.splice(transactions.indexOf(commitment1), 1);

@@ -31,6 +31,5 @@ export const toastrConfig: object = {
   disableTimeOut: true,
   tapToDismiss: false,
   closeMethod: 'fadeOut',
-  onclick: false,
-  closeButton: true,
+  onclick: false
 };
