@@ -476,13 +476,11 @@ async function simpleFTCommitmentBatchTransfer(req, res, next) {
       },
     );
 
-    let lastCommitmentIndex = parseInt(maxOutputCommitmentIndex, 10);
-
-    outputCommitments.forEach((transferCommitment, index) => {
-      outputCommitments[index].commitmentIndex =
-        lastCommitmentIndex - (outputCommitments.length - 1);
+    let lastCommitmentIndex = Number(maxOutputCommitmentIndex);
+    for (const transferCommitment of outputCommitments) {
+      transferCommitment.commitmentIndex = lastCommitmentIndex - (outputCommitments.length - 1);
       lastCommitmentIndex += 1;
-    });
+    }
 
     res.data = {
       outputCommitments,
@@ -615,10 +613,7 @@ async function consolidationTransfer(req, res, next) {
   outputCommitment.salt = await utils.rndHex(32);
 
   try {
-    const {
-      outputCommitment: consolidatedCommitment,
-      txReceipt,
-    } = await erc20.consolidationTransfer(
+    const { txReceipt } = await erc20.consolidationTransfer(
       inputCommitments,
       outputCommitment,
       receiver.publicKey,
@@ -638,7 +633,7 @@ async function consolidationTransfer(req, res, next) {
 
     res.data = {
       inputCommitments,
-      consolidatedCommitment,
+      outputCommitment,
       txReceipt,
     };
     next();
