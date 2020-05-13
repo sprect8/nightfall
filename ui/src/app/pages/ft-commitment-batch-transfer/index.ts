@@ -180,11 +180,7 @@ export default class FtCommitmentBatchTrasnferComponent implements OnInit , Afte
     ).subscribe( data => {
         this.isRequesting = false;
 
-<<<<<<< HEAD
         this.toastr.show(`Transferring fungible token commitments to the selected receiver(s)`, '', toastrConfig, 'simpleFTCommitmentBatchTransfer');
-=======
-        this.toastr.success('Transferred fungible tokens to selected receivers.', 'Success');
->>>>>>> 016c611b00f52b191988b5291cdba3ee145bc906
 
         // reset the form
         while (this.transferDetails.length !== 0) {
