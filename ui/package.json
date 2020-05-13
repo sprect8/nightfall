@@ -75,6 +75,7 @@
     "protractor": "6.0.0",
     "ts-node": "~4.1.0",
     "tslint": "^5.18.0",
-    "typescript": "3.1.6"
+    "typescript": "3.1.6",
+    "yargs": "^15.3.1"
   }
 }
