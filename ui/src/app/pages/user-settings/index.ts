@@ -45,7 +45,7 @@ export default class UserSettingsComponent extends Config implements OnInit {
         this.user = data['data'];
       },
       error => {
-        console.log('error in user get', error);
+        console.log('Error in getting current user details.', error);
       }
     );
   }

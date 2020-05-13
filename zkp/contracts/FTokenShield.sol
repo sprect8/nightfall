@@ -120,6 +120,8 @@ contract FTokenShield is Ownable, MerkleTree, PublicKeyTree {
       bool transferCheck = tokenContract.transferFrom(msg.sender, address(this), _value);
       require(transferCheck, "Commitment cannot be minted");
 
+      // gas measurement:
+      gasUsedByShieldContract = gasUsedByShieldContract + gasCheckpoint - gasleft();
       emit GasUsed(gasUsedByShieldContract, gasUsedByVerifierContract);
   }
 
