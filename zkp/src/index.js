@@ -11,6 +11,7 @@ import { ftCommitmentRoutes, ftRoutes, nftCommitmentRoutes, nftRoutes } from './
 import vkController from './vk-controller'; // this import TRIGGERS the runController() script within.
 import { formatResponse, formatError, errorHandler } from './middlewares';
 import complianceInit from './compliance-init';
+import logger from './logger';
 
 const app = express();
 
@@ -57,7 +58,7 @@ app.route('/vk').post(async function runVkController(req, res, next) {
 app.use(formatResponse);
 
 app.use(function logError(err, req, res, next) {
-  console.error(
+  logger.error(
     `${req.method}:${req.url}
     ${JSON.stringify({ error: err.message })}
     ${JSON.stringify({ errorStack: err.stack.split('\n') }, null, 1)}
@@ -66,7 +67,7 @@ app.use(function logError(err, req, res, next) {
     ${JSON.stringify({ query: req.query })}
   `,
   );
-  console.error(JSON.stringify(err, null, 2));
+  logger.error(JSON.stringify(err, null, 2));
   next(err);
 });
 
@@ -81,6 +82,6 @@ if (process.env.NODE_ENV !== 'test') merkleTree.startEventFilter();
 if (process.env.COMPLIANCE === 'true') complianceInit.startCompliance();
 
 const server = app.listen(80, '0.0.0.0', () =>
-  console.log('Zero-Knowledge-Proof RESTful API server started on ::: 80'),
+  logger.info('Zero-Knowledge-Proof RESTful API server started on ::: 80'),
 );
 server.timeout = 0;

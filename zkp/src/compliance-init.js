@@ -15,7 +15,6 @@ Load test Admin keys for demonstrating the compliance extensions
 async function startCompliance() {
   if (process.env.COMPLIANCE === 'true') {
     const accounts = await web3.eth.getAccounts();
-    console.log('accounts', accounts);
     const { contractInstance: fTokenShieldInstance } = await getTruffleContractInstance(
       'FTokenShield',
     );

@@ -13,6 +13,7 @@ import {
   isNameInUse,
   getNameFromZkpPublicKey,
 } from '../pkd-controller';
+import logger from '../logger';
 
 const router = express.Router();
 
@@ -33,6 +34,7 @@ async function checkNameExistence(req, res, next) {
     res.data = await isNameInUse(req.query.name);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -58,6 +60,7 @@ async function assignNameToAccount(req, res, next) {
     res.data = { message: 'Name Added.' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -74,6 +77,7 @@ async function getNameForAccount(req, res, next) {
     res.data = await getNameFromAddress(address);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -99,6 +103,7 @@ async function assignZkpPublicKeyToAccount(req, res, next) {
     res.data = { message: 'Keys Added.' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -115,6 +120,7 @@ async function getZkpPublicKeyForAccountByName(req, res, next) {
     res.data = await getZkpPublicKeyFromName(name);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -140,6 +146,7 @@ async function assignWhisperKeyToAccount(req, res, next) {
     res.data = { message: 'Keys Added.' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -156,6 +163,7 @@ async function getWhisperKeyForAccountByName(req, res, next) {
     res.data = await getWhisperPublicKeyFromName(name);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -171,6 +179,7 @@ async function getAllRegisteredAddresses(req, res, next) {
     res.data = await getAddressFromName(name);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -190,6 +199,7 @@ async function getAllRegisteredNames(req, res, next) {
     res.data = names;
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -200,6 +210,7 @@ async function getNameFromZkpPublicKeyService(req, res, next) {
     res.data = await getNameFromZkpPublicKey(zkp);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }

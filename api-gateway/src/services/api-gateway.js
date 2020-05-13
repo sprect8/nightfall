@@ -1,6 +1,7 @@
 import { setWhisperIdentityAndSubscribe } from './whisper';
 import { accounts, db, offchain, zkp } from '../rest';
 import { createToken } from '../middlewares'; /* Authorization filter used to verify Role of the user */
+import logger from '../logger';
 
 /**
  * This function is used to login to the application
@@ -31,6 +32,7 @@ export async function loginHandler(req, res, next) {
     res.data = { ...data, token };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -68,7 +70,7 @@ export async function createAccountHandler(req, res, next) {
     res.data = data;
     next();
   } catch (err) {
-    console.log(err);
+    logger.error(err);
     next(err);
   }
 }
@@ -86,6 +88,7 @@ export async function loadVks(req, res, next) {
     res.data = data;
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -139,6 +142,7 @@ export async function addContractInfo(req, res, next) {
     res.data = { message: `Added of type ${type}` };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -207,6 +211,7 @@ export async function updateContractInfo(req, res, next) {
     res.data = { message: 'Contract Address updated' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -244,6 +249,7 @@ export async function deleteContractInfo(req, res, next) {
     res.data = { message: 'Contract Address Removed' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -266,6 +272,7 @@ export async function getAllRegisteredNames(req, res, next) {
     res.data = await offchain.getRegisteredNames();
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -302,6 +309,7 @@ export async function getTokenCommitmentCounts(req, res, next) {
 
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -316,6 +324,7 @@ export async function getUserDetails(req, res, next) {
     res.data = await db.fetchUser(req.user);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -341,6 +350,7 @@ export async function setAddressToBlacklist(req, res, next) {
     });
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -366,6 +376,7 @@ export async function unsetAddressFromBlacklist(req, res, next) {
     });
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -387,6 +398,7 @@ export async function getBlacklistedUsers(req, res, next) {
     });
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -425,6 +437,7 @@ export async function getAndDecodeTransaction(req, res, next) {
 
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }

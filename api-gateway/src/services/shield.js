@@ -1,4 +1,5 @@
 import { zkp } from '../rest';
+import logger from '../logger';
 
 /**
  * This is used to get available shield address from blockchain.
@@ -14,6 +15,7 @@ export async function getShieldAddresses(req, res, next) {
     res.data = { ftCommitmentShield, nftCommitmentShield };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }

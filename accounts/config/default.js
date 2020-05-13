@@ -6,4 +6,5 @@ module.exports = {
   web3ProviderURL: defer(function getWeb3ProviderURL() {
     return `${this.web3Host}:${this.web3Port}`;
   }),
+  isLoggerEnable: true,
 };

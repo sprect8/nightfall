@@ -1,4 +1,5 @@
 import { sendWhisperMessage } from './whisper';
+import logger from '../logger';
 import { accounts, db, offchain, zkp } from '../rest';
 
 /**
@@ -25,6 +26,7 @@ export async function insertNFTCommitmentToDb(req, res, next) {
     res.data = await db.insertNFTCommitment(req.user, req.body);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -49,6 +51,7 @@ export async function getNFTCommitments(req, res, next) {
     res.data = await db.getNFTCommitments(req.user, req.query);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -97,6 +100,7 @@ export async function getNFTCommitmentTransactions(req, res, next) {
     res.data = await db.getNFTCommitmentTransactions(req.user, req.query);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -107,6 +111,7 @@ export async function checkCorrectnessForNFTCommitment(req, res, next) {
     res.data = await zkp.checkCorrectnessForNFTCommitment(req.headers, req.body);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -168,7 +173,7 @@ export async function mintToken(req, res, next) {
     res.data = data;
     next();
   } catch (err) {
-    // insert failed transaction into db.
+    logger.error(err);
     await db.insertNFTCommitmentTransaction(req.user, {
       outputCommitments: [
         {
@@ -288,7 +293,7 @@ export async function transferToken(req, res, next) {
     res.data = data;
     next();
   } catch (err) {
-    // insert failed transaction into db.
+    logger.error(err);
     await db.insertNFTCommitmentTransaction(req.user, {
       inputCommitments: [inputCommitment],
       outputCommitments: [
@@ -383,7 +388,7 @@ export async function burnToken(req, res, next) {
     res.data = { message: 'burn successful' };
     next();
   } catch (err) {
-    // insert failed transaction into db.
+    logger.error(err);
     await db.insertNFTCommitmentTransaction(req.user, {
       inputCommitments: [inputCommitment],
       receiver,

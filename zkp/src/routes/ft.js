@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import fTokenController from '../f-token-controller';
+import logger from '../logger';
 
 const router = Router();
 
@@ -35,6 +36,7 @@ async function mint(req, res, next) {
     res.data = status;
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -76,6 +78,7 @@ async function transfer(req, res, next) {
     res.data = status;
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -112,6 +115,7 @@ async function burn(req, res, next) {
     res.data = status;
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -135,6 +139,7 @@ async function getAddress(req, res, next) {
     };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -163,6 +168,7 @@ async function getInfo(req, res, next) {
     };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }

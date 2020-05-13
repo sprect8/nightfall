@@ -5,6 +5,7 @@ import contract from 'truffle-contract';
 import utils from '../zkpUtils';
 import fTokenController from '../f-token-controller';
 import { getTruffleContractInstance, getContractAddress } from '../contractUtils';
+import logger from '../logger';
 
 const router = Router();
 /**
@@ -73,6 +74,7 @@ async function mint(req, res, next) {
     };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -161,6 +163,7 @@ async function transfer(req, res, next) {
     res.data = { outputCommitments, txReceipt };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -236,6 +239,7 @@ async function burn(req, res, next) {
     res.data = { message: 'Burn successful' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -291,6 +295,7 @@ async function checkCorrectness(req, res, next) {
     res.data = results;
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -315,6 +320,7 @@ async function setFTCommitmentShieldAddress(req, res, next) {
     };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -340,6 +346,7 @@ async function getFTCommitmentShieldAddress(req, res, next) {
     };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -362,6 +369,7 @@ async function unsetFTCommitmentShieldAddress(req, res, next) {
     };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -480,6 +488,7 @@ async function simpleFTCommitmentBatchTransfer(req, res, next) {
     };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -509,6 +518,7 @@ async function setAddressToBlacklist(req, res, next) {
     res.data = { message: 'added to blacklist' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -629,6 +639,7 @@ async function consolidationTransfer(req, res, next) {
     };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -658,6 +669,7 @@ async function unsetAddressFromBlacklist(req, res, next) {
     res.data = { message: 'removed from blacklist' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -707,6 +719,7 @@ async function decodeTransaction(req, res, next) {
     });
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }

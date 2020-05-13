@@ -11,6 +11,7 @@ import {
   ftCommitmentTransactionSchema,
   blacklistSchema,
 } from '../models';
+import logger from '../logger';
 
 const mongo = config.get('mongo');
 
@@ -58,8 +59,9 @@ export default class DB {
       const modelInstance = new Model(data);
       const successData = await modelInstance.save();
       return Promise.resolve(successData);
-    } catch (e) {
-      return Promise.reject(e);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
     }
   }
 
@@ -68,9 +70,9 @@ export default class DB {
       const model = this.Models[modelName];
       const data = await model.find(query, projection).exec();
       return Promise.resolve(data);
-    } catch (e) {
-      console.log('DB error', e);
-      return Promise.reject(e);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
     }
   }
 
@@ -96,8 +98,9 @@ export default class DB {
         .countDocuments()
         .exec();
       return Promise.resolve({ data, totalCount });
-    } catch (e) {
-      return Promise.reject(e);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
     }
   }
 
@@ -120,8 +123,9 @@ export default class DB {
 
       const data = await mQuery.exec();
       return Promise.resolve({ data });
-    } catch (e) {
-      return Promise.reject(e);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
     }
   }
 
@@ -130,8 +134,9 @@ export default class DB {
       const model = this.Models[modelName];
       const data = await model.findOne(query);
       return Promise.resolve(data);
-    } catch (e) {
-      return Promise.reject(e);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
     }
   }
 
@@ -144,8 +149,9 @@ export default class DB {
         .limit(page.size)
         .exec();
       return Promise.resolve(data);
-    } catch (e) {
-      return Promise.reject(e);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
     }
   }
 
@@ -154,8 +160,9 @@ export default class DB {
       const model = this.Models[modelName];
       const data = await model.updateOne(condition, updateData, options);
       return Promise.resolve(data);
-    } catch (e) {
-      return Promise.reject(e);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
     }
   }
 
@@ -171,8 +178,9 @@ export default class DB {
       const data = await model.aggregate(pipeline);
 
       return Promise.resolve(data);
-    } catch (e) {
-      return Promise.reject(e);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
     }
   }
 
@@ -180,8 +188,9 @@ export default class DB {
     try {
       const model = this.Models[modelName];
       return await model.populate(data, populates);
-    } catch (e) {
-      return Promise.reject(e);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
     }
   }
 

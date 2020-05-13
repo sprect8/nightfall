@@ -1,4 +1,5 @@
 import { FtService } from '../business';
+import logger from '../logger';
 
 /**
  * This function add ERC-20 transactions in database
@@ -25,6 +26,7 @@ async function insertFTTransaction(req, res, next) {
     res.data = { message: 'inserted' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -41,6 +43,7 @@ async function getFTTransactions(req, res, next) {
     res.data = await ftService.getFTTransactions(req.query);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }

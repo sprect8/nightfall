@@ -1,4 +1,5 @@
 import { NftService } from '../business';
+import logger from '../logger';
 
 /**
  * This function will add new ERC 721 token in db.
@@ -25,6 +26,7 @@ async function insertNFToken(req, res, next) {
     res.data = { message: 'inserted' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -56,6 +58,7 @@ async function updateNFTokenByTokenId(req, res, next) {
     res.data = { message: 'updated' };
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -80,6 +83,7 @@ async function getNFTokens(req, res, next) {
     res.data = await nftService.getNFTokens(req.query);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
@@ -99,6 +103,7 @@ async function getNFTTransactions(req, res, next) {
     res.data = await nftService.getNFTTransactions(req.query);
     next();
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 }
