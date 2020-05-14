@@ -4,7 +4,7 @@ import config from 'config';
 const url = config.get('accounts.url');
 
 const requestWrapper = options =>
-  new Promise(function promiseHandler(resolve, reject) {
+  new Promise((resolve, reject) => {
     request(options, function responseHandler(err, res, body) {
       if (err || res.statusCode !== 200) {
         return reject(err || res.body);
