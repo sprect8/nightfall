@@ -15,7 +15,7 @@ app.use('/', accounts);
 
 app.use(formatResponse);
 
-app.use(function logError(err, req, res, next) {
+app.use((err, req, res, next) => {
   console.error(
     `${req.method}:${req.url}
     ${JSON.stringify({ error: err.message })}
