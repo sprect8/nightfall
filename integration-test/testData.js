@@ -7,7 +7,7 @@ const LEAF_HASHLENGTH = config.get('LEAF_HASHLENGTH');
 function parseMintCommitments(erc20, type, user) {
   return erc20[type].mintCommitments.map(value => {
     return {
-      value: leftPadHex(parseInt(value, 7), 32),
+      value: leftPadHex(value.toString(16), 32),
       get commitment() {
         return utils.concatenateThenHash(
           `0x${utils.strip0x(erc20.contractAddress).padStart(64, '0')}`,
@@ -23,7 +23,7 @@ function parseMintCommitments(erc20, type, user) {
 function parseTransferCommitments(erc20, type, user) {
   return erc20[type].transferCommitments.map(value => {
     return {
-      value: leftPadHex(parseInt(value, 7), 32),
+      value: leftPadHex(value.toString(16), 32),
       receiver: { name: user.name },
       get commitment() {
         return utils.concatenateThenHash(
@@ -70,12 +70,8 @@ export default {
       },
     },
     batchTransfer: {
-      mintCommitment: 10,
-      transferCommitments: [2, 2],
-    },
-    consolidationTransfer: {
-      mintCommitments: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      transferCommitment: 20,
+      mintCommitment: 50,
+      transferCommitments: [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4],
     },
   },
 
@@ -106,6 +102,9 @@ export default {
           this.transferredSalt, // S_B - set at erc-721 commitment transfer to bob (step 5)
         );
       },
+      get transferCommitmentIndex() {
+        return this.mintCommitmentIndex + 1;
+      },
     };
   },
 
@@ -115,7 +114,7 @@ export default {
     return {
       mintCommitments: parseMintCommitments(erc20, 'transfer', alice),
       transferCommitment: {
-        value: leftPadHex(parseInt(erc20.transfer.transferCommitment, 7), 32),
+        value: leftPadHex(erc20.transfer.transferCommitment.toString(16), 32),
         get commitment() {
           return utils.concatenateThenHash(
             `0x${utils.strip0x(erc20.contractAddress).padStart(64, '0')}`,
@@ -126,7 +125,7 @@ export default {
         },
       },
       changeCommitment: {
-        value: leftPadHex(parseInt(erc20.transfer.changeCommitment, 7), 32),
+        value: leftPadHex(erc20.transfer.changeCommitment.toString(16), 32),
         get commitment() {
           return utils.concatenateThenHash(
             `0x${utils.strip0x(erc20.contractAddress).padStart(64, '0')}`,
@@ -144,7 +143,7 @@ export default {
     const { alice, bob, erc20 } = this;
     return {
       mintCommitment: {
-        value: leftPadHex(parseInt(erc20.batchTransfer.mintCommitment, 7), 32),
+        value: leftPadHex(erc20.batchTransfer.mintCommitment.toString(16), 32),
         get commitment() {
           return utils.concatenateThenHash(
             `0x${utils.strip0x(erc20.contractAddress).padStart(64, '0')}`,
@@ -160,18 +159,18 @@ export default {
 
   // dependent data
   async erc20CommitmentConsolidationTransfer() {
-    const { alice, bob, erc20 } = this;
+    const { alice, erc20, erc20CommitmentBatchTransfer } = this;
     return {
-      mintCommitments: parseMintCommitments(erc20, 'consolidationTransfer', alice),
+      mintCommitments: erc20CommitmentBatchTransfer.transferCommitments,
       transferCommitment: {
         get value() {
-          return leftPadHex(parseInt(erc20.consolidationTransfer.transferCommitment, 7), 32);
+          return leftPadHex(erc20.batchTransfer.mintCommitment.toString(16), 32);
         },
         get commitment() {
           return utils.concatenateThenHash(
             `0x${utils.strip0x(erc20.contractAddress).padStart(64, '0')}`,
             this.value,
-            bob.pk,
+            alice.pk,
             this.salt === undefined ? '0x0' : this.salt, // S_E - set at erc-20 commitment transfer (step 12)
           );
         },

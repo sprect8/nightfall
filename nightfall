@@ -16,18 +16,18 @@ launchContainers(){
   docker-compose run --rm truffle-offchain migrate --reset --network=default
   docker-compose run --rm truffle-zkp migrate --reset --network=default
 
-  printf "${GREEN}*** Launching RabbitMQ container ***${NC}\n"
+  printf "${GREEN}*** Launching independent containers ***${NC}\n"
+  # these container take time to setup
+  # starting them first to avoid ECONNREFUSED error
+  # as other containers depends on them
   docker-compose up -d rabbitmq
+  docker-compose up -d mongo-merkle-tree
+  docker-compose up -d mongo-nightfall
 
-  sleep 3
+  sleep 10
 
   printf "${GREEN}*** Launching containerized microservices ***${NC}\n"
-  if [[ -f docker-compose.override.yml ]]
-  then
-    docker-compose -f docker-compose.yml -f docker-compose.override.yml up
-  else
-    docker-compose up
-  fi
+  docker-compose up
 }
 
 printf "${GREEN}*** Cleaning up all containers ***${NC}\n"

@@ -39,16 +39,26 @@ export default class FtCommitmentService {
   /**
    * Method to initiate a HTTP request to fetch ERC-20 token commitments.
    *
+   * @param pageNo {Number} Page number
+   * @param limit {Number} Page limit
    */
-  getFTCommitments() {
+  getFTCommitments(pageNo?: number, limit?: number) {
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
     };
-    const url = config.apiGateway.root + 'getFTCommitments';
+    let url = config.apiGateway.root + 'getFTCommitments?';
+
+    if (pageNo) {
+      url += 'pageNo=' + pageNo + '&';
+    }
+
+    if (limit) {
+      url += 'limit=' + limit + '&';
+    }
 
     return this.http
       .get(url, httpOptions)
-      .pipe(tap(data => console.log(data)), catchError(this.handleError('getFTCommitments', [])));
+      .pipe(tap(data => console.log()), catchError(this.handleError('getFTCommitments', [])));
   }
 
   /**
@@ -95,7 +105,7 @@ export default class FtCommitmentService {
     const url = config.apiGateway.root + 'transferFTCommitment';
     return this.http
       .post(url, body, httpOptions)
-      .pipe(tap(data => console.log(data)));
+      .pipe(tap(data => console.log()));
   }
 
     /**
@@ -148,7 +158,7 @@ export default class FtCommitmentService {
     const url = config.apiGateway.root + 'simpleFTCommitmentBatchTransfer';
     return this.http
       .post(url, body, httpOptions)
-      .pipe(tap(data => console.log(data)));
+      .pipe(tap(data => console.log()));
   }
 
   /**
