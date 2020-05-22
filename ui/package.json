@@ -6,7 +6,8 @@
   "main": "main.ts",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --host=0.0.0.0 --port 80",
+    "config": "ts-node set-env.ts",
+    "start": "npm run config && ng serve --host=0.0.0.0 --port 80",
     "build": "ng build --prod",
     "compodoc": "npx compodoc -p src/tsconfig.app.json",
     "test": "ng test",
@@ -63,6 +64,7 @@
     "@types/node": "~6.0.60",
     "acorn": ">=6.4.1",
     "codelyzer": "^4.0.1",
+    "dotenv": "^8.2.0",
     "jasmine-core": "~3.4.0",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~4.1.0",
@@ -73,6 +75,7 @@
     "protractor": "6.0.0",
     "ts-node": "~4.1.0",
     "tslint": "^5.18.0",
-    "typescript": "3.1.6"
+    "typescript": "3.1.6",
+    "yargs": "^15.3.1"
   }
 }
