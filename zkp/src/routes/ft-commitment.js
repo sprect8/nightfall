@@ -446,14 +446,12 @@ async function simpleFTCommitmentBatchTransfer(req, res, next) {
   for (const data of outputCommitments) {
     /* eslint-disable no-await-in-loop */
     data.salt = await utils.rndHex(32);
-    receiversPublicKeys.push(data.receiver.publicKey);
   }
 
   try {
-    const { maxOutputCommitmentIndex, txReceipt } = await erc20.simpleFungibleBatchTransfer(
+    const { txReceipt } = await erc20.simpleFungibleBatchTransfer(
       inputCommitment,
       outputCommitments,
-      receiversPublicKeys,
       sender.secretKey,
       {
         erc20Address,
@@ -467,12 +465,6 @@ async function simpleFTCommitmentBatchTransfer(req, res, next) {
         pkPath: `${process.cwd()}/code/gm17/ft-batch-transfer/proving.key`,
       },
     );
-
-    let lastCommitmentIndex = Number(maxOutputCommitmentIndex);
-    for (const transferCommitment of outputCommitments) {
-      transferCommitment.commitmentIndex = lastCommitmentIndex - (outputCommitments.length - 1);
-      lastCommitmentIndex += 1;
-    }
 
     res.data = {
       outputCommitments,
@@ -552,7 +544,7 @@ async function setAddressToBlacklist(req, res, next) {
  * }
  *
  * res.data: {
- * consolidatedCommitment:  {
+ * outputCommitment:  {
  *    "value":"0x00000000000000000000000000000014",
  *    "salt":"0xce4f2a50b07c92b0c12fbf738cd8090ca898c5956f2de14f04c7f6ee6a46bdc7",
  *    "commitment":"0xbb51e94ff3a0ef1e6198195b3b412fe0def4d234ff5916ca953d521f84eea613",

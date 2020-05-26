@@ -143,13 +143,18 @@ if (process.env.COMPLIANCE !== 'true') {
         commitmentIndex: zInd1,
       };
       for (let i = 0; i < outputAmounts.length; i++) {
-        outputCommitments[i] = { value: outputAmounts[i], salt: outputCommitmentSalts[i] };
+        outputCommitments[i] = {
+          value: outputAmounts[i],
+          salt: outputCommitmentSalts[i],
+          receiver: {
+            publicKey: outputPublicKeys[i],
+          },
+        };
       }
 
       const response = await erc20.simpleFungibleBatchTransfer(
         inputCommitment,
         outputCommitments,
-        outputPublicKeys,
         secretKeyA,
         {
           erc20Address,
