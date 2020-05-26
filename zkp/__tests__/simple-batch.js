@@ -63,7 +63,6 @@ const outputPublicKeys = [];
 let inputCommitmentId;
 // storage for z indexes
 let zInd1;
-let zInd2;
 let outputCommitments = [];
 let accounts;
 let fTokenShieldJson;
@@ -152,7 +151,7 @@ if (process.env.COMPLIANCE !== 'true') {
         };
       }
 
-      const response = await erc20.simpleFungibleBatchTransfer(
+      await erc20.simpleFungibleBatchTransfer(
         inputCommitment,
         outputCommitments,
         secretKeyA,
@@ -169,7 +168,6 @@ if (process.env.COMPLIANCE !== 'true') {
         },
       );
 
-      zInd2 = parseInt(response.maxOutputCommitmentIndex, 10);
       const bal2 = await controller.getBalance(accounts[0]);
       const wei = parseInt(bal1, 10) - parseInt(bal2, 10);
       console.log('gas consumed was', wei / 20e9);
@@ -188,13 +186,13 @@ if (process.env.COMPLIANCE !== 'true') {
           value: c,
           salt: outputCommitmentSalts[18],
           commitment: outputCommitments[18].commitment,
-          commitmentIndex: zInd2 - 1,
+          commitmentIndex: outputCommitments[18].commitmentIndex,
         },
         {
           value: d,
           salt: outputCommitmentSalts[19],
           commitment: outputCommitments[19].commitment,
-          commitmentIndex: zInd2,
+          commitmentIndex: outputCommitments[19].commitmentIndex,
         },
       ];
       outputCommitments = [

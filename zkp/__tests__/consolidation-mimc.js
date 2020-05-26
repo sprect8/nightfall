@@ -65,7 +65,6 @@ let pkB = [];
 let Z_A_C;
 // storage for z indexes
 let zInd1;
-let zInd2;
 const outputCommitments = [];
 let accounts;
 let fTokenShieldJson;
@@ -139,12 +138,17 @@ if (process.env.HASH_TYPE === 'mimc') {
       const inputCommitment = { value: C, salt: S_A_C, commitment: Z_A_C, commitmentIndex: zInd1 };
 
       for (let i = 0; i < E.length; i++) {
-        outputCommitments[i] = { value: E[i], salt: S_B_E[i] };
+        outputCommitments[i] = {
+          value: E[i],
+          salt: S_B_E[i],
+          receiver: {
+            publicKey: pkB[i],
+          },
+        };
       }
-      const response = await erc20.simpleFungibleBatchTransfer(
+      await erc20.simpleFungibleBatchTransfer(
         inputCommitment,
         outputCommitments,
-        pkB, // deliberately the same key x 20 for consolidation transfer
         skA,
         // await getVkId('SimpleBatchTransferFToken'),
         {
@@ -160,8 +164,6 @@ if (process.env.HASH_TYPE === 'mimc') {
         },
       );
 
-      zInd2 = parseInt(response.maxOutputCommitmentIndex, 10);
-      outputCommitments.commitment = response.outputCommitments.commitment;
       const bal2 = await controller.getBalance(accounts[0]);
       const wei = parseInt(bal1, 10) - parseInt(bal2, 10);
       console.log('gas consumed was', wei / 20e9);
@@ -177,7 +179,7 @@ if (process.env.HASH_TYPE === 'mimc') {
           value: E[i],
           salt: S_B_E[i],
           commitment: outputCommitments[i].commitment,
-          commitmentIndex: zInd2 - E.length + i + 1,
+          commitmentIndex: outputCommitments[i].commitmentIndex,
         };
       }
       const outputCommitment = { value: C, salt: await utils.rndHex(32) };
