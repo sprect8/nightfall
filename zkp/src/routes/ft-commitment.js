@@ -439,8 +439,6 @@ async function simpleFTCommitmentBatchTransfer(req, res, next) {
   } = await getTruffleContractInstance('FTokenShield');
   const erc20Address = await getContractAddress('FToken');
 
-  const receiversPublicKeys = [];
-
   if (!outputCommitments || outputCommitments.length !== 20) throw new Error('Invalid data input');
 
   for (const data of outputCommitments) {
