@@ -1,4 +1,4 @@
-import UserSchema from './user.model';
+import userSchema from './user.model';
 import nftSchema from './nft.model';
 import nftTransactionSchema from './nft-transaction.model';
 import nftCommitmentSchema from './nft-commitment.model';
@@ -9,7 +9,7 @@ import ftCommitmentTransactionSchema from './ft-commitment-transaction.model';
 import blacklistSchema from './blacklist.model';
 
 export {
-  UserSchema,
+  userSchema,
   nftSchema,
   nftTransactionSchema,
   nftCommitmentSchema,
