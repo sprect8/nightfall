@@ -2,19 +2,19 @@ import apiGateway from './rest/api-gateway';
 import logger from './logger';
 
 async function insertNFTToDb(data, { jwtToken }) {
-  logger.info('\noffchain/src/listeners.js', 'insertNFTToDb', '\ndata', data);
+  logger.info('offchain/src/listeners.js', 'insertNFTToDb', 'data', data);
 
   await apiGateway.insertNFTToDb({ authorization: jwtToken }, data);
 }
 
 async function insertFTTransactionToDb(data, { jwtToken }) {
-  logger.info('\noffchain/src/listeners.js', 'insertFTTransactionToDb', '\ndata', data);
+  logger.info('offchain/src/listeners.js', 'insertFTTransactionToDb', 'data', data);
 
   await apiGateway.insertFTTransactionToDb({ authorization: jwtToken }, data);
 }
 
 async function insertNFTCommitmentToDb(data, { jwtToken }) {
-  logger.info('\noffchain/src/listeners.js', '\ninsertNFTCommitmentToDb', '\ndata', data);
+  logger.info('offchain/src/listeners.js', 'insertNFTCommitmentToDb', 'data', data);
 
   const { blockNumber, outputCommitments } = data;
   const [{ tokenId, salt, owner, commitment, commitmentIndex }] = outputCommitments;
@@ -34,9 +34,9 @@ async function insertNFTCommitmentToDb(data, { jwtToken }) {
   );
 
   logger.info(
-    '\noffchain/src/listeners.js',
-    '\ninsertNFTCommitmentToDb',
-    '\ncorrectnessChecks',
+    'offchain/src/listeners.js',
+    'insertNFTCommitmentToDb',
+    'correctnessChecks',
     correctnessChecks,
   );
 
@@ -49,7 +49,7 @@ async function insertNFTCommitmentToDb(data, { jwtToken }) {
 }
 
 async function insertFTCommitmentToDb(data, { jwtToken }) {
-  logger.info('\noffchain/src/listeners.js', '\ninsertFTCommitmentToDb', '\ndata', data);
+  logger.info('offchain/src/listeners.js', 'insertFTCommitmentToDb', 'data', data);
 
   const { blockNumber, outputCommitments } = data;
   const [{ value, salt, owner, commitment, commitmentIndex }] = outputCommitments;
@@ -69,9 +69,9 @@ async function insertFTCommitmentToDb(data, { jwtToken }) {
   );
 
   logger.info(
-    '\noffchain/src/listeners.js',
-    '\ninsertFTCommitmentToDb',
-    '\ncorrectnessChecks',
+    'offchain/src/listeners.js',
+    'insertFTCommitmentToDb',
+    'correctnessChecks',
     correctnessChecks,
   );
 
@@ -84,7 +84,7 @@ async function insertFTCommitmentToDb(data, { jwtToken }) {
 }
 
 function listeners(data, userData) {
-  logger.info('\noffchain/src/listeners.js', '\nlisteners', '\ndata', data, '\nuserData', userData);
+  logger.info('offchain/src/listeners.js', 'listeners', 'data', data, 'userData', userData);
 
   const actualPayload = data.payload;
   switch (actualPayload.for) {

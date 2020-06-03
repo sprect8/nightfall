@@ -1,5 +1,4 @@
 import { NftCommitmentService } from '../business';
-import logger from '../logger';
 
 /**
  * This function will add new private token in db.
@@ -30,7 +29,6 @@ async function insertNFTCommitment(req, res, next) {
     res.data = { message: 'inserted' };
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -50,7 +48,6 @@ async function getNFTCommitments(req, res, next) {
     res.data = await nftCommitmentService.getNFTCommitments(req.query);
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -82,7 +79,6 @@ async function updateNFTCommitmentByTokenId(req, res, next) {
     res.data = { message: 'updated' };
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -99,7 +95,6 @@ async function getNFTCommitmentTransactions(req, res, next) {
     res.data = await nftCommitmentService.getNFTCommitmentTransactions(req.query);
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -134,7 +129,6 @@ async function insertNFTCommitmentTransaction(req, res, next) {
     res.data = { message: 'inserted' };
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }

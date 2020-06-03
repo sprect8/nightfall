@@ -1,4 +1,5 @@
 import express from 'express';
+
 import listeners from '../listeners';
 import {
   generateWhisperKeys,
@@ -6,7 +7,6 @@ import {
   subscribeObject,
   sendObject,
 } from '../whisper-controller-stub';
-import logger from '../logger';
 
 const router = express.Router();
 
@@ -35,7 +35,6 @@ async function createWhisperKeyForAccount(req, res, next) {
     res.data = shhIdentity;
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -65,7 +64,6 @@ async function getWhisperKeyFromShhId(req, res, next) {
     res.data = { whisperPublicKey };
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -101,7 +99,6 @@ async function subscribeTopic(req, res, next) {
     res.data = { subscribed: true };
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -134,7 +131,6 @@ async function sendMessage(req, res, next) {
     res.data = { postMessage: true };
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }

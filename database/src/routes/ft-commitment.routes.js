@@ -1,5 +1,4 @@
 import { FtCommitmentService } from '../business';
-import logger from '../logger';
 
 /**
  * This function is used to add a coin to the db.
@@ -22,7 +21,6 @@ async function insertFTCommitment(req, res, next) {
     res.data = { message: 'inserted' };
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -38,7 +36,6 @@ async function getFTCommitments(req, res, next) {
     res.data = await ftCommitmentService.getFTCommitments(req.query);
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -66,7 +63,6 @@ async function updateFTCommitmentByCommitmentHash(req, res, next) {
     res.data = { message: 'updated' };
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -86,7 +82,6 @@ async function getFTCommitmentTransactions(req, res, next) {
     res.data = await ftCommitmentService.getFTCommitmentTransactions(req.query);
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -136,7 +131,6 @@ async function insertFTCommitmentTransaction(req, res, next) {
     res.data = { message: 'inserted' };
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }

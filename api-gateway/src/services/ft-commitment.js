@@ -1,5 +1,4 @@
 import { sendWhisperMessage } from './whisper';
-import logger from '../logger';
 import { accounts, db, offchain, zkp } from '../rest';
 
 /**
@@ -27,7 +26,6 @@ export async function insertFTCommitmentToDb(req, res, next) {
     res.data = await db.insertFTCommitment(req.user, req.body);
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -52,7 +50,6 @@ export async function getFTCommitments(req, res, next) {
     res.data = await db.getFTCommitments(req.user, req.query);
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -77,7 +74,6 @@ export async function getFTCommitmentTransactions(req, res, next) {
     res.data = await db.getFTCommitmentTransactions(req.user, req.query);
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -87,7 +83,6 @@ export async function checkCorrectnessForFTCommitment(req, res, next) {
     res.data = await zkp.checkCorrectnessForFTCommitment(req.headers, req.body);
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -140,7 +135,6 @@ export async function mintFTCommitment(req, res, next) {
     res.data = data;
     next();
   } catch (err) {
-    logger.error(err);
     await db.insertFTCommitmentTransaction(req.user, {
       outputCommitments: [
         {
@@ -269,7 +263,6 @@ export async function transferFTCommitment(req, res, next) {
     res.data = outputCommitments;
     next();
   } catch (err) {
-    logger.error(err);
     await db.insertFTCommitmentTransaction(req.user, {
       ...req.body,
       sender: req.user,
@@ -346,7 +339,6 @@ export async function burnFTCommitment(req, res, next) {
 
     next();
   } catch (err) {
-    logger.error(err);
     await db.insertFTCommitmentTransaction(req.user, {
       inputCommitments: [commitment],
       receiver,
@@ -493,7 +485,6 @@ export async function simpleFTCommitmentBatchTransfer(req, res, next) {
     res.data = commitments;
     next();
   } catch (err) {
-    logger.error(err);
     await db.insertFTCommitmentTransaction(req.user, {
       inputCommitments: [inputCommitment],
       outputCommitments: reqBodyOutCommitments,
@@ -613,7 +604,6 @@ export async function consolidationTransfer(req, res, next) {
     res.data = outputCommitment;
     next();
   } catch (err) {
-    logger.error(err);
     await db.insertFTCommitmentTransaction(req.user, {
       inputCommitments,
       outputCommitments: [req.body.outputCommitment],

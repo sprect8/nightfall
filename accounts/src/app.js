@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+
 import accounts from './routes/accounts';
 import logger from './logger';
 import { formatResponse, formatError, errorHandler } from './middlewares';

@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { erc721 } from '@eyblockchain/nightlite';
+
 import utils from '../zkpUtils';
 import nfController from '../nf-token-controller';
 import { getTruffleContractInstance, getContractAddress } from '../contractUtils';
-import logger from '../logger';
 
 const router = Router();
 /**
@@ -75,7 +75,6 @@ async function mint(req, res, next) {
     };
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -167,7 +166,6 @@ async function transfer(req, res, next) {
     };
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -258,7 +256,6 @@ async function burn(req, res, next) {
     };
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -317,7 +314,6 @@ async function checkCorrectness(req, res, next) {
     res.data = results;
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -343,7 +339,6 @@ async function setNFTCommitmentShieldAddress(req, res, next) {
     };
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -370,7 +365,6 @@ async function getNFTCommitmentShieldAddress(req, res, next) {
     };
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }
@@ -394,7 +388,6 @@ async function unsetNFTCommitmentShieldAddress(req, res, next) {
     };
     next();
   } catch (err) {
-    logger.error(err);
     next(err);
   }
 }

@@ -1,5 +1,6 @@
 import Web3 from 'web3';
 import config from 'config';
+
 import logger from './logger';
 
 export default {
