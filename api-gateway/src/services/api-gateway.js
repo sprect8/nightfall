@@ -97,7 +97,7 @@ export async function loadVks(req, res, next) {
  * @param {String} contractAddress
  */
 function setShieldContract(user, contractAddress) {
-  return new Promise(function setShieldDetails(resolve) {
+  return new Promise(resolve => {
     zkp
       .setTokenShield(user, { nftCommitmentShield: contractAddress })
       .then(() => resolve('nft'))
