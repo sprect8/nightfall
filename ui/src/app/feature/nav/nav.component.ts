@@ -53,10 +53,9 @@ export class NavComponent implements OnInit, OnDestroy {
   }
   
   toastRemover(action) {
-    const toast = this.toastr.toasts;
-    for (const i in toast) {
-      if (toast[i].portal.instance.toastPackage.toastType == action) {
-        this.toastr.clear(toast[i].toastId);
+    for (const toast of this.toastr.toasts) {
+      if (toast.portal.instance.toastPackage.toastType == action) {
+        this.toastr.clear(toast.toastId);
         break;
       }
     }
