@@ -182,7 +182,7 @@ if (process.env.HASH_TYPE === 'mimc') {
     });
 
     test('Should consolidate the 20 commitments just created', async () => {
-      const pkE = await utils.rndHex(32); // public key of Eve, who we transfer to
+      const publicKeyE = await utils.rndHex(32); // public key of Eve, who we transfer to
       const inputCommitments = [];
       for (let i = 0; i < amountE.length; i++) {
         inputCommitments[i] = {
@@ -198,7 +198,7 @@ if (process.env.HASH_TYPE === 'mimc') {
       const response = await erc20.consolidationTransfer(
         inputCommitments,
         outputCommitment,
-        pkE,
+        publicKeyE,
         secretKeyB[0],
         {
           erc20Address,
