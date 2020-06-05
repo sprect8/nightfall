@@ -2,15 +2,8 @@ import { createLogger, format, transports } from 'winston';
 import { inspect } from 'util';
 import config from 'config';
 
-function isPrimitive(val) {
-  return val === null || (typeof val !== 'object' && typeof val !== 'function');
-}
-
 function formatWithInspect(val) {
-  const prefix = isPrimitive(val) ? '' : '\n';
-  const shouldFormat = typeof val !== 'string';
-
-  return prefix + (shouldFormat ? inspect(val, { depth: null, colors: true }) : val);
+  return `${val instanceof Object ? '\n' : ''} ${inspect(val, { depth: null, colors: true })}`;
 }
 
 const consoleLogger = {
@@ -24,15 +17,11 @@ if (config.get('isLoggerEnable')) {
   winstonLogger = createLogger({
     level: 'debug',
     format: format.combine(
-      format.timestamp(),
-      format.errors({ stack: true }),
       format.colorize(),
       format.printf(info => {
-        const msg = formatWithInspect(info.message);
         const splatArgs = info[Symbol.for('splat')] || [];
-        const rest = splatArgs.map(data => formatWithInspect(data)).join(' ');
-
-        return `${info.level}: ${msg} ${rest}`;
+        const rest = splatArgs.map(data => formatWithInspect(data)).join();
+        return `${info.level}: ${info.message} ${rest}`;
       }),
     ),
     transports: [new transports.Console()],
