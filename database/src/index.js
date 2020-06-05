@@ -34,7 +34,7 @@ initializeUserRoutes(router);
 
 app.use(formatResponse);
 
-app.use(function logError(err, req, res, next) {
+app.use((err, req, res, next) => {
   logger.error(
     `${req.method}:${req.url}
     ${JSON.stringify({ error: err.message })}

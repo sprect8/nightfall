@@ -45,7 +45,7 @@ app.use(shieldRoutes);
 
 app.use(formatResponse);
 
-app.use(function logError(err, req, res, next) {
+app.use((err, req, res, next) => {
   if (err instanceof Error) {
     logger.error(
       `${req.method}:${req.url}

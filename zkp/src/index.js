@@ -15,7 +15,7 @@ import logger from './logger';
 
 const app = express();
 
-app.use(function cros(req, res, next) {
+app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   res.header(
@@ -57,7 +57,7 @@ app.route('/vk').post(async function runVkController(req, res, next) {
 
 app.use(formatResponse);
 
-app.use(function logError(err, req, res, next) {
+app.use((err, req, res, next) => {
   logger.error(
     `${req.method}:${req.url}
     ${JSON.stringify({ error: err.message })}
