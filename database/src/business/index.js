@@ -1,6 +1,15 @@
-export { default as NftService } from './nft.service';
-export { default as NftCommitmentService } from './nft-commitment.service';
-export { default as FtService } from './ft.service';
-export { default as FtCommitmentService } from './ft-commitment.service';
-export { default as UserService } from './user.service';
-export { default as BlacklistService } from './blacklist.service';
+import NftService from './nft.service';
+import NftCommitmentService from './nft-commitment.service';
+import FtService from './ft.service';
+import FtCommitmentService from './ft-commitment.service';
+import UserService from './user.service';
+import BlacklistService from './blacklist.service';
+
+export {
+  NftService,
+  NftCommitmentService,
+  FtService,
+  FtCommitmentService,
+  UserService,
+  BlacklistService,
+};

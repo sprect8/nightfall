@@ -1,4 +1,6 @@
-export { default as accounts } from './accounts';
-export { default as db } from './db';
-export { default as offchain } from './offchain';
-export { default as zkp } from './zkp';
+import accounts from './accounts';
+import db from './db';
+import offchain from './offchain';
+import zkp from './zkp';
+
+export { accounts, db, offchain, zkp };
