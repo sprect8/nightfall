@@ -2,19 +2,19 @@ import apiGateway from './rest/api-gateway';
 import logger from './logger';
 
 async function insertNFTToDb(data, { jwtToken }) {
-  logger.info('offchain/src/listeners.js', 'insertNFTToDb', 'data', data);
+  logger.debug('offchain/src/listeners.js', 'insertNFTToDb', 'data', data);
 
   await apiGateway.insertNFTToDb({ authorization: jwtToken }, data);
 }
 
 async function insertFTTransactionToDb(data, { jwtToken }) {
-  logger.info('offchain/src/listeners.js', 'insertFTTransactionToDb', 'data', data);
+  logger.debug('offchain/src/listeners.js', 'insertFTTransactionToDb', 'data', data);
 
   await apiGateway.insertFTTransactionToDb({ authorization: jwtToken }, data);
 }
 
 async function insertNFTCommitmentToDb(data, { jwtToken }) {
-  logger.info('offchain/src/listeners.js', 'insertNFTCommitmentToDb', 'data', data);
+  logger.debug('offchain/src/listeners.js', 'insertNFTCommitmentToDb', 'data', data);
 
   const { blockNumber, outputCommitments } = data;
   const [{ tokenId, salt, owner, commitment, commitmentIndex }] = outputCommitments;
@@ -33,7 +33,7 @@ async function insertNFTCommitmentToDb(data, { jwtToken }) {
     },
   );
 
-  logger.info(
+  logger.debug(
     'offchain/src/listeners.js',
     'insertNFTCommitmentToDb',
     'correctnessChecks',
@@ -49,7 +49,7 @@ async function insertNFTCommitmentToDb(data, { jwtToken }) {
 }
 
 async function insertFTCommitmentToDb(data, { jwtToken }) {
-  logger.info('offchain/src/listeners.js', 'insertFTCommitmentToDb', 'data', data);
+  logger.debug('offchain/src/listeners.js', 'insertFTCommitmentToDb', 'data', data);
 
   const { blockNumber, outputCommitments } = data;
   const [{ value, salt, owner, commitment, commitmentIndex }] = outputCommitments;
@@ -68,7 +68,7 @@ async function insertFTCommitmentToDb(data, { jwtToken }) {
     },
   );
 
-  logger.info(
+  logger.debug(
     'offchain/src/listeners.js',
     'insertFTCommitmentToDb',
     'correctnessChecks',
@@ -84,7 +84,7 @@ async function insertFTCommitmentToDb(data, { jwtToken }) {
 }
 
 function listeners(data, userData) {
-  logger.info('offchain/src/listeners.js', 'listeners', 'data', data, 'userData', userData);
+  logger.debug('offchain/src/listeners.js', 'listeners', 'data', data, 'userData', userData);
 
   const actualPayload = data.payload;
   switch (actualPayload.for) {
