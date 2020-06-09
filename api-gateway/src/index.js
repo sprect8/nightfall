@@ -19,12 +19,7 @@ import {
   userRoutes,
   shieldRoutes,
 } from './routes';
-import {
-  authentication,
-  formatResponse,
-  formatError,
-  errorHandler,
-} from './middlewares';
+import { authentication, formatResponse, formatError, errorHandler } from './middlewares';
 import setupAdmin from './setup-admin-user';
 
 const app = express();

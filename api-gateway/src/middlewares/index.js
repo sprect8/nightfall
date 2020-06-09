@@ -1,5 +1,5 @@
 import { createToken, authentication } from './auth';
-import { encryptPassword, decryptPassword, unlockAccount } from './password';
+import { encryptPassword, decryptPassword } from './password';
 import { formatResponse, formatError, errorHandler } from './response';
 
 export {
@@ -7,7 +7,6 @@ export {
   authentication,
   encryptPassword,
   decryptPassword,
-  unlockAccount,
   formatResponse,
   formatError,
   errorHandler,

@@ -1,5 +1,4 @@
 import crypto from 'crypto';
-import accounts from '../rest/accounts';
 
 const CRYPT_SECRET = 'secret';
 

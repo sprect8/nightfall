@@ -43,8 +43,7 @@ async function checkCorrectness(
   console.log('commitment:', commitment);
   console.log('commitmentIndex:', commitmentIndex);
 
-  // eslint-disable-line no-underscore-dangle
-  const { contractName } = nfTokenShield.constructor._json;
+  const { contractName } = nfTokenShield.constructor._json; // eslint-disable-line no-underscore-dangle
 
   // query the merkle-tree microservice until it's filtered the blockNumber we wish to query:
   await merkleTree.waitForBlockNumber(contractName, blockNumber);

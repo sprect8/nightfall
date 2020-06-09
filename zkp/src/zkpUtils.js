@@ -110,7 +110,7 @@ function add(x, y, base) {
   return z;
 }
 
-/** 
+/**
  * Helper functions for modular arithmetic - required for mimc hashing
  */
 function addMod(addMe, m) {
@@ -130,7 +130,7 @@ function powerMod(base, exponent, m) {
   return result;
 }
 
-/** 
+/**
  * Helper function for the converting any base to any base
  * Returns a*x, where x is an array of decimal digits and a is an ordinary
  * JavaScript number. base is the number base of the array x.
@@ -147,15 +147,15 @@ function multiplyByNumber(num, x, base) {
     if (num & 1) {
       result = add(result, power, base);
     }
-    // eslint-disable-line
-    num >>= 1;
+
+    num >>= 1; // eslint-disable-line
     if (num === 0) break;
     power = add(power, power, base);
   }
   return result;
 }
 
-/** 
+/**
  * Helper function for the converting any base to any base
  */
 function convertBase(str, fromBase, toBase) {
@@ -217,7 +217,7 @@ function hexToDec(hexStr) {
   return convertBase(hexStr.toLowerCase(), 16, 10);
 }
 
-/** 
+/**
  * converts a hex string to an element of a Finite Field GF(fieldSize) (note, decimal representation is used for all field elements)
  * @param {string} hexStr A hex string.
  * @param {integer} fieldSize The number of elements in the finite field.
@@ -284,7 +284,7 @@ function splitAndPadBitsN(bitStr, n) {
   return a;
 }
 
-/** 
+/**
  * Checks whether a hex number is larger than N bits, and splits its binary representation into chunks of size = N bits. The left-most (big endian) chunk will be the only chunk of size <= N bits. If the inequality is strict, it left-pads this left-most chunk with zeros.
  * @param {string} hexStr A hex number/string.
  * @param {integer} N The 'chunk size'.
@@ -304,7 +304,7 @@ function binToDec(binStr) {
   return dec;
 }
 
-/** 
+/**
  * Preserves the magnitude of a hex number in a finite field, even if the order of the field is smaller than hexStr. hexStr is converted to decimal (as fields work in decimal integer representation) and then split into chunks of size packingSize. Relies on a sensible packing size being provided (ZoKrates uses packingSize = 128).
  * if the result has fewer elements than it would need for compatibiity with the dsl, it's padded to the left with zero elements
  */
@@ -502,7 +502,7 @@ function rndHex(bytes) {
   });
 }
 
-/* 
+/**
  * flattenDeep converts a nested array into a flattened array. We use this to pass our proofs and vks into the verifier contract.
  * Example:
  * A vk of the form:

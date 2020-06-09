@@ -412,7 +412,7 @@ describe('****** Integration Test ******\n', function() {
             return done();
           });
       });
-  
+
       /*
        * Step 10.
        * Mint ERC-20 token commitment.
@@ -439,7 +439,7 @@ describe('****** Integration Test ******\n', function() {
             return done();
           });
       });
-  
+
       /*
        * Step 11.
        * Mint ERC-20 token commitment.
@@ -466,7 +466,7 @@ describe('****** Integration Test ******\n', function() {
             return done();
           });
       });
- 
+
       /*
        * Step 12.
        * Transfer ERC-20 Commitment.
