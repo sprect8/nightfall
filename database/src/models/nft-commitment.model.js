@@ -38,8 +38,10 @@ export default new Schema(
     isReceived: Boolean,
 
     // boolean stats - correctness checks
-    commitmentReconciles: Boolean, // for a given A, pk, S and z, do we have that h(A,pk,S)=z?
-    commitmentExistsOnchain: Boolean, // does z exist on-chain?
+    commitmentReconciles: Boolean,
+
+    // does commitment exist on-chain?
+    commitmentExistsOnchain: Boolean,
   },
   { timestamps: true },
 );

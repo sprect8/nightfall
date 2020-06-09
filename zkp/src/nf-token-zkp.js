@@ -1,19 +1,19 @@
 /**
-@module nf-token-zkp.js
-@author Westlad, Chaitanya-Konda, iAmMichaelConnor
-@desc This code interacts with the blockchain to mint, transfer and burn an nf token commitment.
-It talks to NFTokenShield.sol and you need to give it aninstance of that contract before it
-will work. This version works by transforming an existing commitment to a new one, which
-enables multiple transfers of an asset to take place. The code also talks directly to Verifier.
-*/
+ * @module nf-token-zkp.js
+ * @author Westlad, Chaitanya-Konda, iAmMichaelConnor
+ * @desc This code interacts with the blockchain to mint, transfer and burn an nf token commitment.
+ * It talks to NFTokenShield.sol and you need to give it aninstance of that contract before it
+ * will work. This version works by transforming an existing commitment to a new one, which
+ * enables multiple transfers of an asset to take place. The code also talks directly to Verifier.
+ */
 
 import config from 'config';
 import { merkleTree } from '@eyblockchain/nightlite';
 import utils from './zkpUtils';
 
 /**
-checks the details of an incoming (newly transferred token), to ensure the data we have received is correct and legitimate!!
-*/
+ * checks the details of an incoming (newly transferred token), to ensure the data we have received is correct and legitimate!!
+ */
 async function checkCorrectness(
   erc721Address,
   asset,
@@ -31,7 +31,9 @@ async function checkCorrectness(
     publicKey,
     salt,
   );
-  const zCorrect = commitmentCheck === commitment; // eslint-disable-line camelcase
+
+  // eslint-disable-line camelcase
+  const zCorrect = commitmentCheck === commitment;
   console.log('commitment:', commitment);
   console.log('commitmentCheck:', commitmentCheck);
 
@@ -40,7 +42,9 @@ async function checkCorrectness(
   );
   console.log('commitment:', commitment);
   console.log('commitmentIndex:', commitmentIndex);
-  const { contractName } = nfTokenShield.constructor._json; // eslint-disable-line no-underscore-dangle
+
+  // eslint-disable-line no-underscore-dangle
+  const { contractName } = nfTokenShield.constructor._json;
 
   // query the merkle-tree microservice until it's filtered the blockNumber we wish to query:
   await merkleTree.waitForBlockNumber(contractName, blockNumber);
@@ -52,7 +56,8 @@ async function checkCorrectness(
       `Could not find commitment ${commitment} at the given commitmentIndex ${commitmentIndex} in  the merkle-tree microservice. Found ${leaf.value} instead.`,
     );
 
-  const zOnchainCorrect = leaf.value === commitment; // eslint-disable-line camelcase
+  // eslint-disable-line camelcase
+  const zOnchainCorrect = leaf.value === commitment;
   console.log('commitment:', commitment);
   console.log('commitment emmitted by blockchain:', leaf.value);
 

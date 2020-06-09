@@ -77,12 +77,6 @@ async function getAccountBalance(req, res, next) {
 }
 
 /**
- * This function is to transfer ether to an account
- * @param {*} req
- * @param {*} res
- */
-
-/**
  * @api {get} /transferEther
  * @apiDescription This function is to transfer ether to an account
  * @apiVersion 1.0.0

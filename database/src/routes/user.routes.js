@@ -18,6 +18,7 @@ async function configureDBconnection(req, res, next) {
     next(err);
   }
 }
+
 /**
  * This function will create a user(public ethereum account)
  * req.body = {

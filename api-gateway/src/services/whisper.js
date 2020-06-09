@@ -18,7 +18,6 @@ export async function sendWhisperMessage(senderShhIdentity, dataToSend) {
   await offchain.sendMessage(details);
 }
 
-// user auth
 /**
  * This function assign new set of whisper keys to logged in user
  * @param {Object} req

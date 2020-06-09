@@ -16,14 +16,3 @@ export function decryptPassword(passwordHash) {
   decrpted += decipher.final('utf8');
   return decrpted;
 }
-
-export async function unlockAccount(req, res, next) {
-  if (!req.user) return next();
-  const { address, password } = req.user;
-  try {
-    await accounts.unlockAccount({ address, password });
-  } catch (error) {
-    return next(error);
-  }
-  return next();
-}

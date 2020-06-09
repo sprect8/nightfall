@@ -54,7 +54,8 @@ if the string is too short to fill the output hex string, it is padded on the le
 if the string is too long, an error is thrown
 */
 function utf8StringToHex(str, outLengthBytes) {
-  const outLength = outLengthBytes * 2; // work in characters rather than bytes
+  // work in characters rather than bytes
+  const outLength = outLengthBytes * 2;
   const buf = Buffer.from(str, 'utf8');
   let hex = buf.toString('hex');
   if (outLength < hex.length)
@@ -109,7 +110,8 @@ function add(x, y, base) {
   return z;
 }
 
-/** Helper functions for modular arithmetic - required for mimc hashing
+/** 
+ * Helper functions for modular arithmetic - required for mimc hashing
  */
 function addMod(addMe, m) {
   return addMe.reduce((e, acc) => (e + acc) % m, BigInt(0));
@@ -128,9 +130,10 @@ function powerMod(base, exponent, m) {
   return result;
 }
 
-/** Helper function for the converting any base to any base
- Returns a*x, where x is an array of decimal digits and a is an ordinary
- JavaScript number. base is the number base of the array x.
+/** 
+ * Helper function for the converting any base to any base
+ * Returns a*x, where x is an array of decimal digits and a is an ordinary
+ * JavaScript number. base is the number base of the array x.
  */
 function multiplyByNumber(num, x, base) {
   if (num < 0) return null;
@@ -144,14 +147,16 @@ function multiplyByNumber(num, x, base) {
     if (num & 1) {
       result = add(result, power, base);
     }
-    num >>= 1; // eslint-disable-line
+    // eslint-disable-line
+    num >>= 1;
     if (num === 0) break;
     power = add(power, power, base);
   }
   return result;
 }
 
-/** Helper function for the converting any base to any base
+/** 
+ * Helper function for the converting any base to any base
  */
 function convertBase(str, fromBase, toBase) {
   const digits = parseToDigitsArray(str, fromBase);
@@ -190,10 +195,10 @@ function hexToBinSimple(hex) {
 }
 
 /**
-Converts hex strings into byte (decimal) values.  This is so that they can
-be passed into  merkle-proof.code in a more compressed fromat than bits.
-Each byte is invididually converted so 0xffff becomes [15,15]
-*/
+ * Converts hex strings into byte (decimal) values.  This is so that they can
+ * be passed into  merkle-proof.code in a more compressed fromat than bits.
+ * Each byte is invididually converted so 0xffff becomes [15,15]
+ */
 function hexToBytes(hex) {
   const cleanHex = strip0x(hex);
   const out = [];
@@ -212,11 +217,12 @@ function hexToDec(hexStr) {
   return convertBase(hexStr.toLowerCase(), 16, 10);
 }
 
-/** converts a hex string to an element of a Finite Field GF(fieldSize) (note, decimal representation is used for all field elements)
-@param {string} hexStr A hex string.
-@param {integer} fieldSize The number of elements in the finite field.
-@return {string} A Field Value (decimal value) (formatted as string, because they're very large)
-*/
+/** 
+ * converts a hex string to an element of a Finite Field GF(fieldSize) (note, decimal representation is used for all field elements)
+ * @param {string} hexStr A hex string.
+ * @param {integer} fieldSize The number of elements in the finite field.
+ * @return {string} A Field Value (decimal value) (formatted as string, because they're very large)
+ */
 function hexToField(hexStr, fieldSize) {
   const cleanHexStr = strip0x(hexStr);
   const decStr = hexToDec(cleanHexStr);
@@ -227,21 +233,21 @@ function hexToField(hexStr, fieldSize) {
 }
 
 /**
-Left-pads the input hex string with zeros, so that it becomes of size N octets.
-@param {string} hexStr A hex number/string.
-@param {integer} N The string length (i.e. the number of octets).
-@return A hex string (padded) to size N octets, (plus 0x at the start).
-*/
+ * Left-pads the input hex string with zeros, so that it becomes of size N octets.
+ * @param {string} hexStr A hex number/string.
+ * @param {integer} N The string length (i.e. the number of octets).
+ * @return A hex string (padded) to size N octets, (plus 0x at the start).
+ */
 function leftPadHex(hexStr, n) {
   return ensure0x(strip0x(hexStr).padStart(n, '0'));
 }
 
 /**
-Used by splitAndPadBitsN function.
-Left-pads the input binary string with zeros, so that it becomes of size N bits.
-@param {string} bitStr A binary number/string.
-@param {integer} N The 'chunk size'.
-@return A binary string (padded) to size N bits.
+ * Used by splitAndPadBitsN function.
+ * Left-pads the input binary string with zeros, so that it becomes of size N bits.
+ * @param {string} bitStr A binary number/string.
+ * @param {integer} N The 'chunk size'.
+ * @return A binary string (padded) to size N bits.
  */
 function leftPadBitsN(bitStr, n) {
   const len = bitStr.length;
@@ -258,12 +264,12 @@ function leftPadBitsN(bitStr, n) {
 }
 
 /**
-Used by split'X'ToBitsN functions.
-Checks whether a binary number is larger than N bits, and splits its binary representation into chunks of size = N bits. The left-most (big endian) chunk will be the only chunk of size <= N bits. If the inequality is strict, it left-pads this left-most chunk with zeros.
-@param {string} bitStr A binary number/string.
-@param {integer} N The 'chunk size'.
-@return An array whose elements are binary 'chunks' which altogether represent the input binary number.
-*/
+ * Used by split'X'ToBitsN functions.
+ * Checks whether a binary number is larger than N bits, and splits its binary representation into chunks of size = N bits. The left-most (big endian) chunk will be the only chunk of size <= N bits. If the inequality is strict, it left-pads this left-most chunk with zeros.
+ * @param {string} bitStr A binary number/string.
+ * @param {integer} N The 'chunk size'.
+ * @return An array whose elements are binary 'chunks' which altogether represent the input binary number.
+ */
 function splitAndPadBitsN(bitStr, n) {
   let a = [];
   const len = bitStr.length;
@@ -278,11 +284,12 @@ function splitAndPadBitsN(bitStr, n) {
   return a;
 }
 
-/** Checks whether a hex number is larger than N bits, and splits its binary representation into chunks of size = N bits. The left-most (big endian) chunk will be the only chunk of size <= N bits. If the inequality is strict, it left-pads this left-most chunk with zeros.
-@param {string} hexStr A hex number/string.
-@param {integer} N The 'chunk size'.
-@return An array whose elements are binary 'chunks' which altogether represent the input hex number.
-*/
+/** 
+ * Checks whether a hex number is larger than N bits, and splits its binary representation into chunks of size = N bits. The left-most (big endian) chunk will be the only chunk of size <= N bits. If the inequality is strict, it left-pads this left-most chunk with zeros.
+ * @param {string} hexStr A hex number/string.
+ * @param {integer} N The 'chunk size'.
+ * @return An array whose elements are binary 'chunks' which altogether represent the input hex number.
+ */
 function splitHexToBitsN(hexStr, n) {
   const strippedHexStr = strip0x(hexStr);
   const bitStr = hexToBinSimple(strippedHexStr.toString());
@@ -297,14 +304,16 @@ function binToDec(binStr) {
   return dec;
 }
 
-/** Preserves the magnitude of a hex number in a finite field, even if the order of the field is smaller than hexStr. hexStr is converted to decimal (as fields work in decimal integer representation) and then split into chunks of size packingSize. Relies on a sensible packing size being provided (ZoKrates uses packingSize = 128).
- *if the result has fewer elements than it would need for compatibiity with the dsl, it's padded to the left with zero elements
+/** 
+ * Preserves the magnitude of a hex number in a finite field, even if the order of the field is smaller than hexStr. hexStr is converted to decimal (as fields work in decimal integer representation) and then split into chunks of size packingSize. Relies on a sensible packing size being provided (ZoKrates uses packingSize = 128).
+ * if the result has fewer elements than it would need for compatibiity with the dsl, it's padded to the left with zero elements
  */
 function hexToFieldPreserve(hexStr, packingSize, packets, silenceWarnings) {
   let bitsArr = [];
   bitsArr = splitHexToBitsN(strip0x(hexStr).toString(), packingSize.toString());
 
-  let decArr = []; // decimal array
+  // decimal array
+  let decArr = [];
   decArr = bitsArr.map(item => binToDec(item.toString()));
 
   // fit the output array to the desired number of packets:
@@ -316,10 +325,12 @@ function hexToFieldPreserve(hexStr, packingSize, packets, silenceWarnings) {
           `Field split into an array of ${decArr.length} packets: ${decArr}
           , but this exceeds the requested packet size of ${packets}. Data would have been lost; possibly unexpectedly. To silence this warning, pass '1' or 'true' as the final parameter.`,
         );
+
       // remove extra packets (dangerous!):
       for (let i = 0; i < overflow; i += 1) decArr.shift();
     } else {
       const missing = packets - decArr.length;
+
       // add any missing zero elements
       for (let i = 0; i < missing; i += 1) decArr.unshift('0');
     }
@@ -330,24 +341,27 @@ function hexToFieldPreserve(hexStr, packingSize, packets, silenceWarnings) {
 // FUNCTIONS ON FIELDS
 
 /**
-Converts an array of Field Elements (decimal numbers which are smaller in magnitude than the field size q), where the array represents a decimal of magnitude larger than q, into the decimal which the array represents.
-@param {[string]} fieldsArr is an array of (decimal represented) field elements. Each element represents a number which is 2**128 times larger than the next in the array. So the 0th element of fieldsArr requires the largest left-shift (by a multiple of 2**128), and the last element is not shifted (shift = 1). The shifted elements should combine (sum) to the underlying decimal number which they represent.
-@param {integer} packingSize Each field element of fieldsArr is a 'packing' of exactly 'packingSize' bits. I.e. packingSize is the size (in bits) of each chunk (element) of fieldsArr. We use this to reconstruct the underlying decimal value which was, at some point previously, packed into a fieldsArr format.
-@returns {string} A decimal number (as a string, because it might be a very large number)
-*/
+ * Converts an array of Field Elements (decimal numbers which are smaller in magnitude than the field size q), where the array represents a decimal of magnitude larger than q, into the decimal which the array represents.
+ * @param {[string]} fieldsArr is an array of (decimal represented) field elements. Each element represents a number which is 2**128 times larger than the next in the array. So the 0th element of fieldsArr requires the largest left-shift (by a multiple of 2**128), and the last element is not shifted (shift = 1). The shifted elements should combine (sum) to the underlying decimal number which they represent.
+ * @param {integer} packingSize Each field element of fieldsArr is a 'packing' of exactly 'packingSize' bits. I.e. packingSize is the size (in bits) of each chunk (element) of fieldsArr. We use this to reconstruct the underlying decimal value which was, at some point previously, packed into a fieldsArr format.
+ * @returns {string} A decimal number (as a string, because it might be a very large number)
+ */
 
 // UTILITY FUNCTIONS:
 
 /**
-Utility function to xor to two hex strings and return as buffer
-Looks like the inputs are somehow being changed to decimal!
-*/
+ * Utility function to xor to two hex strings and return as buffer
+ * Looks like the inputs are somehow being changed to decimal!
+ */
 function xor(a, b) {
   const length = Math.max(a.length, b.length);
-  const buffer = Buffer.allocUnsafe(length); // creates a buffer object of length 'length'
+
+  // creates a buffer object of length 'length'
+  const buffer = Buffer.allocUnsafe(length);
   for (let i = 0; i < length; i += 1) {
     buffer[i] = a[i] ^ b[i]; // eslint-disable-line
   }
+
   // a.forEach((item)=>console.log("xor input a: " + item))
   // b.forEach((item)=>console.log("xor input b: " + item))
   // buffer.forEach((item)=>console.log("xor outputs: " + item))
@@ -355,9 +369,9 @@ function xor(a, b) {
 }
 
 /**
-Utility function to concatenate two hex strings and return as buffer
-Looks like the inputs are somehow being changed to decimal!
-*/
+ * Utility function to concatenate two hex strings and return as buffer
+ * Looks like the inputs are somehow being changed to decimal!
+ */
 function concatenate(a, b) {
   const length = a.length + b.length;
   const buffer = Buffer.allocUnsafe(length); // creates a buffer object of length 'length'
@@ -371,13 +385,13 @@ function concatenate(a, b) {
 }
 
 /**
-Utility function:
-hashes a concatenation of items but it does it by
-breaking the items up into 432 bit chunks, hashing those, plus any remainder
-and then repeating the process until you end up with a single hash.  That way
-we can generate a hash without needing to use more than a single sha round.  It's
-not the same value as we'd get using rounds but it's at least doable.
-*/
+ * Utility function:
+ * hashes a concatenation of items but it does it by
+ * breaking the items up into 432 bit chunks, hashing those, plus any remainder
+ * and then repeating the process until you end up with a single hash.  That way
+ * we can generate a hash without needing to use more than a single sha round.  It's
+ * not the same value as we'd get using rounds but it's at least doable.
+ */
 function hash(item) {
   const preimage = strip0x(item);
 
@@ -390,16 +404,16 @@ function hash(item) {
 }
 
 /**
-Utility function to:
-- convert each item in items to a 'buffer' of bytes (2 hex values), convert those bytes into decimal representation
-- 'concatenate' each decimally-represented byte together into 'concatenated bytes'
-- hash the 'buffer' of 'concatenated bytes' (sha256) (sha256 returns a hex output)
-- truncate the result to the right-most 64 bits
-Return:
-createHash: we're creating a sha256 hash
-update: [input string to hash (an array of bytes (in decimal representaion) [byte, byte, ..., byte] which represents the result of: item1, item2, item3. Note, we're calculating hash(item1, item2, item3) ultimately]
-digest: [output format ("hex" in our case)]
-slice: [begin value] outputs the items in the array on and after the 'begin value'
+ * Utility function to:
+ * - convert each item in items to a 'buffer' of bytes (2 hex values), convert those bytes into decimal representation
+ * - 'concatenate' each decimally-represented byte together into 'concatenated bytes'
+ * - hash the 'buffer' of 'concatenated bytes' (sha256) (sha256 returns a hex output)
+ * - truncate the result to the right-most 64 bits
+ * Return:
+ * createHash: we're creating a sha256 hash
+ * update: [input string to hash (an array of bytes (in decimal representaion) [byte, byte, ..., byte] which represents the result of: item1, item2, item3. Note, we're calculating hash(item1, item2, item3) ultimately]
+ * digest: [output format ("hex" in our case)]
+ * slice: [begin value] outputs the items in the array on and after the 'begin value'
  */
 function concatenateThenHash(...items) {
   const concatvalue = items
@@ -422,21 +436,26 @@ function keccak256Hash(item) {
 }
 
 /**
-mimc encryption function
-@param  {String} x - the input value
-@param {String} k - the key value
-@param {String} seed - input seed for first round (=0n for a hash)
-@param
-*/
+ * mimc encryption function
+ * @param  {String} x - the input value
+ * @param {String} k - the key value
+ * @param {String} seed - input seed for first round (=0n for a hash)
+ * @param
+ */
 function mimcpe7(x, k, seed, roundCount, m) {
   let xx = x;
   let t;
   let c = seed;
   for (let i = 0; i < roundCount; i++) {
     c = keccak256Hash(c);
-    t = addMod([xx, BigInt(c), k], m); // t = x + c_i + k
-    xx = powerMod(t, BigInt(7), m); // t^7
+
+    // t = x + c_i + k
+    t = addMod([xx, BigInt(c), k], m);
+
+    // t^7
+    xx = powerMod(t, BigInt(7), m);
   }
+
   // Result adds key again as blinding factor
   return addMod([xx, k], m);
 }
@@ -452,7 +471,9 @@ function mimcpe7mp(x, k, seed, roundCount, m = BigInt(config.ZOKRATES_PRIME)) {
 
 function mimcHash(...msgs) {
   // elipses means input stored in array called msgs
-  const mimc = '0x6d696d63'; // this is 'mimc' in hex as a nothing-up-my-sleeve seed
+
+  // this is 'mimc' in hex as a nothing-up-my-sleeve seed
+  const mimc = '0x6d696d63';
   return `0x${mimcpe7mp(
     // '${' notation '0x${x}' -> '0x34' w/ x=34
     msgs.map(e => {
@@ -467,11 +488,11 @@ function mimcHash(...msgs) {
     .toString(16) // hex string - can remove 0s
     .padStart(64, '0')}`; // so pad
 }
-/**
-function to generate a promise that resolves to a string of hex
-@param {int} bytes - the number of bytes of hex that should be returned
- */
 
+/**
+ * function to generate a promise that resolves to a string of hex
+ * @param {int} bytes - the number of bytes of hex that should be returned
+ */
 function rndHex(bytes) {
   return new Promise((resolve, reject) => {
     crypto.randomBytes(bytes, (err, buf) => {
@@ -481,40 +502,40 @@ function rndHex(bytes) {
   });
 }
 
-/* flattenDeep converts a nested array into a flattened array. We use this to pass our proofs and vks into the verifier contract.
-Example:
-A vk of the form:
-[
-  [
-    [ '1','2' ],
-    [ '3','4' ]
-  ],
-    [ '5','6' ],
-    [
-      [ '7','8' ], [ '9','10' ]
-    ],
-  [
-    [ '11','12' ],
-    [ '13','14' ]
-  ],
-    [ '15','16' ],
-    [
-      [ '17','18' ], [ '19','20' ]
-    ],
-  [
-    [ '21','22' ],
-    [ '23','24' ]
-  ],
-  [
-    [ '25','26' ],
-    [ '27','28' ],
-    [ '29','30' ],
-    [ '31','32' ]
-  ]
-]
-
-is converted to:
-['1','2','3','4','5','6',...]
+/* 
+ * flattenDeep converts a nested array into a flattened array. We use this to pass our proofs and vks into the verifier contract.
+ * Example:
+ * A vk of the form:
+ * [
+ *  [
+ *    [ '1','2' ],
+ *    [ '3','4' ]
+ *  ],
+ *   [ '5','6' ],
+ *   [
+ *     [ '7','8' ], [ '9','10' ]
+ *   ],
+ *  [
+ *    [ '11','12' ],
+ *    [ '13','14' ]
+ *  ],
+ *  [ '15','16' ],
+ *  [
+ *    [ '17','18' ], [ '19','20' ]
+ *  ],
+ *  [
+ *    [ '21','22' ],
+ *    [ '23','24' ]
+ *  ],
+ *  [
+ *    [ '25','26' ],
+ *    [ '27','28' ],
+ *    [ '29','30' ],
+ *    [ '31','32' ]
+ *  ]
+ * ]
+ *  is converted to:
+ * ['1','2','3','4','5','6',...]
  */
 function flattenDeep(arr) {
   return arr.reduce(
