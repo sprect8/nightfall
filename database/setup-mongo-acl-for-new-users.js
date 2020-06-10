@@ -3,7 +3,7 @@
 var existingRoles = db.getRoles().map(data => data.role);
 var existingUsers = db.getUsers().map(data => data.user);
 
-db.getCollectionNames().forEach(function(c){
+db.getCollectionNames().forEach((c) => {
   if (existingRoles.indexOf(c) !== -1) return;
   if (c.indexOf("_") === -1) return;
 

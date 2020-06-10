@@ -112,6 +112,11 @@ services:
       - ./ui/tsconfig.json:/app/tsconfig.json:cached,ro
     ports:
       - '8000:80'
+    environment:
+      API_GATEWAY_HOST: http://localhost
+      API_GATEWAY_PORT: 8001
+      RABBITMQ_HOST: ws://localhost
+      RABBITMQ_PORT: 15674
     networks:
       - nightfall_network
 

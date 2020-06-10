@@ -51,7 +51,7 @@ async function mint(req, res, next) {
 
   try {
     const { commitment, commitmentIndex } = await erc20.mint(
-      value,
+      value.toString(16),
       owner.publicKey,
       salt,
       {
