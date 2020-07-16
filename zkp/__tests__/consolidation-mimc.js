@@ -11,11 +11,11 @@ import { getContractAddress, getTruffleContractInstance } from '../src/contractU
 jest.setTimeout(7200000);
 
 const PROOF_LENGTH = 20;
-const C = '0x00000000000000000000000000000028'; // 128 bits = 16 bytes = 32 chars
-const E = new Array(20).fill('0x00000000000000000000000000000002');
-const skA = '0x0000000000111111111111111111111111111111111111111111111111112111';
+const amountC = '0x00000000000000000000000000000028'; // 128 bits = 16 bytes = 32 chars
+const amountE = new Array(20).fill('0x00000000000000000000000000000002');
+const secretKeyA = '0x0000000000111111111111111111111111111111111111111111111111112111';
 // we could generate these but it's nice to have them fixed in case later testing
-const skB = [
+const secretKeyB = [
   '0x0000000000111111111111111111111111111111111111111111111111111100',
   '0x0000000000111111111111111111111111111111111111111111111111111100',
   '0x0000000000111111111111111111111111111111111111111111111111111100',
@@ -37,7 +37,7 @@ const skB = [
   '0x0000000000111111111111111111111111111111111111111111111111111100',
   '0x0000000000111111111111111111111111111111111111111111111111111100', // deliberately the same as the last one - to enable a transfer test
 ];
-const S_B_E = [
+const saltBobE = [
   '0x0000000000211111111111111111111111111111111111111111111111111100',
   '0x0000000000211111111111111111111111111111111111111111111111111101',
   '0x0000000000211111111111111111111111111111111111111111111111111102',
@@ -59,13 +59,12 @@ const S_B_E = [
   '0x0000000000211111111111111111111111111111111111111111111111111118',
   '0x0000000000211111111111111111111111111111111111111111111111111119',
 ];
-let S_A_C;
-let pkA;
-let pkB = [];
-let Z_A_C;
+let saltAliceC;
+let publicKeyA;
+let publicKeyB = [];
+let commitmentAliceC;
 // storage for z indexes
 let zInd1;
-let zInd2;
 const outputCommitments = [];
 let accounts;
 let fTokenShieldJson;
@@ -82,12 +81,17 @@ if (process.env.HASH_TYPE === 'mimc') {
     fTokenShieldAddress = contractInstance.address;
     fTokenShieldJson = contractJson;
     for (let i = 0; i < PROOF_LENGTH; i++) {
-      pkB[i] = utils.strip0x(utils.hash(skB[i]));
+      publicKeyB[i] = utils.strip0x(utils.hash(secretKeyB[i]));
     }
-    pkB = await Promise.all(pkB);
-    S_A_C = await utils.rndHex(32);
-    pkA = utils.strip0x(utils.hash(skA));
-    Z_A_C = utils.concatenateThenHash(erc20AddressPadded, C, pkA, S_A_C);
+    publicKeyB = await Promise.all(publicKeyB);
+    saltAliceC = await utils.rndHex(32);
+    publicKeyA = utils.strip0x(utils.hash(secretKeyA));
+    commitmentAliceC = utils.concatenateThenHash(
+      erc20AddressPadded,
+      amountC,
+      publicKeyA,
+      saltAliceC,
+    );
   });
   // eslint-disable-next-line no-undef
   describe('f-token-controller.js tests', () => {
@@ -107,11 +111,11 @@ if (process.env.HASH_TYPE === 'mimc') {
       expect(AMOUNT).toEqual(bal2 - bal1);
     });
 
-    test('Should mint an ERC-20 commitment Z_A_C for Alice of value C', async () => {
+    test('Should mint an ERC-20 commitment commitmentAliceC for Alice of value C', async () => {
       const { commitment: zTest, commitmentIndex: zIndex } = await erc20.mint(
-        C,
-        pkA,
-        S_A_C,
+        amountC,
+        publicKeyA,
+        saltAliceC,
         // await getVkId('MintFToken'),
         {
           erc20Address,
@@ -126,26 +130,36 @@ if (process.env.HASH_TYPE === 'mimc') {
         },
       );
       zInd1 = parseInt(zIndex, 10);
-      console.log('salt:', S_A_C);
-      console.log('pkA:', pkA);
-      console.log('expected commitment:', Z_A_C);
+      console.log('salt:', saltAliceC);
+      console.log('publicKeyA:', publicKeyA);
+      console.log('expected commitment:', commitmentAliceC);
       console.log('commitment index:', zInd1);
-      expect(Z_A_C).toEqual(zTest);
+      expect(commitmentAliceC).toEqual(zTest);
     });
 
     test('Should transfer ERC-20 commitments of various values to ONE receipient and get change', async () => {
       // the E's becomes Bobs'.
       const bal1 = await controller.getBalance(accounts[0]);
-      const inputCommitment = { value: C, salt: S_A_C, commitment: Z_A_C, commitmentIndex: zInd1 };
+      const inputCommitment = {
+        value: amountC,
+        salt: saltAliceC,
+        commitment: commitmentAliceC,
+        commitmentIndex: zInd1,
+      };
 
-      for (let i = 0; i < E.length; i++) {
-        outputCommitments[i] = { value: E[i], salt: S_B_E[i] };
+      for (let i = 0; i < amountE.length; i++) {
+        outputCommitments[i] = {
+          value: amountE[i],
+          salt: saltBobE[i],
+          receiver: {
+            publicKey: publicKeyB[i],
+          },
+        };
       }
-      const response = await erc20.simpleFungibleBatchTransfer(
+      await erc20.simpleFungibleBatchTransfer(
         inputCommitment,
         outputCommitments,
-        pkB, // deliberately the same key x 20 for consolidation transfer
-        skA,
+        secretKeyA,
         // await getVkId('SimpleBatchTransferFToken'),
         {
           erc20Address,
@@ -160,8 +174,6 @@ if (process.env.HASH_TYPE === 'mimc') {
         },
       );
 
-      zInd2 = parseInt(response.maxOutputCommitmentIndex, 10);
-      outputCommitments.commitment = response.outputCommitments.commitment;
       const bal2 = await controller.getBalance(accounts[0]);
       const wei = parseInt(bal1, 10) - parseInt(bal2, 10);
       console.log('gas consumed was', wei / 20e9);
@@ -170,24 +182,24 @@ if (process.env.HASH_TYPE === 'mimc') {
     });
 
     test('Should consolidate the 20 commitments just created', async () => {
-      const pkE = await utils.rndHex(32); // public key of Eve, who we transfer to
+      const publicKeyE = await utils.rndHex(32); // public key of Eve, who we transfer to
       const inputCommitments = [];
-      for (let i = 0; i < E.length; i++) {
+      for (let i = 0; i < amountE.length; i++) {
         inputCommitments[i] = {
-          value: E[i],
-          salt: S_B_E[i],
+          value: amountE[i],
+          salt: saltBobE[i],
           commitment: outputCommitments[i].commitment,
-          commitmentIndex: zInd2 - E.length + i + 1,
+          commitmentIndex: outputCommitments[i].commitmentIndex,
         };
       }
-      const outputCommitment = { value: C, salt: await utils.rndHex(32) };
+      const outputCommitment = { value: amountC, salt: await utils.rndHex(32) };
       console.log(`********************** inputCommitments : ${JSON.stringify(inputCommitments)}`);
       console.log(`********************** outputCommitment : ${JSON.stringify(outputCommitment)}`);
       const response = await erc20.consolidationTransfer(
         inputCommitments,
         outputCommitment,
-        pkE,
-        skB[0],
+        publicKeyE,
+        secretKeyB[0],
         {
           erc20Address,
           account: accounts[0],
