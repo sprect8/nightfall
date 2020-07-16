@@ -61,6 +61,7 @@
       "/app/__tests__/globalSetup.js"
     ],
     "setupFilesAfterEnv": [
+      "<rootDir>/__tests__/setups/override-default-config.js",
       "jest-expect-message"
     ]
   }

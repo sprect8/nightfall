@@ -6,8 +6,6 @@ import bc from '../src/web3';
 import controller from '../src/nf-token-controller';
 import { getContractAddress, getTruffleContractInstance } from '../src/contractUtils';
 
-jest.setTimeout(7200000);
-
 let tokenIdA;
 let tokenIdB;
 let tokenIdG;
