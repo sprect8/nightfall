@@ -2,7 +2,7 @@ import config from 'config';
 
 import { COLLECTIONS } from '../common/constants';
 import {
-  UserSchema,
+  userSchema,
   nftSchema,
   nftTransactionSchema,
   nftCommitmentSchema,
@@ -26,7 +26,7 @@ export default class DB {
   createTablesForUser() {
     const { username, database } = this;
     this.Models = {
-      user: database.model(`${username}_${COLLECTIONS.USER}`, UserSchema),
+      user: database.model(`${username}_${COLLECTIONS.USER}`, userSchema),
       nft: database.model(`${username}_${COLLECTIONS.NFT}`, nftSchema),
       nft_transaction: database.model(
         `${username}_${COLLECTIONS.NFT_TRANSACTION}`,
