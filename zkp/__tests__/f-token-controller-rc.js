@@ -6,7 +6,7 @@ import utils from '../src/zkpUtils';
 import controller from '../src/f-token-controller';
 import { getTruffleContractInstance, getContractAddress } from '../src/contractUtils';
 // import { setAuthorityPrivateKeys, rangeGenerator } from '../src/el-gamal';
-jest.setTimeout(7200000);
+
 const web3 = Web3.connection();
 const amountC = '0x00000000000000000000000000000020'; // 128 bits = 16 bytes = 32 chars
 const amountD = '0x00000000000000000000000000000030';

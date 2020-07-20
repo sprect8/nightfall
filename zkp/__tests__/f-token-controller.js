@@ -7,8 +7,6 @@ import utils from '../src/zkpUtils';
 import controller from '../src/f-token-controller';
 import { getTruffleContractInstance, getContractAddress } from '../src/contractUtils';
 
-jest.setTimeout(7200000);
-
 const amountC = '0x00000000000000000000000000000020'; // 128 bits = 16 bytes = 32 chars
 const amountD = '0x00000000000000000000000000000030';
 const amountE = '0x00000000000000000000000000000040';

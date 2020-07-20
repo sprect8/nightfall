@@ -8,8 +8,6 @@ import controller from '../src/f-token-controller';
 import { getContractAddress, getTruffleContractInstance } from '../src/contractUtils';
 // import vk from '../src/vk-controller';
 
-jest.setTimeout(7200000);
-
 const PROOF_LENGTH = 20;
 const amountC = '0x00000000000000000000000000000028'; // 128 bits = 16 bytes = 32 chars
 const amountE = new Array(20).fill('0x00000000000000000000000000000002');
