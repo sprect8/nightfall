@@ -6,7 +6,8 @@
 
 import express from 'express';
 import bodyParser from 'body-parser';
-import { merkleTree, provider } from '@eyblockchain/nightlite';
+import { merkleTree, provider, overrideDefaultConfig } from '@eyblockchain/nightlite';
+import config from 'config';
 import { ftCommitmentRoutes, ftRoutes, nftCommitmentRoutes, nftRoutes } from './routes';
 import vkController from './vk-controller'; // this import TRIGGERS the runController() script within.
 import { formatResponse, formatError, errorHandler } from './middlewares';
@@ -14,6 +15,10 @@ import complianceInit from './compliance-init';
 import logger from './logger';
 
 const app = express();
+
+overrideDefaultConfig({
+  NODE_HASHLENGTH: config.NODE_HASHLENGTH,
+});
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
