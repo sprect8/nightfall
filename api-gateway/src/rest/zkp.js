@@ -23,10 +23,7 @@ export default {
       url: `${url}/vk`,
       method: 'POST',
       json: true,
-      headers: {
-        address: headers.address,
-        password: headers.password,
-      },
+      headers,
       body,
     };
     return requestWrapper(options);

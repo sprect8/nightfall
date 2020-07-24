@@ -1,9 +1,9 @@
 /**
-@module vk-controller.js
-@author iAmMichaelConnor
-@desc this acts as a layer of logic between the restapi.js, which lands the
-rest api calls, and the heavy-lifitng token-zkp.js and zokrates.js.  It exists so that the amount of logic in restapi.js is absolutely minimised.
-*/
+ * @module vk-controller.js
+ * @author iAmMichaelConnor
+ * @desc this acts as a layer of logic between the restapi.js, which lands the
+ * rest api calls, and the heavy-lifitng token-zkp.js and zokrates.js.  It exists so that the amount of logic in restapi.js is absolutely minimised.
+ */
 
 import config from 'config';
 import { vks } from '@eyblockchain/nightlite';

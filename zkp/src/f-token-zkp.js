@@ -1,18 +1,18 @@
 /**
-@module f-token-zkp.js
-@author Westlad, iAmMichaelConnor
-@desc This code interacts with the blockchain to mint, transfer and burn an f token commitment.
-It talks to FTokenShield.sol and you need to give it aninstance of that contract
-before it will work. This version works by transforming an existing commitment to a
-new one, which enables sending of arbritrary amounts. The code also talks directly to Verifier.
-*/
+ * @module f-token-zkp.js
+ * @author Westlad, iAmMichaelConnor
+ * @desc This code interacts with the blockchain to mint, transfer and burn an f token commitment.
+ * It talks to FTokenShield.sol and you need to give it aninstance of that contract
+ * before it will work. This version works by transforming an existing commitment to a
+ * new one, which enables sending of arbritrary amounts. The code also talks directly to Verifier.
+ */
 
 import { merkleTree } from '@eyblockchain/nightlite';
 import utils from './zkpUtils';
 
 /**
-checks the details of an incoming (newly transferred token), to ensure the data we have received is correct and legitimate!!
-*/
+ * checks the details of an incoming (newly transferred token), to ensure the data we have received is correct and legitimate!!
+ */
 async function checkCorrectness(
   erc20Address,
   value,

@@ -47,6 +47,7 @@ describe('****** Integration Test ******\n', function() {
           return done();
         });
     });
+
     /*
      * Create an account for Bob.
      */
@@ -63,6 +64,7 @@ describe('****** Integration Test ******\n', function() {
         });
     });
   });
+
   /*
    * Step 2.
    * This step will log in Alice and Bob.
@@ -102,6 +104,7 @@ describe('****** Integration Test ******\n', function() {
           return done();
         });
     });
+
     /*
      * Login User Bob.
      */
@@ -164,6 +167,7 @@ describe('****** Integration Test ******\n', function() {
             return done();
           });
       });
+
       /*
        * Step 4.
        * Mint ERC-721 token commitment.
@@ -193,11 +197,13 @@ describe('****** Integration Test ******\n', function() {
         expect(res).to.have.nested.property('body.data.commitment');
         expect(res).to.have.nested.property('body.data.commitmentIndex');
 
-        erc721CommitmentTransfer.salt = res.body.data.salt; // set Salt from response to calculate and verify commitment.
+        // set Salt from response to calculate and verify commitment.
+        erc721CommitmentTransfer.salt = res.body.data.salt;
         erc721CommitmentTransfer.mintCommitmentIndex = res.body.data.commitmentIndex;
 
         expect(res.body.data.commitment).to.be.equal(erc721CommitmentTransfer.mintCommitment);
       });
+
       /*
        * Step 5.
        * Transfer ERC-721 Commitment.
@@ -236,7 +242,8 @@ describe('****** Integration Test ******\n', function() {
             expect(res).to.have.nested.property('body.data.commitment');
             expect(res).to.have.nested.property('body.data.commitmentIndex');
 
-            erc721CommitmentTransfer.transferredSalt = res.body.data.salt; // set Salt from response to calculate and verify commitment.
+            // set Salt from response to calculate and verify commitment.
+            erc721CommitmentTransfer.transferredSalt = res.body.data.salt;
 
             expect(res.body.data.commitment).to.be.equal(
               erc721CommitmentTransfer.transferCommitment,
@@ -290,6 +297,7 @@ describe('****** Integration Test ******\n', function() {
             return done();
           });
       });
+
       /*
        * Step 7.
        * Tranfer ERC-721 Token.
@@ -404,6 +412,7 @@ describe('****** Integration Test ******\n', function() {
             return done();
           });
       });
+
       /*
        * Step 10.
        * Mint ERC-20 token commitment.
@@ -422,13 +431,15 @@ describe('****** Integration Test ******\n', function() {
             expect(res).to.have.nested.property('body.data.commitment');
             expect(res).to.have.nested.property('body.data.commitmentIndex');
 
-            commitment.salt = res.body.data.salt; // set Salt from response to calculate and verify commitment.
+            // set Salt from response to calculate and verify commitment.
+            commitment.salt = res.body.data.salt;
             commitment.commitmentIndex = res.body.data.commitmentIndex;
 
             expect(res.body.data.commitment).to.be.equal(commitment.commitment);
             return done();
           });
       });
+
       /*
        * Step 11.
        * Mint ERC-20 token commitment.
@@ -447,13 +458,15 @@ describe('****** Integration Test ******\n', function() {
             expect(res).to.have.nested.property('body.data.commitment');
             expect(res).to.have.nested.property('body.data.commitmentIndex');
 
-            commitment.salt = res.body.data.salt; // set Salt from response to calculate and verify commitment.
+            // set Salt from response to calculate and verify commitment.
+            commitment.salt = res.body.data.salt;
             commitment.commitmentIndex = res.body.data.commitmentIndex;
 
             expect(res.body.data.commitment).to.be.equal(commitment.commitment);
             return done();
           });
       });
+
       /*
        * Step 12.
        * Transfer ERC-20 Commitment.
@@ -475,8 +488,11 @@ describe('****** Integration Test ******\n', function() {
 
             const outputCommitments = res.body.data;
 
-            transferCommitment.salt = outputCommitments[0].salt; // set Salt from response to calculate and verify commitment.
-            changeCommitment.salt = outputCommitments[1].salt; // set Salt from response to calculate and verify commitment.
+            // set Salt from response to calculate and verify commitment.
+            transferCommitment.salt = outputCommitments[0].salt;
+
+            // set Salt from response to calculate and verify commitment.
+            changeCommitment.salt = outputCommitments[1].salt;
             expect(outputCommitments[0].commitment).to.be.equal(transferCommitment.commitment);
             expect(outputCommitments[1].commitment).to.be.equal(changeCommitment.commitment);
 
@@ -491,6 +507,7 @@ describe('****** Integration Test ******\n', function() {
             return done();
           });
       });
+
       /*
        * Step 13.
        * Burn ERC-20 Commitment.
@@ -540,6 +557,7 @@ describe('****** Integration Test ******\n', function() {
             return done();
           });
       });
+
       /*
        * Step 15.
        * Transfer ERC-20 token
@@ -620,13 +638,15 @@ describe('****** Integration Test ******\n', function() {
             expect(res).to.have.nested.property('body.data.commitment');
             expect(res).to.have.nested.property('body.data.commitmentIndex');
 
-            mintCommitment.salt = res.body.data.salt; // set Salt from response to calculate and verify commitment.
+            // set Salt from response to calculate and verify commitment.
+            mintCommitment.salt = res.body.data.salt;
             mintCommitment.commitmentIndex = res.body.data.commitmentIndex;
 
             expect(res.body.data.commitment).to.be.equal(mintCommitment.commitment);
             return done();
           });
       });
+
       /*
        * Step 18.
        * Batch Transfer ERC-20 Commitment.
@@ -689,7 +709,9 @@ describe('****** Integration Test ******\n', function() {
           .set('Authorization', bob.token)
           .end((err, res) => {
             if (err) return done(err);
-            transferCommitment.salt = res.body.data.salt; // set Salt from response to calculate and verify commitment.
+
+            // set Salt from response to calculate and verify commitment.
+            transferCommitment.salt = res.body.data.salt;
             expect(res.body.data.commitment).to.be.equal(transferCommitment.commitment);
             expect(res.body.data.commitmentIndex).to.be.equal(
               mintCommitments[mintCommitments.length - 1].commitmentIndex + 1,
