@@ -1,9 +1,9 @@
 /**
-This module acts as a layer of logic between the index.js, which lands the
-rest api calls, and the heavy-lifitng token-zkp.js and zokrates.js.  It exists so that the amount of logic in restapi.js is absolutely minimised.
-@module token-controller.js
-@author westlad, Chaitanya-Konda, iAmMichaelConnor
-*/
+ * This module acts as a layer of logic between the index.js, which lands the
+ * rest api calls, and the heavy-lifitng token-zkp.js and zokrates.js.  It exists so that the amount of logic in restapi.js is absolutely minimised.
+ * @module token-controller.js
+ * @author westlad, Chaitanya-Konda, iAmMichaelConnor
+ */
 
 /* eslint-disable camelcase */
 
@@ -25,11 +25,11 @@ NFTokenMetadata.setProvider(Web3.connect());
 const shield = {}; // this field holds the current Shield contract instance.
 
 /**
-This function allocates a specific NFTokenShield contract to a particular user
-(or, more accurately, a particular Ethereum address)
-@param {string} shieldAddress - the address of the shield contract you want to point to
-@param {string} address - the Ethereum address of the user to whom this shieldAddress will apply
-*/
+ * This function allocates a specific NFTokenShield contract to a particular user
+ * (or, more accurately, a particular Ethereum address)
+ * @param {string} shieldAddress - the address of the shield contract you want to point to
+ * @param {string} address - the Ethereum address of the user to whom this shieldAddress will apply
+ */
 async function setShield(shieldAddress, address) {
   if (shieldAddress === undefined) shield[address] = await getContractAddress('NFTokenShield');
   else shield[address] = await NFTokenShield.at(shieldAddress);
@@ -40,8 +40,8 @@ function unSetShield(address) {
 }
 
 /**
-return the address of the shield contract
-*/
+ * return the address of the shield contract
+ */
 async function getShieldAddress(account) {
   const nfTokenShield = shield[account]
     ? shield[account]
@@ -50,55 +50,55 @@ async function getShieldAddress(account) {
 }
 
 /**
-return the name of the ERC-721 tokens
-*/
+ * return the name of the ERC-721 tokens
+ */
 async function getNFTName() {
   const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));
   return nfToken.name.call();
 }
 
 /**
-return the symbol of the ERC-721 tokens
-*/
+ * return the symbol of the ERC-721 tokens
+ */
 async function getNFTSymbol() {
   const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));
   return nfToken.symbol.call();
 }
 
 /**
-return the address of the ERC-721 token
-*/
+ * return the address of the ERC-721 token
+ */
 async function getNFTAddress() {
   return getContractAddress('NFTokenMetadata');
 }
 
 /**
-return the symbol of the ERC-721 tokens
-*/
+ * return the symbol of the ERC-721 tokens
+ */
 async function getNFTURI(tokenID) {
   const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));
   return nfToken.tokenURI.call(tokenID);
 }
 
 /**
-return the number of tokens held by an account
-*/
+ * return the number of tokens held by an account
+ */
 async function getBalance(address) {
   const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));
   return nfToken.balanceOf.call(address);
 }
 
 /**
-return the number of tokens held by an account
-*/
+ * return the number of tokens held by an account
+ */
 async function getOwner(tokenID) {
   const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));
   return nfToken.ownerOf.call(tokenID);
 }
 
 /**
-create an ERC-721 Token in the account that calls the function
-*/
+ * create an ERC-721 Token in the account that calls the function
+ */
 async function mintNFToken(tokenID, tokenURI, address) {
   console.log('Minting NF Token', tokenID, address);
   const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));
@@ -109,8 +109,8 @@ async function mintNFToken(tokenID, tokenURI, address) {
 }
 
 /**
-Transfer ERC-721 Token from the owner's account to another account
-*/
+ * Transfer ERC-721 Token from the owner's account to another account
+ */
 async function transferNFToken(tokenID, fromAddress, toAddress) {
   console.log(`Transferring NF Token ${tokenID}from ${fromAddress}to ${toAddress}`);
   const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));
@@ -121,8 +121,8 @@ async function transferNFToken(tokenID, fromAddress, toAddress) {
 }
 
 /**
-create an ERC-721 Token in the account that calls the function
-*/
+ * create an ERC-721 Token in the account that calls the function
+ */
 async function burnNFToken(tokenID, address) {
   console.log('Burning NF Token', tokenID, address);
   const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));
@@ -133,8 +133,8 @@ async function burnNFToken(tokenID, address) {
 }
 
 /**
-Add an approver for an ERC-721 Token
-*/
+ * Add an approver for an ERC-721 Token
+ */
 async function addApproverNFToken(approved, tokenID, address) {
   console.log('Adding Approver for an NF Token', approved, tokenID, address);
   const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));
@@ -145,8 +145,8 @@ async function addApproverNFToken(approved, tokenID, address) {
 }
 
 /**
-Get an approver for an ERC-721 Token
-*/
+ * Get an approver for an ERC-721 Token
+ */
 async function getApproved(tokenID) {
   console.log('Getting Approver for an NF Token', tokenID);
   const nfToken = await NFTokenMetadata.at(await getContractAddress('NFTokenMetadata'));

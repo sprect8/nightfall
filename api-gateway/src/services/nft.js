@@ -79,6 +79,7 @@ export async function getNFTTransactions(req, res, next) {
     next(err);
   }
 }
+
 /**
  * This function will mint a non-fungible token
  * req.user {
