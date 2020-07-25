@@ -17,6 +17,7 @@ launchContainersAndRunIntegrationTest(){
   printf "${GREEN}*** Deploying all contracts ***${NC}\n"
   docker-compose run --rm truffle-offchain migrate --reset --network=default
   docker-compose run --rm truffle-zkp migrate --reset --network=default
+  docker-compose run --rm truffle-nightlite migrate --reset --network=default
 
   printf "${GREEN}*** Launching independent containers ***${NC}\n"
   # these container take time to setup
@@ -69,7 +70,6 @@ cleanup(){
   printf  "${GREEN}*** Delete files created by previous run ***${NC}\n"
   rm -dr zkp/build/ || true
   rm -dr offchain/build/ || true
-  rm zkp/contracts/MerkleTree.sol || true
   rm docker-compose.override.yml || true
 }
 
@@ -81,10 +81,19 @@ docker pull zokrates/zokrates:0.5.1
 printf "${GREEN}*** Install node modules dependencies of nightfall ***${NC}\n"
 npm ci
 
-printf "${GREEN}*** Installing zkp-util dependencies"
+printf "${GREEN}*** Installing zkp-util dependencies ***${NC}\n"
 pushd zkp-utils
 npm ci
 popd
+
+printf "${GREEN}*** Installing zkp dependencies ***${NC}\n"
+pushd zkp
+npm ci
+popd
+
+# to be removed
+printf "${GREEN}*** temp ***${NC}\n"
+cp -R zkp/.yalc/@eyblockchain/nightlite zkp/node_modules/@eyblockchain/
 
 if [[ "$1" == "compliance" || "$1" == "mimc" ]]
 then

@@ -19,19 +19,16 @@ import {
   userRoutes,
   shieldRoutes,
 } from './routes';
-import {
-  authentication, // Authorization filter to verify Role of the user
-  formatResponse,
-  formatError,
-  errorHandler,
-} from './middlewares';
+import { authentication, formatResponse, formatError, errorHandler } from './middlewares';
 import setupAdmin from './setup-admin-user';
 
 const app = express();
 
-app.use(bodyParser.json()); // set up a filter to parse JSON
+// set up a filter to parse JSON
+app.use(bodyParser.json());
 
-app.use(cors()); // cross origin filter
+// cross origin filter
+app.use(cors());
 app.use(authentication);
 
 app.use(rootRouter);

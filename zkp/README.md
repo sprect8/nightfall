@@ -32,7 +32,18 @@ After your trusted setup is complete run:
 docker-compose run --rm truffle-zkp compile --all && docker-compose run --rm truffle-zkp migrate --reset --network=default
 ```
 
-This will run ganache in a container; compile all of the nightfall contracts; and deploy them.  
+This will run ganache in a container; compile all of the nightfall contracts; and deploy them.
+
+And, to deploy nightlite Shield and Hashing Contracts, follow these steps
+- Install node dependency of zkp microservice
+  ```sh
+  cd zkp/ && npm ci && cd ..
+  ```
+
+- To compile and deploy contracts.
+  ```sh
+  docker-compose run --rm truffle-nightlite compile --all && docker-compose run --rm truffle-nightlite migrate --reset --network=default
+  ```
 
 To run the zkp unit tests (in another terminal window):
 

@@ -38,7 +38,6 @@ let zInd2;
 let zInd3;
 
 let accounts;
-let fTokenShieldJson;
 let fTokenShieldAddress;
 let fTokenShieldInstance;
 let erc20Address;
@@ -47,9 +46,8 @@ if (process.env.COMPLIANCE === 'true') {
     elgamal.setAuthorityPrivateKeys(); // setup test keys
     accounts = await web3.eth.getAccounts();
     console.log('Number of test accounts', accounts.length);
-    const { contractJson, contractInstance } = await getTruffleContractInstance('FTokenShield');
+    const { contractInstance } = await getTruffleContractInstance('FTokenShield');
     fTokenShieldAddress = contractInstance.address;
-    fTokenShieldJson = contractJson;
     fTokenShieldInstance = contractInstance;
 
     erc20Address = await getContractAddress('FToken');
@@ -160,7 +158,6 @@ if (process.env.COMPLIANCE === 'true') {
         {
           erc20Address,
           account: accounts[0],
-          fTokenShieldJson,
           fTokenShieldAddress,
         },
         {
@@ -183,7 +180,6 @@ if (process.env.COMPLIANCE === 'true') {
         {
           erc20Address,
           account: accounts[0],
-          fTokenShieldJson,
           fTokenShieldAddress,
         },
         {
@@ -227,7 +223,6 @@ if (process.env.COMPLIANCE === 'true') {
           {
             erc20Address,
             account: accounts[0],
-            fTokenShieldJson,
             fTokenShieldAddress,
           },
           {
@@ -274,7 +269,6 @@ if (process.env.COMPLIANCE === 'true') {
         {
           erc20Address,
           account: accounts[0],
-          fTokenShieldJson,
           fTokenShieldAddress,
         },
         {
@@ -295,7 +289,6 @@ if (process.env.COMPLIANCE === 'true') {
         {
           erc20Address,
           account: accounts[1],
-          fTokenShieldJson,
           fTokenShieldAddress,
         },
         {
@@ -360,7 +353,6 @@ if (process.env.COMPLIANCE === 'true') {
           {
             erc20Address,
             account: accounts[1],
-            fTokenShieldJson,
             fTokenShieldAddress,
           },
           {
@@ -410,7 +402,6 @@ if (process.env.COMPLIANCE === 'true') {
         {
           erc20Address,
           account: accounts[1],
-          fTokenShieldJson,
           fTokenShieldAddress,
         },
         {
@@ -452,7 +443,6 @@ if (process.env.COMPLIANCE === 'true') {
           erc20Address,
           account: accounts[0],
           tokenReceiver: accounts[3],
-          fTokenShieldJson,
           fTokenShieldAddress,
         },
         {

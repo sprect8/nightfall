@@ -1,5 +1,4 @@
 import crypto from 'crypto';
-import accounts from '../rest/accounts';
 
 const CRYPT_SECRET = 'secret';
 
@@ -15,15 +14,4 @@ export function decryptPassword(passwordHash) {
   let decrpted = decipher.update(passwordHash, 'hex', 'utf8');
   decrpted += decipher.final('utf8');
   return decrpted;
-}
-
-export async function unlockAccount(req, res, next) {
-  if (!req.user) return next();
-  const { address, password } = req.user;
-  try {
-    await accounts.unlockAccount({ address, password });
-  } catch (error) {
-    return next(error);
-  }
-  return next();
 }

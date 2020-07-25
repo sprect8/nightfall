@@ -5,7 +5,7 @@ import bc from '../src/web3';
 
 import utils from '../src/zkpUtils';
 import controller from '../src/f-token-controller';
-import { getTruffleContractInstance, getContractAddress } from '../src/contractUtils';
+import { getContractAddress } from '../src/contractUtils';
 
 const amountC = '0x00000000000000000000000000000020'; // 128 bits = 16 bytes = 32 chars
 const amountD = '0x00000000000000000000000000000030';
@@ -37,7 +37,6 @@ let zInd2;
 let zInd3;
 
 let accounts;
-let fTokenShieldJson;
 let fTokenShieldAddress;
 let erc20Address;
 if (process.env.COMPLIANCE !== 'true') {
@@ -45,10 +44,7 @@ if (process.env.COMPLIANCE !== 'true') {
     if (!(await bc.isConnected())) await bc.connect();
     accounts = await (await bc.connection()).eth.getAccounts();
 
-    const { contractJson, contractInstance } = await getTruffleContractInstance('FTokenShield');
-    fTokenShieldAddress = contractInstance.address;
-    fTokenShieldJson = contractJson;
-
+    fTokenShieldAddress = await getContractAddress('FTokenShield');
     erc20Address = await getContractAddress('FToken');
     const erc20AddressPadded = `0x${utils.strip0x(erc20Address).padStart(64, '0')}`;
 
@@ -138,7 +134,6 @@ if (process.env.COMPLIANCE !== 'true') {
         {
           erc20Address,
           account: accounts[0],
-          fTokenShieldJson,
           fTokenShieldAddress,
         },
         {
@@ -160,7 +155,6 @@ if (process.env.COMPLIANCE !== 'true') {
         {
           erc20Address,
           account: accounts[0],
-          fTokenShieldJson,
           fTokenShieldAddress,
         },
         {
@@ -192,7 +186,6 @@ if (process.env.COMPLIANCE !== 'true') {
         {
           erc20Address,
           account: accounts[0],
-          fTokenShieldJson,
           fTokenShieldAddress,
         },
         {
@@ -212,7 +205,6 @@ if (process.env.COMPLIANCE !== 'true') {
         {
           erc20Address,
           account: accounts[1],
-          fTokenShieldJson,
           fTokenShieldAddress,
         },
         {
@@ -249,7 +241,6 @@ if (process.env.COMPLIANCE !== 'true') {
         {
           erc20Address,
           account: accounts[1],
-          fTokenShieldJson,
           fTokenShieldAddress,
         },
         {
@@ -275,7 +266,6 @@ if (process.env.COMPLIANCE !== 'true') {
           erc20Address,
           account: accounts[0],
           tokenReceiver: accounts[3],
-          fTokenShieldJson,
           fTokenShieldAddress,
         },
         {

@@ -11,9 +11,7 @@ services:
     environment:
       HASH_TYPE: 'mimc'
 
-  truffle-zkp:
-    environment:
-      HASH_TYPE: 'mimc'
+  truffle-nightlite:
     volumes:
-      - ./zkp/contracts/mimc/MerkleTree.sol:/truffle/contracts/MerkleTree.sol:delegated
-      - ./zkp/contracts/mimc/MiMC.sol:/truffle/contracts/MiMC.sol:delegated
+      - ./zkp/node_modules/@eyblockchain/nightlite/contracts/mimc/MerkleTree.sol:/truffle/contracts/MerkleTree.sol:delegated
+      - ./zkp/node_modules/@eyblockchain/nightlite/contracts/mimc/MiMC.sol:/truffle/contracts/MiMC.sol:delegated

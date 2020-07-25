@@ -88,6 +88,7 @@ services:
       - ./zkp/config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock
       - /dev:/dev # only for github actions
+      - ./zkp/.yalc/@eyblockchain/nightlite:/app/node_modules/@eyblockchain/nightlite
     environment:
       HASH_TYPE: 'sha' #override this with docker-compose.override.mimc
       BLOCKCHAIN_HOST: ws://ganache
@@ -191,13 +192,28 @@ services:
       ETH_GAS_PRICE: 20000000000
     volumes:
       - ./zkp/contracts/:/truffle/contracts:delegated
-      - /truffle/contracts/mimc
-      - /truffle/contracts/sha
-      - ./zkp/contracts/sha/MerkleTree.sol:/truffle/contracts/MerkleTree.sol:delegated
       - ./zkp/migrations/:/truffle/migrations:delegated
       - ./zkp/build/contracts/:/truffle/build/contracts:cached
-      - ./zkp/test/:/truffle/test:delegated
-      - ./zkp/src/:/truffle/src:delegated
+    depends_on:
+      - ganache
+    logging:
+      options:
+        max-size: 10m
+    networks:
+      - nightfall_network
+
+  truffle-nightlite:
+    image: ajmay/truffle:5.0.9
+    environment:
+      SOLC_VERSION: 0.5.8
+      ETH_HOST: ganache
+      ETH_GAS: 6000000
+      ETH_GAS_PRICE: 20000000000
+    volumes:
+      - ./zkp/node_modules/@eyblockchain/nightlite/contracts/:/truffle/contracts:delegated
+      - ./zkp/node_modules/@eyblockchain/nightlite/contracts/sha/MerkleTree.sol:/truffle/contracts/MerkleTree.sol:delegated
+      - ./zkp/node_modules/@eyblockchain/nightlite/migrations/:/truffle/migrations:delegated
+      - ./zkp/build/contracts/:/truffle/build/contracts:cached
     depends_on:
       - ganache
     logging:

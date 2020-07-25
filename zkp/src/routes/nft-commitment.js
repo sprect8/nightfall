@@ -5,6 +5,7 @@ import nfController from '../nf-token-controller';
 import { getContractAddress } from '../contractUtils';
 
 const router = Router();
+
 /**
  * @api {post} /mintNFTCommitment
  * @apiDescription This function is to mint a non fungible token
@@ -73,6 +74,7 @@ async function mint(req, res, next) {
     next(err);
   }
 }
+
 /**
  * @api {post} /transferNFTCommitment
  * @apiDescription This function is to transfer a non fungible token to a reciever

@@ -5,7 +5,7 @@ import utils from '../src/zkpUtils';
 import bc from '../src/web3';
 
 import controller from '../src/f-token-controller';
-import { getContractAddress, getTruffleContractInstance } from '../src/contractUtils';
+import { getContractAddress } from '../src/contractUtils';
 // import vk from '../src/vk-controller';
 
 const PROOF_LENGTH = 20;
@@ -65,7 +65,6 @@ let commitmentAliceC;
 let zInd1;
 const outputCommitments = [];
 let accounts;
-let fTokenShieldJson;
 let fTokenShieldAddress;
 let erc20Address;
 
@@ -73,11 +72,9 @@ if (process.env.HASH_TYPE === 'mimc') {
   beforeAll(async () => {
     if (!(await bc.isConnected())) await bc.connect();
     accounts = await (await bc.connection()).eth.getAccounts();
-    const { contractJson, contractInstance } = await getTruffleContractInstance('FTokenShield');
     erc20Address = await getContractAddress('FToken');
     const erc20AddressPadded = `0x${utils.strip0x(erc20Address).padStart(64, '0')}`;
-    fTokenShieldAddress = contractInstance.address;
-    fTokenShieldJson = contractJson;
+    fTokenShieldAddress = await getContractAddress('FTokenShield');
     for (let i = 0; i < PROOF_LENGTH; i++) {
       publicKeyB[i] = utils.strip0x(utils.hash(secretKeyB[i]));
     }
@@ -118,7 +115,6 @@ if (process.env.HASH_TYPE === 'mimc') {
         {
           erc20Address,
           account: accounts[0],
-          fTokenShieldJson,
           fTokenShieldAddress,
         },
         {
@@ -162,7 +158,6 @@ if (process.env.HASH_TYPE === 'mimc') {
         {
           erc20Address,
           account: accounts[0],
-          fTokenShieldJson,
           fTokenShieldAddress,
         },
         {
@@ -201,7 +196,6 @@ if (process.env.HASH_TYPE === 'mimc') {
         {
           erc20Address,
           account: accounts[0],
-          fTokenShieldJson,
           fTokenShieldAddress,
         },
         {
