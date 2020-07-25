@@ -88,7 +88,6 @@ services:
       - ./zkp/config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock
       - /dev:/dev # only for github actions
-      - ./zkp/.yalc/@eyblockchain/nightlite:/app/node_modules/@eyblockchain/nightlite
     environment:
       HASH_TYPE: 'sha' #override this with docker-compose.override.mimc
       BLOCKCHAIN_HOST: ws://ganache
