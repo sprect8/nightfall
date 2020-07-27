@@ -1,8 +1,8 @@
 import contract from 'truffle-contract';
+import utils from 'zkp-utils';
 
 import { getContractAddress, getContractInterface } from '../src/contractUtils';
 import bc from '../src/web3';
-import utils from '../src/zkpUtils';
 
 if (process.env.HASH_TYPE === 'mimc') {
   let accounts;

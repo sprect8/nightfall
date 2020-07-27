@@ -9,7 +9,7 @@
 
 import contract from 'truffle-contract';
 import jsonfile from 'jsonfile';
-import zkp from './f-token-zkp';
+import { merkleTree } from '@eyblockchain/nightlite';
 import Web3 from './web3';
 import logger from './logger';
 import { getContractAddress } from './contractUtils';
@@ -150,7 +150,7 @@ async function checkCorrectness(
 ) {
   const fTokenShieldInstance = shield[account] ? shield[account] : await FTokenShield.deployed();
 
-  const results = await zkp.checkCorrectness(
+  const results = await merkleTree.checkCorrectness(
     erc20Address,
     amount,
     publicKey,

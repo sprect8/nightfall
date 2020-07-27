@@ -86,6 +86,7 @@ services:
       - ./zkp/.babelrc:/app/.babelrc
       - ./zkp/__tests__:/app/__tests__
       - ./zkp/config:/app/config
+      - ./zkp-utils:/app/node_modules/zkp-utils
       - /var/run/docker.sock:/var/run/docker.sock
       - /dev:/dev # only for github actions
     environment:
