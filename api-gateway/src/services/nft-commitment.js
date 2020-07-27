@@ -345,6 +345,7 @@ export async function burnToken(req, res, next) {
 
     // get logged in user.
     const user = await db.fetchUser(req.user);
+
     // Release the public token from escrow:
     // Nullify the burnor's 'token commitment' within the shield contract.
     // Transfer the public token from the shield contract to the owner.
@@ -368,6 +369,8 @@ export async function burnToken(req, res, next) {
     });
 
     const { tokenUri, tokenId, shieldContractAddress } = inputCommitment;
+
+    // send nft token data to BOB side
     await sendWhisperMessage(user.shhIdentity, {
       tokenUri,
       tokenId,
@@ -376,7 +379,7 @@ export async function burnToken(req, res, next) {
       sender: req.user,
       isReceived: true,
       for: 'NFTToken',
-    }); // send nft token data to BOB side
+    });
 
     res.data = { message: 'burn successful' };
     next();

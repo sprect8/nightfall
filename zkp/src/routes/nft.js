@@ -3,6 +3,7 @@ import { Router } from 'express';
 import nfController from '../nf-token-controller';
 
 const router = Router();
+
 /**
  * @api {post} /mintNFToken
  * @apiDescription This function is to mint a non fungible token

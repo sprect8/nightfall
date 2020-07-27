@@ -31,6 +31,7 @@ export async function getContractAddress(contractName) {
 
 export async function getContractInterface(contractName) {
   const path = `../build/contracts/${contractName}.json`;
+
   const contractInterface = require(path); // eslint-disable-line global-require, import/no-dynamic-require
   return contractInterface;
 }

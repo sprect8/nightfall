@@ -7,6 +7,7 @@ import fTokenController from '../f-token-controller';
 import { getTruffleContractInstance, getContractAddress } from '../contractUtils';
 
 const router = Router();
+
 /**
  * @api {post} /mintFTCommitment
  * @apiDescription This function is to mint a fungible token commitment
@@ -239,6 +240,7 @@ async function burn(req, res, next) {
     next(err);
   }
 }
+
 /**
  * @api {post} /checkCorrectnessForFTCommitment
  * @apiDescription This function is to check correctness for a fungible token commitment
@@ -365,6 +367,7 @@ async function unsetFTCommitmentShieldAddress(req, res, next) {
     next(err);
   }
 }
+
 /**
  * @api {post} /simpleFTCommitmentBatchTransfer
  * @apiDescription This function will do batch fungible commitment transfer

@@ -79,7 +79,7 @@ export async function loadVks(req, res, next) {
       {
         ...req.body,
       },
-      req.headers,
+      req.user,
     );
 
     res.data = data;
