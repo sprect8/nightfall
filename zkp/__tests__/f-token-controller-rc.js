@@ -1,8 +1,9 @@
 /* eslint-disable import/no-unresolved */
 
 import { erc20, elgamal } from '@eyblockchain/nightlite';
+import utils from 'zkp-utils';
+
 import Web3 from '../src/web3';
-import utils from '../src/zkpUtils';
 import controller from '../src/f-token-controller';
 import { getTruffleContractInstance, getContractAddress } from '../src/contractUtils';
 // import { setAuthorityPrivateKeys, rangeGenerator } from '../src/el-gamal';

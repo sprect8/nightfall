@@ -9,7 +9,7 @@
 
 import contract from 'truffle-contract';
 import jsonfile from 'jsonfile';
-import zkp from './nf-token-zkp';
+import { merkleTree } from '@eyblockchain/nightlite';
 import Web3 from './web3';
 import { getContractAddress } from './contractUtils';
 
@@ -165,7 +165,7 @@ async function checkCorrectness(
 ) {
   const nfTokenShield = shield[account] ? shield[account] : await NFTokenShield.deployed();
 
-  const results = await zkp.checkCorrectness(
+  const results = await merkleTree.checkCorrectness(
     erc721Address,
     tokenId,
     publicKey,

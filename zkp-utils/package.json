@@ -26,6 +26,7 @@
     "cli-progress": "^2.1.1",
     "hex-to-binary": "^1.0.1",
     "jsonfile": "^5.0.0",
+    "keccak": "^2.1.0",
     "safe-buffer": "^5.1.2"
   }
 }

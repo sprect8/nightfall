@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { erc20, elgamal } from '@eyblockchain/nightlite';
 import contract from 'truffle-contract';
+import utils from 'zkp-utils';
 
-import utils from '../zkpUtils';
 import fTokenController from '../f-token-controller';
 import { getTruffleContractInstance, getContractAddress } from '../contractUtils';
 

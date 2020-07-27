@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { erc721 } from '@eyblockchain/nightlite';
-import utils from '../zkpUtils';
+import utils from 'zkp-utils';
+
 import nfController from '../nf-token-controller';
 import { getTruffleContractInstance, getContractAddress } from '../contractUtils';
 
