@@ -1,6 +1,7 @@
 /* eslint-disable func-names */
 
 import express from 'express';
+
 import {
   setZkpPublicKey,
   setWhisperPublicKey,

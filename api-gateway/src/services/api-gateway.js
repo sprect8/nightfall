@@ -68,7 +68,6 @@ export async function createAccountHandler(req, res, next) {
     res.data = data;
     next();
   } catch (err) {
-    console.log(err);
     next(err);
   }
 }

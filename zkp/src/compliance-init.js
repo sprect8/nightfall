@@ -15,7 +15,6 @@ const web3 = Web3.connection();
 async function startCompliance() {
   if (process.env.COMPLIANCE === 'true') {
     const accounts = await web3.eth.getAccounts();
-    console.log('accounts', accounts);
     const { contractInstance: fTokenShieldInstance } = await getTruffleContractInstance(
       'FTokenShield',
     );

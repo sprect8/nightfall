@@ -1,4 +1,5 @@
 import { Router } from 'express';
+
 import fTokenController from '../f-token-controller';
 
 const router = Router();

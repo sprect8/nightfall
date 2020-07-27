@@ -33,7 +33,7 @@ export default {
    */
   async receiveMessage(queue) {
     await this.channel.assertQueue(queue);
-    this.channel.consume(queue, message => console.log(queue, message.content.toString()));
+    this.channel.consume(queue, message => logger.info(queue, message.content.toString()));
   },
 
   /*

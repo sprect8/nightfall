@@ -24,6 +24,6 @@ export default async function() {
     });
     logger.info('Admin user created');
   } catch (err) {
-    console.log(err);
+    logger.error(err);
   }
 }

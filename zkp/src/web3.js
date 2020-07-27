@@ -1,5 +1,6 @@
 import Web3 from 'web3';
 import config from 'config';
+import logger from './logger';
 
 export default {
   connection() {
@@ -12,12 +13,12 @@ export default {
   connect() {
     if (this.web3) return this.web3.currentProvider;
 
-    console.log('Blockchain Connecting ...');
+    logger.info('Blockchain Connecting ...');
     const provider = new Web3.providers.WebsocketProvider(config.get('web3ProviderURL'));
 
-    provider.on('error', console.error);
-    provider.on('connect', () => console.log('Blockchain Connected ...'));
-    provider.on('end', console.error);
+    provider.on('error', logger.error);
+    provider.on('connect', () => logger.info('Blockchain Connected ...'));
+    provider.on('end', logger.error);
 
     this.web3 = new Web3(provider);
 

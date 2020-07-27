@@ -87,4 +87,5 @@ module.exports = {
   POLLING_FREQUENCY: 6000, // How many milliseconds to wait between each poll
 
   zkpCodeVolume: process.env.ZKP_CODE_VOLUME,
+  isLoggerEnable: true,
 };

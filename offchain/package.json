@@ -25,7 +25,8 @@
     "minimist": ">=0.2.1",
     "request": "^2.88.0",
     "truffle-contract": "4.0.15",
-    "web3": "1.0.0-beta.36"
+    "web3": "1.0.0-beta.36",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.4",

@@ -168,7 +168,6 @@ export async function mintToken(req, res, next) {
     res.data = data;
     next();
   } catch (err) {
-    // insert failed transaction into db.
     await db.insertNFTCommitmentTransaction(req.user, {
       outputCommitments: [
         {
@@ -288,7 +287,6 @@ export async function transferToken(req, res, next) {
     res.data = data;
     next();
   } catch (err) {
-    // insert failed transaction into db.
     await db.insertNFTCommitmentTransaction(req.user, {
       inputCommitments: [inputCommitment],
       outputCommitments: [
@@ -386,7 +384,6 @@ export async function burnToken(req, res, next) {
     res.data = { message: 'burn successful' };
     next();
   } catch (err) {
-    // insert failed transaction into db.
     await db.insertNFTCommitmentTransaction(req.user, {
       inputCommitments: [inputCommitment],
       receiver,

@@ -11,6 +11,7 @@ import contract from 'truffle-contract';
 import jsonfile from 'jsonfile';
 import { merkleTree } from '@eyblockchain/nightlite';
 import Web3 from './web3';
+import logger from './logger';
 import { getContractAddress } from './contractUtils';
 
 const FTokenShield = contract(jsonfile.readFileSync('./build/contracts/FTokenShield.json'));
@@ -79,7 +80,7 @@ async function getFTAddress() {
  * @param {string} address - the address of the Ethereum account
  */
 async function buyFToken(amount, address) {
-  console.log('Buying ERC-20', amount, address);
+  logger.info('Buying ERC-20', amount, address);
   const fToken = await FToken.at(await getContractAddress('FToken'));
   return fToken.mint(address, amount, {
     from: address,
@@ -95,7 +96,7 @@ async function buyFToken(amount, address) {
  * @param {string} fromAddress - the address of the Ethereum account to transfer from
  */
 async function transferFToken(amount, fromAddress, toAddress) {
-  console.log('Transferring ERC-20', amount, toAddress);
+  logger.info('Transferring ERC-20', amount, toAddress);
   const fToken = await FToken.at(await getContractAddress('FToken'));
   return fToken.transfer(toAddress, amount, {
     from: fromAddress,
@@ -114,7 +115,7 @@ async function transferFToken(amount, fromAddress, toAddress) {
  * @param {string} address - the address of the Ethereum account
  */
 async function burnFToken(amount, address) {
-  console.log('Buying ERC-20', amount, address);
+  logger.info('Buying ERC-20', amount, address);
 
   const fToken = await FToken.at(await getContractAddress('FToken'));
   return fToken.burn(address, amount, {
@@ -130,7 +131,7 @@ async function burnFToken(amount, address) {
  * @returns - an object containing the token symbol and name.
  */
 async function getTokenInfo() {
-  console.log('Getting ERC-20 info');
+  logger.info('Getting ERC-20 info');
   const fToken = await FToken.at(await getContractAddress('FToken'));
   const symbol = await fToken.symbol.call();
   const name = await fToken.name.call();
@@ -159,7 +160,7 @@ async function checkCorrectness(
     blockNumber,
     fTokenShieldInstance,
   );
-  console.log('\nf-token-controller', '\ncheckCorrectness', '\nresults', results);
+  logger.info('\nf-token-controller', '\ncheckCorrectness', '\nresults', results);
 
   return results;
 }
