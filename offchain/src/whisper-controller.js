@@ -6,6 +6,7 @@
 
 import utils from 'zkp-utils';
 import Web3 from './web3';
+import logger from './logger';
 
 const web3 = Web3.connection();
 const TRANSFER_TOPIC = '0xeca7945f';
@@ -123,7 +124,7 @@ async function sendMessage(message, idSender, pkReceiver, topic = TRANSFER_TOPIC
       powTarget: 0.5,
     });
   } catch (err) {
-    console.error('Error from message post:', err);
+    logger.error('Error from message post:', err);
   }
 }
 
@@ -169,7 +170,7 @@ async function sendObject(message, idSender, pkReceiver, topic = TRANSFER_TOPIC)
     }, 3000); // a short delay in case the sender and receiver are the same person
     // so that there is time for the application to go from transmit to receive.
   } catch (err) {
-    console.error('Error from message post:', err);
+    logger.error('Error from message post:', err);
   }
 }
 

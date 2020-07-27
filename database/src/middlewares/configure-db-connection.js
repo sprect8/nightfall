@@ -1,5 +1,6 @@
 import { dbConnections, userDBs } from '../common/dbConnections';
 import DB from '../mongodb/db';
+import logger from '../logger';
 
 export default async function(req, res, next) {
   const name =
@@ -29,7 +30,7 @@ export default async function(req, res, next) {
     }
     throw new Error('DB connection assign failed');
   } catch (err) {
-    console.log(err);
+    logger.error(err);
     return next(err);
   }
 }

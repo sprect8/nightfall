@@ -1,9 +1,9 @@
 /* eslint-disable import/no-unresolved */
 
 import { erc20 } from '@eyblockchain/nightlite';
-import bc from '../src/web3';
+import utils from 'zkp-utils';
 
-import utils from '../src/zkpUtils';
+import bc from '../src/web3';
 import controller from '../src/f-token-controller';
 import { getContractAddress } from '../src/contractUtils';
 

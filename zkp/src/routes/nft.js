@@ -1,4 +1,5 @@
 import { Router } from 'express';
+
 import nfController from '../nf-token-controller';
 
 const router = Router();
