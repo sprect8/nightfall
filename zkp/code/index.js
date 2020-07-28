@@ -52,7 +52,11 @@ async function main() {
 }
 
 // RUN
-main().catch(err => {
-  console.log(err);
-  process.exit(1);
-});
+main()
+  .then(() => {
+    process.exit(0);
+  })
+  .catch(err => {
+    console.log(err);
+    process.exit(1);
+  });
