@@ -15,6 +15,7 @@ launchContainers(){
   printf "${GREEN}*** Deploying all contracts ***${NC}\n"
   docker-compose run --rm truffle-offchain migrate --reset --network=default
   docker-compose run --rm truffle-zkp migrate --reset --network=default
+  docker-compose run --rm truffle-nightlite migrate --reset --network=default
 
   printf "${GREEN}*** Launching independent containers ***${NC}\n"
   # these container take time to setup
@@ -64,8 +65,13 @@ cleanup
 printf "${GREEN}*** Pull zokrates docker image ***${NC}\n"
 docker pull zokrates/zokrates:0.5.1
 
-printf "${GREEN}*** Installing zkp-util dependencies"
+printf "${GREEN}*** Installing zkp-util dependencies ***${NC}\n"
 pushd zkp-utils
+npm ci
+popd
+
+printf "${GREEN}*** Installing zkp dependencies ***${NC}\n"
+pushd zkp
 npm ci
 popd
 

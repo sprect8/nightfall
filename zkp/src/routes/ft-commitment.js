@@ -44,10 +44,7 @@ async function mint(req, res, next) {
   const { address } = req.headers;
   const { value, owner } = req.body;
   const salt = await utils.rndHex(32);
-  const {
-    contractJson: fTokenShieldJson,
-    contractInstance: fTokenShield,
-  } = await getTruffleContractInstance('FTokenShield');
+  const fTokenShieldAddress = await getContractAddress('FTokenShield');
   const erc20Address = await getContractAddress('FToken');
 
   try {
@@ -57,8 +54,7 @@ async function mint(req, res, next) {
       salt,
       {
         erc20Address,
-        fTokenShieldJson,
-        fTokenShieldAddress: fTokenShield.address,
+        fTokenShieldAddress,
         account: address,
       },
       {
@@ -132,10 +128,7 @@ async function mint(req, res, next) {
 async function transfer(req, res, next) {
   const { address } = req.headers;
   const { inputCommitments, outputCommitments, receiver, sender } = req.body;
-  const {
-    contractJson: fTokenShieldJson,
-    contractInstance: fTokenShield,
-  } = await getTruffleContractInstance('FTokenShield');
+  const fTokenShieldAddress = await getContractAddress('FTokenShield');
   const erc20Address = await getContractAddress('FToken');
 
   outputCommitments[0].salt = await utils.rndHex(32);
@@ -149,8 +142,7 @@ async function transfer(req, res, next) {
       sender.secretKey,
       {
         erc20Address,
-        fTokenShieldJson,
-        fTokenShieldAddress: fTokenShield.address,
+        fTokenShieldAddress,
         account: address,
       },
       {
@@ -208,10 +200,7 @@ async function transfer(req, res, next) {
 async function burn(req, res, next) {
   const { value, salt, commitment, commitmentIndex, receiver, sender } = req.body;
   const { address } = req.headers;
-  const {
-    contractJson: fTokenShieldJson,
-    contractInstance: fTokenShield,
-  } = await getTruffleContractInstance('FTokenShield');
+  const fTokenShieldAddress = await getContractAddress('FTokenShield');
   const erc20Address = await getContractAddress('FToken');
 
   try {
@@ -223,8 +212,7 @@ async function burn(req, res, next) {
       commitmentIndex,
       {
         erc20Address,
-        fTokenShieldJson,
-        fTokenShieldAddress: fTokenShield.address,
+        fTokenShieldAddress,
         account: address,
         tokenReceiver: receiver.address,
       },
@@ -436,10 +424,8 @@ async function unsetFTCommitmentShieldAddress(req, res, next) {
 async function simpleFTCommitmentBatchTransfer(req, res, next) {
   const { address } = req.headers;
   const { inputCommitment, outputCommitments, sender } = req.body;
-  const {
-    contractJson: fTokenShieldJson,
-    contractInstance: fTokenShield,
-  } = await getTruffleContractInstance('FTokenShield');
+
+  const fTokenShieldAddress = await getContractAddress('FTokenShield');
   const erc20Address = await getContractAddress('FToken');
 
   if (!outputCommitments || outputCommitments.length !== 20) throw new Error('Invalid data input');
@@ -456,9 +442,8 @@ async function simpleFTCommitmentBatchTransfer(req, res, next) {
       sender.secretKey,
       {
         erc20Address,
+        fTokenShieldAddress,
         account: address,
-        fTokenShieldJson,
-        fTokenShieldAddress: fTokenShield.address,
       },
       {
         codePath: `${process.cwd()}/code/gm17/ft-batch-transfer/out`,
@@ -489,15 +474,10 @@ async function setAddressToBlacklist(req, res, next) {
   const { address } = req.headers;
   const { malfeasantAddress } = req.body;
   try {
-    const {
-      contractJson: fTokenShieldJson,
-      contractInstance: fTokenShield,
-    } = await getTruffleContractInstance('FTokenShield');
-
+    const fTokenShieldAddress = await getContractAddress('FTokenShield');
     await erc20.blacklist(malfeasantAddress, {
       account: address,
-      fTokenShieldJson,
-      fTokenShieldAddress: fTokenShield.address,
+      fTokenShieldAddress,
     });
     res.data = { message: 'added to blacklist' };
     next();
@@ -586,10 +566,8 @@ async function setAddressToBlacklist(req, res, next) {
 async function consolidationTransfer(req, res, next) {
   const { address } = req.headers;
   const { inputCommitments, outputCommitment, receiver, sender } = req.body;
-  const {
-    contractJson: fTokenShieldJson,
-    contractInstance: fTokenShield,
-  } = await getTruffleContractInstance('FTokenShield');
+
+  const fTokenShieldAddress = await getContractAddress('FTokenShield');
   const erc20Address = await getContractAddress('FToken');
 
   if (!inputCommitments) throw new Error('Invalid data input');
@@ -604,9 +582,8 @@ async function consolidationTransfer(req, res, next) {
       sender.secretKey,
       {
         erc20Address,
+        fTokenShieldAddress,
         account: address,
-        fTokenShieldJson,
-        fTokenShieldAddress: fTokenShield.address,
       },
       {
         codePath: `${process.cwd()}/code/gm17/ft-consolidation-transfer/out`,
@@ -638,15 +615,10 @@ async function unsetAddressFromBlacklist(req, res, next) {
   const { address } = req.headers;
   const { blacklistedAddress } = req.body;
   try {
-    const {
-      contractJson: fTokenShieldJson,
-      contractInstance: fTokenShield,
-    } = await getTruffleContractInstance('FTokenShield');
-
+    const fTokenShieldAddress = await getContractAddress('FTokenShield');
     await erc20.unblacklist(blacklistedAddress, {
       account: address,
-      fTokenShieldJson,
-      fTokenShieldAddress: fTokenShield.address,
+      fTokenShieldAddress,
     });
     res.data = { message: 'removed from blacklist' };
     next();

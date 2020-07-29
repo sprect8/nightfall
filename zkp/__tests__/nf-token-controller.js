@@ -5,7 +5,7 @@ import utils from 'zkp-utils';
 
 import bc from '../src/web3';
 import controller from '../src/nf-token-controller';
-import { getContractAddress, getTruffleContractInstance } from '../src/contractUtils';
+import { getContractAddress } from '../src/contractUtils';
 
 let tokenIdA;
 let tokenIdB;
@@ -27,18 +27,15 @@ let commitmentIndexA;
 let commitmentIndexG;
 
 let accounts;
-let nfTokenShieldJson;
 let nfTokenShieldAddress;
 let erc721Address;
 if (process.env.COMPLIANCE !== 'true') {
   beforeAll(async () => {
     if (!(await bc.isConnected())) await bc.connect();
     accounts = await (await bc.connection()).eth.getAccounts();
-    const { contractJson, contractInstance } = await getTruffleContractInstance('NFTokenShield');
+    nfTokenShieldAddress = await getContractAddress('NFTokenShield');
     erc721Address = await getContractAddress('NFTokenMetadata');
     const erc721AddressPadded = `0x${utils.strip0x(erc721Address).padStart(64, '0')}`;
-    nfTokenShieldAddress = contractInstance.address;
-    nfTokenShieldJson = contractJson;
     tokenIdA = await utils.rndHex(32);
     tokenIdB = await utils.rndHex(32);
     tokenIdG = await utils.rndHex(32);
@@ -125,7 +122,6 @@ if (process.env.COMPLIANCE !== 'true') {
         {
           erc721Address,
           account: accounts[0],
-          nfTokenShieldJson,
           nfTokenShieldAddress,
         },
         {
@@ -146,7 +142,6 @@ if (process.env.COMPLIANCE !== 'true') {
         {
           erc721Address,
           account: accounts[0],
-          nfTokenShieldJson,
           nfTokenShieldAddress,
         },
         {
@@ -171,7 +166,6 @@ if (process.env.COMPLIANCE !== 'true') {
         {
           erc721Address,
           account: accounts[0],
-          nfTokenShieldJson,
           nfTokenShieldAddress,
         },
         {
@@ -195,7 +189,6 @@ if (process.env.COMPLIANCE !== 'true') {
         {
           erc721Address,
           account: accounts[0],
-          nfTokenShieldJson,
           nfTokenShieldAddress,
         },
         {
@@ -218,7 +211,6 @@ if (process.env.COMPLIANCE !== 'true') {
           erc721Address,
           account: accounts[0],
           tokenReceiver: accounts[2],
-          nfTokenShieldJson,
           nfTokenShieldAddress,
         },
         {

@@ -35,22 +35,3 @@ export async function getContractInterface(contractName) {
   const contractInterface = require(path); // eslint-disable-line global-require, import/no-dynamic-require
   return contractInterface;
 }
-
-// returns a web3 contract instance (rather than a truffle-contract instance)
-export async function getWeb3ContractInstance(contractName, deployedAddress) {
-  const contractInterface = await getContractInterface(contractName);
-  let contractInstance;
-
-  if (!deployedAddress) {
-    contractInstance = new web3.eth.Contract(contractInterface.abi);
-  } else {
-    contractInstance = new web3.eth.Contract(contractInterface.abi, deployedAddress);
-  }
-  return contractInstance;
-}
-
-export async function getContractBytecode(contractName) {
-  const contractInterface = await getContractInterface(contractName);
-  const { bytecode } = contractInterface;
-  return bytecode;
-}
