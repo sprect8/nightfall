@@ -1,3 +1,9 @@
+import initializeNftRoutes from './nft.routes';
+import initializeNftCommitmentRoutes from './nft-commitment.routes';
+import initializeFtRoutes from './ft.routes';
+import initializeFtCommitmentRoutes from './ft-commitment.routes';
+import initializeUserRoutes from './user.routes';
+
 function parseParams(req, res, next) {
   req.username = req.params.name;
   next();
@@ -12,8 +18,10 @@ export default function configureRoutesToPraseParams(app) {
   app.all('/users/:name/nft-shield-contracts/:address', parseParams);
 }
 
-export { default as initializeNftRoutes } from './nft.routes';
-export { default as initializeNftCommitmentRoutes } from './nft-commitment.routes';
-export { default as initializeFtRoutes } from './ft.routes';
-export { default as initializeFtCommitmentRoutes } from './ft-commitment.routes';
-export { default as initializeUserRoutes } from './user.routes';
+export {
+  initializeNftRoutes,
+  initializeNftCommitmentRoutes,
+  initializeFtRoutes,
+  initializeFtCommitmentRoutes,
+  initializeUserRoutes,
+};

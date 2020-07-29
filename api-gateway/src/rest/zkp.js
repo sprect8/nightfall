@@ -4,8 +4,8 @@ import config from 'config';
 const url = config.get('zkp.url');
 
 const requestWrapper = options =>
-  new Promise(function promiseHandler(resolve, reject) {
-    request(options, function responseHandler(err, res, body) {
+  new Promise((resolve, reject) => {
+    request(options, (err, res, body) => {
       if (err || res.statusCode !== 200) {
         return reject(err || res.body.error);
       }
@@ -23,10 +23,7 @@ export default {
       url: `${url}/vk`,
       method: 'POST',
       json: true,
-      headers: {
-        address: headers.address,
-        password: headers.password,
-      },
+      headers,
       body,
     };
     return requestWrapper(options);

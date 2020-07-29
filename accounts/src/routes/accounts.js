@@ -1,4 +1,5 @@
 import express from 'express';
+
 import {
   newAccount,
   transferEtherToAccount,
@@ -75,12 +76,6 @@ async function getAccountBalance(req, res, next) {
   res.data = balance;
   next();
 }
-
-/**
- * This function is to transfer ether to an account
- * @param {*} req
- * @param {*} res
- */
 
 /**
  * @api {get} /transferEther

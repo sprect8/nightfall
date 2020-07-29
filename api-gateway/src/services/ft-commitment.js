@@ -135,7 +135,6 @@ export async function mintFTCommitment(req, res, next) {
     res.data = data;
     next();
   } catch (err) {
-    // insert failed transaction into db.
     await db.insertFTCommitmentTransaction(req.user, {
       outputCommitments: [
         {
@@ -206,7 +205,8 @@ export async function transferFTCommitment(req, res, next) {
     await db.updateUserWithPrivateAccount(req.user, { address, password });
     await accounts.unlockAccount({ address, password });
 
-    receiver.publicKey = await offchain.getZkpPublicKeyFromName(receiver.name); // fetch pk from PKD by passing username
+    // fetch pk from PKD by passing username
+    receiver.publicKey = await offchain.getZkpPublicKeyFromName(receiver.name);
 
     // get logged in user's secretKey.
     req.body.sender = {};
@@ -249,9 +249,8 @@ export async function transferFTCommitment(req, res, next) {
     }
 
     const user = await db.fetchUser(req.user);
-    // note:
-    // E is the value transferred to the receiver
-    // F is the value returned as 'change' to the sender
+
+    // send new ft commitment to BOB via Whisper.
     await sendWhisperMessage(user.shhIdentity, {
       outputCommitments: [transferCommitment],
       blockNumber: txReceipt.receipt.blockNumber,
@@ -264,7 +263,6 @@ export async function transferFTCommitment(req, res, next) {
     res.data = outputCommitments;
     next();
   } catch (err) {
-    // insert failed transaction into db.
     await db.insertFTCommitmentTransaction(req.user, {
       ...req.body,
       sender: req.user,
@@ -330,6 +328,7 @@ export async function burnFTCommitment(req, res, next) {
       isBurned: true,
     });
 
+    // send ft token data to BOB side
     await sendWhisperMessage(user.shhIdentity, {
       value: Number(commitment.value),
       shieldContractAddress: user.selected_coin_shield_contract,
@@ -337,11 +336,10 @@ export async function burnFTCommitment(req, res, next) {
       sender: req.user,
       isReceived: true,
       for: 'FToken',
-    }); // send ft token data to BOB side
+    });
 
     next();
   } catch (err) {
-    // insert failed transaction into db.
     await db.insertFTCommitmentTransaction(req.user, {
       inputCommitments: [commitment],
       receiver,
@@ -488,7 +486,6 @@ export async function simpleFTCommitmentBatchTransfer(req, res, next) {
     res.data = commitments;
     next();
   } catch (err) {
-    // insert failed transaction into db.
     await db.insertFTCommitmentTransaction(req.user, {
       inputCommitments: [inputCommitment],
       outputCommitments: reqBodyOutCommitments,
@@ -570,7 +567,8 @@ export async function consolidationTransfer(req, res, next) {
     await db.updateUserWithPrivateAccount(req.user, { address, password });
     await accounts.unlockAccount({ address, password });
 
-    receiver.publicKey = await offchain.getZkpPublicKeyFromName(receiver.name); // fetch pk from PKD by passing username
+    // fetch pk from PKD by passing username
+    receiver.publicKey = await offchain.getZkpPublicKeyFromName(receiver.name);
 
     // get logged in user's secretKey.
     req.body.sender = {};

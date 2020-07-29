@@ -4,7 +4,9 @@ import logger from './logger';
 export default async function() {
   try {
     const status = await offchain.isNameInUse('admin');
-    if (status) return; // admin registered in another system
+
+    // is admin registered in another system
+    if (status) return;
 
     // get coinbase address
     const address = await accounts.getCoinbase();
@@ -22,6 +24,6 @@ export default async function() {
     });
     logger.info('Admin user created');
   } catch (err) {
-    console.log(err);
+    logger.error(err);
   }
 }

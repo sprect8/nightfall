@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import { erc20, elgamal } from '@eyblockchain/nightlite';
 import contract from 'truffle-contract';
+import utils from 'zkp-utils';
 
-import utils from '../zkpUtils';
 import fTokenController from '../f-token-controller';
 import { getTruffleContractInstance, getContractAddress } from '../contractUtils';
 
 const router = Router();
+
 /**
  * @api {post} /mintFTCommitment
  * @apiDescription This function is to mint a fungible token commitment
@@ -43,21 +44,17 @@ async function mint(req, res, next) {
   const { address } = req.headers;
   const { value, owner } = req.body;
   const salt = await utils.rndHex(32);
-  const {
-    contractJson: fTokenShieldJson,
-    contractInstance: fTokenShield,
-  } = await getTruffleContractInstance('FTokenShield');
+  const fTokenShieldAddress = await getContractAddress('FTokenShield');
   const erc20Address = await getContractAddress('FToken');
 
   try {
     const { commitment, commitmentIndex } = await erc20.mint(
-      value,
+      value.toString(16),
       owner.publicKey,
       salt,
       {
         erc20Address,
-        fTokenShieldJson,
-        fTokenShieldAddress: fTokenShield.address,
+        fTokenShieldAddress,
         account: address,
       },
       {
@@ -131,10 +128,7 @@ async function mint(req, res, next) {
 async function transfer(req, res, next) {
   const { address } = req.headers;
   const { inputCommitments, outputCommitments, receiver, sender } = req.body;
-  const {
-    contractJson: fTokenShieldJson,
-    contractInstance: fTokenShield,
-  } = await getTruffleContractInstance('FTokenShield');
+  const fTokenShieldAddress = await getContractAddress('FTokenShield');
   const erc20Address = await getContractAddress('FToken');
 
   outputCommitments[0].salt = await utils.rndHex(32);
@@ -148,8 +142,7 @@ async function transfer(req, res, next) {
       sender.secretKey,
       {
         erc20Address,
-        fTokenShieldJson,
-        fTokenShieldAddress: fTokenShield.address,
+        fTokenShieldAddress,
         account: address,
       },
       {
@@ -207,10 +200,7 @@ async function transfer(req, res, next) {
 async function burn(req, res, next) {
   const { value, salt, commitment, commitmentIndex, receiver, sender } = req.body;
   const { address } = req.headers;
-  const {
-    contractJson: fTokenShieldJson,
-    contractInstance: fTokenShield,
-  } = await getTruffleContractInstance('FTokenShield');
+  const fTokenShieldAddress = await getContractAddress('FTokenShield');
   const erc20Address = await getContractAddress('FToken');
 
   try {
@@ -222,8 +212,7 @@ async function burn(req, res, next) {
       commitmentIndex,
       {
         erc20Address,
-        fTokenShieldJson,
-        fTokenShieldAddress: fTokenShield.address,
+        fTokenShieldAddress,
         account: address,
         tokenReceiver: receiver.address,
       },
@@ -239,6 +228,7 @@ async function burn(req, res, next) {
     next(err);
   }
 }
+
 /**
  * @api {post} /checkCorrectnessForFTCommitment
  * @apiDescription This function is to check correctness for a fungible token commitment
@@ -365,6 +355,7 @@ async function unsetFTCommitmentShieldAddress(req, res, next) {
     next(err);
   }
 }
+
 /**
  * @api {post} /simpleFTCommitmentBatchTransfer
  * @apiDescription This function will do batch fungible commitment transfer
@@ -433,33 +424,26 @@ async function unsetFTCommitmentShieldAddress(req, res, next) {
 async function simpleFTCommitmentBatchTransfer(req, res, next) {
   const { address } = req.headers;
   const { inputCommitment, outputCommitments, sender } = req.body;
-  const {
-    contractJson: fTokenShieldJson,
-    contractInstance: fTokenShield,
-  } = await getTruffleContractInstance('FTokenShield');
-  const erc20Address = await getContractAddress('FToken');
 
-  const receiversPublicKeys = [];
+  const fTokenShieldAddress = await getContractAddress('FTokenShield');
+  const erc20Address = await getContractAddress('FToken');
 
   if (!outputCommitments || outputCommitments.length !== 20) throw new Error('Invalid data input');
 
   for (const data of outputCommitments) {
     /* eslint-disable no-await-in-loop */
     data.salt = await utils.rndHex(32);
-    receiversPublicKeys.push(data.receiver.publicKey);
   }
 
   try {
-    const { maxOutputCommitmentIndex, txReceipt } = await erc20.simpleFungibleBatchTransfer(
+    const { txReceipt } = await erc20.simpleFungibleBatchTransfer(
       inputCommitment,
       outputCommitments,
-      receiversPublicKeys,
       sender.secretKey,
       {
         erc20Address,
+        fTokenShieldAddress,
         account: address,
-        fTokenShieldJson,
-        fTokenShieldAddress: fTokenShield.address,
       },
       {
         codePath: `${process.cwd()}/code/gm17/ft-batch-transfer/out`,
@@ -467,12 +451,6 @@ async function simpleFTCommitmentBatchTransfer(req, res, next) {
         pkPath: `${process.cwd()}/code/gm17/ft-batch-transfer/proving.key`,
       },
     );
-
-    let lastCommitmentIndex = Number(maxOutputCommitmentIndex);
-    for (const transferCommitment of outputCommitments) {
-      transferCommitment.commitmentIndex = lastCommitmentIndex - (outputCommitments.length - 1);
-      lastCommitmentIndex += 1;
-    }
 
     res.data = {
       outputCommitments,
@@ -496,15 +474,10 @@ async function setAddressToBlacklist(req, res, next) {
   const { address } = req.headers;
   const { malfeasantAddress } = req.body;
   try {
-    const {
-      contractJson: fTokenShieldJson,
-      contractInstance: fTokenShield,
-    } = await getTruffleContractInstance('FTokenShield');
-
+    const fTokenShieldAddress = await getContractAddress('FTokenShield');
     await erc20.blacklist(malfeasantAddress, {
       account: address,
-      fTokenShieldJson,
-      fTokenShieldAddress: fTokenShield.address,
+      fTokenShieldAddress,
     });
     res.data = { message: 'added to blacklist' };
     next();
@@ -552,7 +525,7 @@ async function setAddressToBlacklist(req, res, next) {
  * }
  *
  * res.data: {
- * consolidatedCommitment:  {
+ * outputCommitment:  {
  *    "value":"0x00000000000000000000000000000014",
  *    "salt":"0xce4f2a50b07c92b0c12fbf738cd8090ca898c5956f2de14f04c7f6ee6a46bdc7",
  *    "commitment":"0xbb51e94ff3a0ef1e6198195b3b412fe0def4d234ff5916ca953d521f84eea613",
@@ -593,10 +566,8 @@ async function setAddressToBlacklist(req, res, next) {
 async function consolidationTransfer(req, res, next) {
   const { address } = req.headers;
   const { inputCommitments, outputCommitment, receiver, sender } = req.body;
-  const {
-    contractJson: fTokenShieldJson,
-    contractInstance: fTokenShield,
-  } = await getTruffleContractInstance('FTokenShield');
+
+  const fTokenShieldAddress = await getContractAddress('FTokenShield');
   const erc20Address = await getContractAddress('FToken');
 
   if (!inputCommitments) throw new Error('Invalid data input');
@@ -611,9 +582,8 @@ async function consolidationTransfer(req, res, next) {
       sender.secretKey,
       {
         erc20Address,
+        fTokenShieldAddress,
         account: address,
-        fTokenShieldJson,
-        fTokenShieldAddress: fTokenShield.address,
       },
       {
         codePath: `${process.cwd()}/code/gm17/ft-consolidation-transfer/out`,
@@ -645,15 +615,10 @@ async function unsetAddressFromBlacklist(req, res, next) {
   const { address } = req.headers;
   const { blacklistedAddress } = req.body;
   try {
-    const {
-      contractJson: fTokenShieldJson,
-      contractInstance: fTokenShield,
-    } = await getTruffleContractInstance('FTokenShield');
-
+    const fTokenShieldAddress = await getContractAddress('FTokenShield');
     await erc20.unblacklist(blacklistedAddress, {
       account: address,
-      fTokenShieldJson,
-      fTokenShieldAddress: fTokenShield.address,
+      fTokenShieldAddress,
     });
     res.data = { message: 'removed from blacklist' };
     next();

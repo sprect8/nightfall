@@ -1,6 +1,7 @@
 import express, { Router } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+
 import logger from './logger';
 import { dbConnection, formatResponse, formatError, errorHandler } from './middlewares';
 import configureRoutesToPraseParams, {
@@ -33,7 +34,7 @@ initializeUserRoutes(router);
 
 app.use(formatResponse);
 
-app.use(function logError(err, req, res, next) {
+app.use((err, req, res, next) => {
   logger.error(
     `${req.method}:${req.url}
     ${JSON.stringify({ error: err.message })}

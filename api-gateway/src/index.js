@@ -8,6 +8,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+
 import logger from './logger';
 import rabbitmq from './rabbitmq';
 import {
@@ -19,19 +20,16 @@ import {
   userRoutes,
   shieldRoutes,
 } from './routes';
-import {
-  authentication, // Authorization filter to verify Role of the user
-  formatResponse,
-  formatError,
-  errorHandler,
-} from './middlewares';
+import { authentication, formatResponse, formatError, errorHandler } from './middlewares';
 import setupAdmin from './setup-admin-user';
 
 const app = express();
 
-app.use(bodyParser.json()); // set up a filter to parse JSON
+// set up a filter to parse JSON
+app.use(bodyParser.json());
 
-app.use(cors()); // cross origin filter
+// cross origin filter
+app.use(cors());
 app.use(authentication);
 
 app.use(rootRouter);
@@ -44,7 +42,7 @@ app.use(shieldRoutes);
 
 app.use(formatResponse);
 
-app.use(function logError(err, req, res, next) {
+app.use((err, req, res, next) => {
   if (err instanceof Error) {
     logger.error(
       `${req.method}:${req.url}

@@ -44,9 +44,9 @@ Mac and Linux machines with at least 16GB of memory and 10GB of disk space are s
 The Nightfall demonstration requires the following software to run:
 
 - Docker
-  - Launch Docker Desktop (on Mac, it is on the menu bar) and set memory to 8GB with 4GB of swap
-    space (minimum - 12GB memory is better) or 16GB of memory with 512MB of swap. **The default
-    values for Docker Desktop will NOT work. No, they really won't**.
+  - Launch Docker Desktop (on Mac, it is on the menu bar) and set memory to 12GB with 4GB of swap
+    space (minimum - 16GB memory is better). **The default values for Docker Desktop
+    will NOT work. No, they really won't**.
 - Python
   - Be sure npm is setup to use v2.7 of python, not python3. To check the python version, run
     `python --version`

@@ -24,6 +24,7 @@ case $yn in
     setupAllCmd=setupAll-mimc
     mimc=yes
     mkdir zkp/code/gm17/ft-batch-transfer zkp/code/gm17/ft-burn zkp/code/gm17/ft-consolidation-transfer zkp/code/gm17/ft-mint zkp/code/gm17/ft-transfer zkp/code/gm17/nft-burn zkp/code/gm17/nft-mint zkp/code/gm17/nft-transfer || true
+    cp docker-compose.override.mimc.yml docker-compose.override.yml
     ;;
   [Nn]* )
     ;;
@@ -38,6 +39,7 @@ if [ ${setupCmd} != "setup-mimc" ]
         setupCmd=setup-rc
         setupAllCmd=setupAll-rc
         mkdir zkp/code/gm17/ft-burn zkp/code/gm17/ft-mint zkp/code/gm17/ft-transfer || true
+        cp docker-compose.override.compliance.yml docker-compose.override.yml
         ;;
       [Nn]* ) mkdir zkp/code/gm17/ft-batch-transfer zkp/code/gm17/ft-burn zkp/code/gm17/ft-mint zkp/code/gm17/ft-transfer zkp/code/gm17/nft-burn zkp/code/gm17/nft-mint zkp/code/gm17/nft-transfer || true
         ;;

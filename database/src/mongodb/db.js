@@ -1,7 +1,8 @@
 import config from 'config';
+
 import { COLLECTIONS } from '../common/constants';
 import {
-  UserSchema,
+  userSchema,
   nftSchema,
   nftTransactionSchema,
   nftCommitmentSchema,
@@ -25,7 +26,7 @@ export default class DB {
   createTablesForUser() {
     const { username, database } = this;
     this.Models = {
-      user: database.model(`${username}_${COLLECTIONS.USER}`, UserSchema),
+      user: database.model(`${username}_${COLLECTIONS.USER}`, userSchema),
       nft: database.model(`${username}_${COLLECTIONS.NFT}`, nftSchema),
       nft_transaction: database.model(
         `${username}_${COLLECTIONS.NFT_TRANSACTION}`,
@@ -52,26 +53,15 @@ export default class DB {
     };
   }
 
-  async saveData(modelName, data) {
-    try {
-      const Model = this.Models[modelName];
-      const modelInstance = new Model(data);
-      const successData = await modelInstance.save();
-      return Promise.resolve(successData);
-    } catch (e) {
-      return Promise.reject(e);
-    }
+  saveData(modelName, data) {
+    const Model = this.Models[modelName];
+    const modelInstance = new Model(data);
+    return modelInstance.save();
   }
 
-  async getData(modelName, query = {}, projection) {
-    try {
-      const model = this.Models[modelName];
-      const data = await model.find(query, projection).exec();
-      return Promise.resolve(data);
-    } catch (e) {
-      console.log('DB error', e);
-      return Promise.reject(e);
-    }
+  getData(modelName, query = {}, projection) {
+    const model = this.Models[modelName];
+    return model.find(query, projection).exec();
   }
 
   async getDbData(
@@ -95,94 +85,63 @@ export default class DB {
         .find(query)
         .countDocuments()
         .exec();
-      return Promise.resolve({ data, totalCount });
-    } catch (e) {
-      return Promise.reject(e);
+      return { data, totalCount };
+    } catch (err) {
+      return err;
     }
   }
 
-  async getDbValues(modelName, query, projection, sort = {}, pageNo, limit) {
-    try {
-      const model = this.Models[modelName];
-      const mQuery = model.find(query);
-      if (limit) {
-        mQuery.limit(limit);
-      }
-      if (pageNo) {
-        mQuery.skip(limit * (pageNo - 1));
-      }
-      if (sort) {
-        mQuery.sort(sort);
-      }
-      if (projection) {
-        mQuery.populate(projection);
-      }
-
-      const data = await mQuery.exec();
-      return Promise.resolve({ data });
-    } catch (e) {
-      return Promise.reject(e);
+  getDbValues(modelName, query, projection, sort = {}, pageNo, limit) {
+    const model = this.Models[modelName];
+    const mQuery = model.find(query);
+    if (limit) {
+      mQuery.limit(limit);
     }
+    if (pageNo) {
+      mQuery.skip(limit * (pageNo - 1));
+    }
+    if (sort) {
+      mQuery.sort(sort);
+    }
+    if (projection) {
+      mQuery.populate(projection);
+    }
+    return mQuery.exec();
   }
 
-  async findOne(modelName, query) {
-    try {
-      const model = this.Models[modelName];
-      const data = await model.findOne(query);
-      return Promise.resolve(data);
-    } catch (e) {
-      return Promise.reject(e);
-    }
+  findOne(modelName, query) {
+    const model = this.Models[modelName];
+    return model.findOne(query);
   }
 
-  async getListData(modelName, query, page) {
-    try {
-      const model = this.Models[modelName];
-      const data = await model
-        .find(query)
-        .skip(page.index * page.size)
-        .limit(page.size)
-        .exec();
-      return Promise.resolve(data);
-    } catch (e) {
-      return Promise.reject(e);
-    }
+  getListData(modelName, query, page) {
+    const model = this.Models[modelName];
+    return model
+      .find(query)
+      .skip(page.index * page.size)
+      .limit(page.size)
+      .exec();
   }
 
-  async updateData(modelName, condition, updateData, options = { upsert: true }) {
-    try {
-      const model = this.Models[modelName];
-      const data = await model.updateOne(condition, updateData, options);
-      return Promise.resolve(data);
-    } catch (e) {
-      return Promise.reject(e);
-    }
+  updateData(modelName, condition, updateData, options = { upsert: true }) {
+    const model = this.Models[modelName];
+    return model.updateOne(condition, updateData, options);
   }
 
-  async aggregation(modelName, condition, projection, options) {
-    try {
-      const model = this.Models[modelName];
-      const pipeline = [{ $match: condition }];
+  aggregation(modelName, condition, projection, options) {
+    const model = this.Models[modelName];
+    const pipeline = [{ $match: condition }];
 
-      if (projection) pipeline.push(projection);
+    if (projection) pipeline.push(projection);
 
-      if (options) pipeline.push(options);
+    if (options) pipeline.push(options);
 
-      const data = await model.aggregate(pipeline);
-
-      return Promise.resolve(data);
-    } catch (e) {
-      return Promise.reject(e);
-    }
+    return model.aggregate(pipeline);
   }
 
-  async populate(modelName, data, populates) {
-    try {
-      const model = this.Models[modelName];
-      return await model.populate(data, populates);
-    } catch (e) {
-      return Promise.reject(e);
-    }
+  populate(modelName, data, populates) {
+    const model = this.Models[modelName];
+    return model.populate(data, populates);
   }
 
   addUser(name, password) {

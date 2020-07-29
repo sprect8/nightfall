@@ -86,6 +86,7 @@ services:
       - ./zkp/.babelrc:/app/.babelrc
       - ./zkp/__tests__:/app/__tests__
       - ./zkp/config:/app/config
+      - ./zkp-utils:/app/node_modules/zkp-utils
       - /var/run/docker.sock:/var/run/docker.sock
       - /dev:/dev # only for github actions
     environment:
@@ -112,6 +113,11 @@ services:
       - ./ui/tsconfig.json:/app/tsconfig.json
     ports:
       - '8000:80'
+    environment:
+      API_GATEWAY_HOST: http://localhost
+      API_GATEWAY_PORT: 8001
+      RABBITMQ_HOST: ws://localhost
+      RABBITMQ_PORT: 15674
     networks:
       - nightfall_network
 
@@ -186,13 +192,29 @@ services:
       ETH_GAS_PRICE: 20000000000
     volumes:
       - ./zkp/contracts/:/truffle/contracts:delegated
-      - /truffle/contracts/mimc
-      - /truffle/contracts/sha
-      - ./zkp/contracts/sha/MerkleTree.sol:/truffle/contracts/MerkleTree.sol:delegated
       - ./zkp/migrations/:/truffle/migrations:delegated
       - ./zkp/build/contracts/:/truffle/build/contracts:cached
-      - ./zkp/test/:/truffle/test:delegated
-      - ./zkp/src/:/truffle/src:delegated
+    depends_on:
+      - ganache
+    logging:
+      options:
+        max-size: 10m
+    networks:
+      - nightfall_network
+
+  truffle-nightlite:
+    image: ajmay/truffle:5.0.9
+    environment:
+      SOLC_VERSION: 0.5.8
+      ETH_HOST: ganache
+      ETH_GAS: 6000000
+      ETH_GAS_PRICE: 20000000000
+    volumes:
+      - ./zkp/node_modules/@eyblockchain/nightlite/contracts/:/truffle/contracts:delegated
+      - ./zkp/node_modules/@eyblockchain/nightlite/contracts/sha/MerkleTree.sol:/truffle/contracts/MerkleTree.sol:delegated
+      - ./zkp/node_modules/@eyblockchain/nightlite/contracts/mimc/MiMC.sol:/truffle/contracts/MiMC.sol:delegated
+      - ./zkp/node_modules/@eyblockchain/nightlite/migrations/:/truffle/migrations:delegated
+      - ./zkp/build/contracts/:/truffle/build/contracts:cached
     depends_on:
       - ganache
     logging:

@@ -68,7 +68,6 @@ export async function createAccountHandler(req, res, next) {
     res.data = data;
     next();
   } catch (err) {
-    console.log(err);
     next(err);
   }
 }
@@ -80,7 +79,7 @@ export async function loadVks(req, res, next) {
       {
         ...req.body,
       },
-      req.headers,
+      req.user,
     );
 
     res.data = data;
@@ -97,7 +96,7 @@ export async function loadVks(req, res, next) {
  * @param {String} contractAddress
  */
 function setShieldContract(user, contractAddress) {
-  return new Promise(function setShieldDetails(resolve) {
+  return new Promise(resolve => {
     zkp
       .setTokenShield(user, { nftCommitmentShield: contractAddress })
       .then(() => resolve('nft'))

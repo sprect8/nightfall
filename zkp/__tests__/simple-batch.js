@@ -1,12 +1,11 @@
 /* eslint-disable import/no-unresolved */
 
 import { erc20 } from '@eyblockchain/nightlite';
-import utils from '../src/zkpUtils';
+import utils from 'zkp-utils';
+
 import bc from '../src/web3';
 import controller from '../src/f-token-controller';
-import { getTruffleContractInstance, getContractAddress } from '../src/contractUtils';
-
-jest.setTimeout(7200000);
+import { getContractAddress } from '../src/contractUtils';
 
 const PROOF_LENGTH = 20;
 const inputAmount = '0x00000000000000000000000000000028'; // 128 bits = 16 bytes = 32 chars
@@ -63,10 +62,8 @@ const outputPublicKeys = [];
 let inputCommitmentId;
 // storage for z indexes
 let zInd1;
-let zInd2;
 let outputCommitments = [];
 let accounts;
-let fTokenShieldJson;
 let fTokenShieldAddress;
 let erc20Address;
 if (process.env.COMPLIANCE !== 'true') {
@@ -74,10 +71,7 @@ if (process.env.COMPLIANCE !== 'true') {
     if (!(await bc.isConnected())) await bc.connect();
     accounts = await (await bc.connection()).eth.getAccounts();
 
-    const { contractJson, contractInstance } = await getTruffleContractInstance('FTokenShield');
-    fTokenShieldAddress = contractInstance.address;
-    fTokenShieldJson = contractJson;
-
+    fTokenShieldAddress = await getContractAddress('FTokenShield');
     erc20Address = await getContractAddress('FToken');
     const erc20AddressPadded = `0x${utils.strip0x(erc20Address).padStart(64, '0')}`;
 
@@ -120,7 +114,6 @@ if (process.env.COMPLIANCE !== 'true') {
         {
           erc20Address,
           account: accounts[0],
-          fTokenShieldJson,
           fTokenShieldAddress,
         },
         {
@@ -143,18 +136,22 @@ if (process.env.COMPLIANCE !== 'true') {
         commitmentIndex: zInd1,
       };
       for (let i = 0; i < outputAmounts.length; i++) {
-        outputCommitments[i] = { value: outputAmounts[i], salt: outputCommitmentSalts[i] };
+        outputCommitments[i] = {
+          value: outputAmounts[i],
+          salt: outputCommitmentSalts[i],
+          receiver: {
+            publicKey: outputPublicKeys[i],
+          },
+        };
       }
 
-      const response = await erc20.simpleFungibleBatchTransfer(
+      await erc20.simpleFungibleBatchTransfer(
         inputCommitment,
         outputCommitments,
-        outputPublicKeys,
         secretKeyA,
         {
           erc20Address,
           account: accounts[0],
-          fTokenShieldJson,
           fTokenShieldAddress,
         },
         {
@@ -164,7 +161,6 @@ if (process.env.COMPLIANCE !== 'true') {
         },
       );
 
-      zInd2 = parseInt(response.maxOutputCommitmentIndex, 10);
       const bal2 = await controller.getBalance(accounts[0]);
       const wei = parseInt(bal1, 10) - parseInt(bal2, 10);
       console.log('gas consumed was', wei / 20e9);
@@ -183,13 +179,13 @@ if (process.env.COMPLIANCE !== 'true') {
           value: c,
           salt: outputCommitmentSalts[18],
           commitment: outputCommitments[18].commitment,
-          commitmentIndex: zInd2 - 1,
+          commitmentIndex: outputCommitments[18].commitmentIndex,
         },
         {
           value: d,
           salt: outputCommitmentSalts[19],
           commitment: outputCommitments[19].commitment,
-          commitmentIndex: zInd2,
+          commitmentIndex: outputCommitments[19].commitmentIndex,
         },
       ];
       outputCommitments = [
@@ -205,7 +201,6 @@ if (process.env.COMPLIANCE !== 'true') {
         {
           erc20Address,
           account: accounts[0],
-          fTokenShieldJson,
           fTokenShieldAddress,
         },
         {
