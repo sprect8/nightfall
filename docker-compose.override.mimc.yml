@@ -14,4 +14,3 @@ services:
   truffle-nightlite:
     volumes:
       - ./zkp/node_modules/@eyblockchain/nightlite/contracts/mimc/MerkleTree.sol:/truffle/contracts/MerkleTree.sol:delegated
-      - ./zkp/node_modules/@eyblockchain/nightlite/contracts/mimc/MiMC.sol:/truffle/contracts/MiMC.sol:delegated

@@ -8,7 +8,3 @@ services:
   # we need many accounts to be able to run the compliance unit tests
   ganache:
     command: ganache-cli --accounts=110 --defaultBalanceEther=1000
-
-  truffle-nightlite:
-    volumes:
-      - ./zkp/node_modules/@eyblockchain/nightlite/contracts/mimc/MiMC.sol:/truffle/contracts/MiMC.sol:delegated

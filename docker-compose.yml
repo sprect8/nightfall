@@ -212,6 +212,7 @@ services:
     volumes:
       - ./zkp/node_modules/@eyblockchain/nightlite/contracts/:/truffle/contracts:delegated
       - ./zkp/node_modules/@eyblockchain/nightlite/contracts/sha/MerkleTree.sol:/truffle/contracts/MerkleTree.sol:delegated
+      - ./zkp/node_modules/@eyblockchain/nightlite/contracts/mimc/MiMC.sol:/truffle/contracts/MiMC.sol:delegated
       - ./zkp/node_modules/@eyblockchain/nightlite/migrations/:/truffle/migrations:delegated
       - ./zkp/build/contracts/:/truffle/build/contracts:cached
     depends_on:
