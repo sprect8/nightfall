@@ -51,6 +51,15 @@ export class NavComponent implements OnInit, OnDestroy {
       this.parseDataAndShowToaster(data);
     });
   }
+  
+  toastRemover(action) {
+    for (const toast of this.toastr.toasts) {
+      if (toast.portal.instance.toastPackage.toastType == action) {
+        this.toastr.clear(toast.toastId);
+        break;
+      }
+    }
+  }
 
   parseDataAndShowToaster(data) {
     const placeholder = `Something went wrong.`;
@@ -60,112 +69,136 @@ export class NavComponent implements OnInit, OnDestroy {
 
     switch (data.type) {
       case '/mintFTCommitment':
+        this.toastRemover('mintFTCommitment');
         if (data.error) {
           this.toastr.error(
-            `ft commitment mint failed: ${data.error.message || placeholder}`,
-            'Error',
+            `Failed to mint fungible token commitment`,
+            null,
             toasterSettings
           );
         } else {
           this.toastr.success(
-            `ft commitment minted successfully.`,
-            'Success',
+            `Successfully minted fungible token commitment`,
+            null,
             toasterSettings
           );
         }
         break;
 
       case '/transferFTCommitment':
+        this.toastRemover('transferFTCommitment');
         if (data.error) {
           this.toastr.error(
-            `ft commitment transfer failed: ${data.error.message || placeholder}`,
-            'Error',
+            `Failed to transfer fungible token commitment`,
+            null,
             toasterSettings
           );
         } else {
           this.toastr.success(
-            `ft commitment value ${Number(data[0].value)} transferred successfully to ${data[0].owner.name}`,
-            'Success',
+            `Successfully transferred fungible token commitment value ${Number(data[0].value)} to ${data[0].owner.name}`,
+            null,
             toasterSettings
           );
         }
         break;
 
       case '/burnFTCommitment':
+        this.toastRemover('burnFTCommitment');
         if (data.error) {
           this.toastr.error(
-            `ft commitment burn failed: ${data.error.message || placeholder}`,
-            'Error',
+            `Failed burning fungible token commitment`,
+            null,
             toasterSettings
           );
         } else {
           this.toastr.success(
-            `ft commitment burned successfully.`,
-            'Success',
+            `Successfully burned fungible token commitment`,
+            null,
             toasterSettings
           );
         }
         break;
 
         case '/simpleFTCommitmentBatchTransfer':
+          this.toastRemover('simpleFTCommitmentBatchTransfer');
           if (data.error) {
             this.toastr.error(
-              `ft commitment batch transfer failed: ${data.error.message || placeholder}`,
-              'Error',
+              `Failed batch transfer of fungible token commitments`,
+              null,
               toasterSettings
             );
           } else {
             this.toastr.success(
-              `ft commitment batch transferred successfully.`,
-              'Success',
+              `Successfully transferred fungible token commitments to selected reciever(s) `,
+              null,
               toasterSettings
             );
           }
           break;
 
         case '/mintNFTCommitment':
+          this.toastRemover('mintNFTCommitment');
           if (data.error) {
             this.toastr.error(
-              `nft commitment mint failed: ${data.error.message || placeholder}`,
-              'Error',
+              `Failed to mint non-fungible token commitment`,
+              null,
               toasterSettings
             );
           } else {
             this.toastr.success(
-              `nft commitment minted successfully.`,
-              'Success',
+              `Successfully minted non-fungible token commitment`,
+              null,
               toasterSettings
             );
           }
           break;
 
         case '/transferNFTCommitment':
+          this.toastRemover('transferNFTCommitment');
           if (data.error) {
             this.toastr.error(
-              `nft commitment transfer failed: ${data.error.message || placeholder}`,
-              'Error',
+              `Failed to transfer non-fungible token commitment`,
+              null,
               toasterSettings
             );
           } else {
             this.toastr.success(
-              `nft commitment transferred successfully.`,
-              'Success',
+              `Successfully transferred non-fungible token commitment to reciever`,
+              null,
               toasterSettings
             );
           }
           break;
 
         case '/burnNFTCommitment':
+          this.toastRemover('burnNFTCommitment');
           if (data.error) {
             this.toastr.error(
-              `nft commitment burn failed: ${data.error.message || placeholder}`,
-              'Error',
+              `Failed to burn non-fungible token commitment`,
+              null,
               toasterSettings
             );
           } else {
             this.toastr.success(
-              `nft commitment burned successfully.`,
-              'Success',
+              `Successfully burned non-fungible token commitment`,
+              null,
+              toasterSettings
+            );
+          }
+          break;
+
+        case '/consolidationTransfer':
+          this.toastRemover('consolidationTransfer');
+          if (data.error) {
+            this.toastr.error(
+              `Failed consolidation transfer of fungible token commitments to reciever`,
+              null,
+              toasterSettings
+            );
+          } else {
+            this.toastr.success(
+              `Successfully transferred consolidated fungible token commitment to reciever`,
+              null,
               toasterSettings
             );
           }
