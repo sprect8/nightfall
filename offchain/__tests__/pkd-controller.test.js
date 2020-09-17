@@ -4,7 +4,7 @@
 Authors:
 */
 
-import utils from 'zkp-utils';
+import utils from 'nightlite-utils';
 
 import {
   isNameInUse,
@@ -106,7 +106,7 @@ describe('PKD Controller testing', () => {
   });
 
   test('ZKP public key can be set and retrieved using the ZKP public key to address association', async () => {
-    zkpPublicKeyInput = await utils.rndHex(32);
+    zkpPublicKeyInput = await utils.randomHex(32);
     const accounts = await web3.eth.getAccounts();
     await setZkpPublicKey(zkpPublicKeyInput, accounts[0]);
     const zkpPublicKeyOutput = await getZkpPublicKeyFromAddress(accounts[0]);
@@ -130,7 +130,7 @@ describe('PKD Controller testing', () => {
 
   test('Public key can be set and retrieved using the Public key to address association', async () => {
     const accounts = await web3.eth.getAccounts();
-    zkpPublicKeyInput = await utils.rndHex(32);
+    zkpPublicKeyInput = await utils.randomHex(32);
 
     const publicKeyInput = [];
     const publicKeyOutput = [];

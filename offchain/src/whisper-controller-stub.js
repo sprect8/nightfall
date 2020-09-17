@@ -8,7 +8,7 @@ the same node server though (nothing gets passed through the blockchain).
 @module whisper-controller-stub
 */
 
-import utils from 'zkp-utils';
+import utils from 'nightlite-utils';
 import EventEmitter from 'events';
 
 class MyEmitter extends EventEmitter {}
@@ -28,9 +28,9 @@ export async function generateWhisperKeys(id) {
   if (id.address === undefined)
     throw new Error('no valid Ethereum Address has been set for this party');
 
-  const shhIdentity = utils.strip0x(await utils.rndHex(32)); // just use a random number
+  const shhIdentity = utils.strip0x(await utils.randomHex(32)); // just use a random number
 
-  wpk[shhIdentity] = await utils.rndHex(65); // save a corresponding random 'public key'\
+  wpk[shhIdentity] = await utils.randomHex(65); // save a corresponding random 'public key'\
   const returnPubKey = wpk[shhIdentity];
   return { shhIdentity, returnPubKey };
 }

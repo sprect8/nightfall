@@ -4,7 +4,7 @@
 @author Westlad
 */
 
-import utils from 'zkp-utils';
+import utils from 'nightlite-utils';
 import Web3 from './web3';
 import logger from './logger';
 

@@ -6,7 +6,7 @@ The functions are fairly self-documenting so not individually commented.
 
 import tc from 'truffle-contract';
 import jsonfile from 'jsonfile';
-import utils from 'zkp-utils';
+import utils from 'nightlite-utils';
 
 import Web3 from './web3';
 
