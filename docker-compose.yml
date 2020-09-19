@@ -85,7 +85,6 @@ services:
       - ./zkp/.babelrc:/app/.babelrc
       - ./zkp/__tests__:/app/__tests__
       - ./zkp/config:/app/config
-      - ./zkp-utils:/app/node_modules/zkp-utils
       - /var/run/docker.sock:/var/run/docker.sock
       - /dev:/dev # only for github actions
     environment:
@@ -139,7 +138,6 @@ services:
       - ./database/src:/app/src
       - ./database/.babelrc:/app/.babelrc
       - ./database/config:/app/config
-      - ./zkp-utils:/app/node_modules/zkp-utils
       - ./database/setup-mongo-acl-for-new-users.js:/app/setup-mongo-acl-for-new-users.js
     environment:
       MONGO_HOST: mongo-nightfall

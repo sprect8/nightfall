@@ -1,7 +1,7 @@
 /* eslint-disable import/no-unresolved */
 
 import { erc20, elgamal } from '@eyblockchain/nightlite';
-import utils from 'zkp-utils';
+import utils from 'nightlite-utils';
 
 import Web3 from '../src/web3';
 import controller from '../src/f-token-controller';
@@ -55,40 +55,40 @@ if (process.env.COMPLIANCE === 'true') {
     const erc20AddressPadded = `0x${utils.strip0x(erc20Address).padStart(64, '0')}`;
 
     // blockchainOptions = { account, fTokenShieldJson, fTokenShieldAddress };
-    saltAliceC = await utils.rndHex(32);
-    saltAliceD = await utils.rndHex(32);
-    saltAliceToBobE = await utils.rndHex(32);
-    saltAliceToAliceF = await utils.rndHex(32);
+    saltAliceC = await utils.randomHex(32);
+    saltAliceD = await utils.randomHex(32);
+    saltAliceToBobE = await utils.randomHex(32);
+    saltAliceToAliceF = await utils.randomHex(32);
     // publicKeyA = utils.ensure0x(utils.strip0x(utils.hash(secretKeyA)).padStart(32, '0'));
-    publicKeyA = utils.hash(secretKeyA);
-    publicKeyB = utils.hash(secretKeyB);
-    commitmentAliceC = utils.concatenateThenHash(
-      erc20AddressPadded,
-      amountC,
-      publicKeyA,
-      saltAliceC,
+    publicKeyA = utils.shaHash(utils.strip0x(secretKeyA));
+    publicKeyB = utils.shaHash(utils.strip0x(secretKeyB));
+    commitmentAliceC = utils.shaHash(
+      utils.strip0x(erc20AddressPadded),
+      utils.strip0x(amountC),
+      utils.strip0x(publicKeyA),
+      utils.strip0x(saltAliceC),
     );
-    commitmentAliceD = utils.concatenateThenHash(
-      erc20AddressPadded,
-      amountD,
-      publicKeyA,
-      saltAliceD,
+    commitmentAliceD = utils.shaHash(
+      utils.strip0x(erc20AddressPadded),
+      utils.strip0x(amountD),
+      utils.strip0x(publicKeyA),
+      utils.strip0x(saltAliceD),
     );
-    saltBobG = await utils.rndHex(32);
-    saltBobToEveH = await utils.rndHex(32);
-    saltBobToBobI = await utils.rndHex(32);
-    commitmentBobG = utils.concatenateThenHash(erc20AddressPadded, amountG, publicKeyB, saltBobG);
-    commitmentBobE = utils.concatenateThenHash(
-      erc20AddressPadded,
-      amountE,
-      publicKeyB,
-      saltAliceToBobE,
+    saltBobG = await utils.randomHex(32);
+    saltBobToEveH = await utils.randomHex(32);
+    saltBobToBobI = await utils.randomHex(32);
+    commitmentBobG = utils.shaHash(erc20AddressPadded, amountG, publicKeyB, saltBobG);
+    commitmentBobE = utils.shaHash(
+      utils.strip0x(erc20AddressPadded),
+      utils.strip0x(amountE),
+      utils.strip0x(publicKeyB),
+      utils.strip0x(saltAliceToBobE),
     );
-    commitmentAliceF = utils.concatenateThenHash(
-      erc20AddressPadded,
-      amountF,
-      publicKeyA,
-      saltAliceToAliceF,
+    commitmentAliceF = utils.shaHash(
+      utils.strip0x(erc20AddressPadded),
+      utils.strip0x(amountF),
+      utils.strip0x(publicKeyA),
+      utils.strip0x(saltAliceToAliceF),
     );
     fTokenShieldInstance.setRootPruningInterval(100, {
       from: accounts[0],
@@ -485,7 +485,7 @@ if (process.env.COMPLIANCE === 'true') {
       const userPromises = [];
       const zkpPublicKeysPromises = [];
       // generate some public keys
-      for (let i = 0; i < accounts.length; i++) zkpPublicKeysPromises.push(utils.rndHex(32));
+      for (let i = 0; i < accounts.length; i++) zkpPublicKeysPromises.push(utils.randomHex(32));
       const zkpPublicKeys = await Promise.all(zkpPublicKeysPromises);
       // try to register the new keys with accounts (ignore Alice's and Bob's accounts)
       for (let i = 4; i < accounts.length; i++) {
@@ -518,12 +518,12 @@ if (process.env.COMPLIANCE === 'true') {
     test('Alice and Bob are already registered, so attempting to register them again with a different ZKP public key should fail', async () => {
       expect.assertions(1);
       try {
-        await fTokenShieldInstance.checkUser(await utils.rndHex(32), {
+        await fTokenShieldInstance.checkUser(await utils.randomHex(32), {
           from: accounts[0],
           gas: 6500000,
           gasPrice: 20000000000,
         });
-        await fTokenShieldInstance.checkUser(await utils.rndHex(32), {
+        await fTokenShieldInstance.checkUser(await utils.randomHex(32), {
           from: accounts[0],
           gas: 6500000,
           gasPrice: 20000000000,

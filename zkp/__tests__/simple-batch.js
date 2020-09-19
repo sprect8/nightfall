@@ -1,7 +1,7 @@
 /* eslint-disable import/no-unresolved */
 
 import { erc20 } from '@eyblockchain/nightlite';
-import utils from 'zkp-utils';
+import utils from 'nightlite-utils';
 
 import bc from '../src/web3';
 import controller from '../src/f-token-controller';
@@ -76,17 +76,17 @@ if (process.env.COMPLIANCE !== 'true') {
     const erc20AddressPadded = `0x${utils.strip0x(erc20Address).padStart(64, '0')}`;
 
     for (let i = 0; i < PROOF_LENGTH; i++) {
-      outputPublicKeys[i] = utils.strip0x(utils.hash(receiverSecretKeys[i]));
+      outputPublicKeys[i] = utils.shaHash(utils.strip0x(receiverSecretKeys[i]));
     }
 
-    publicKeyAlice = utils.strip0x(utils.hash(secretKeyA));
+    publicKeyAlice = utils.shaHash(utils.strip0x(secretKeyA));
 
-    inputCommitmentSalt = await utils.rndHex(32);
-    inputCommitmentId = utils.concatenateThenHash(
-      erc20AddressPadded,
-      inputAmount,
-      publicKeyAlice,
-      inputCommitmentSalt,
+    inputCommitmentSalt = await utils.randomHex(32);
+    inputCommitmentId = utils.shaHash(
+      utils.strip0x(erc20AddressPadded),
+      utils.strip0x(inputAmount),
+      utils.strip0x(publicKeyAlice),
+      utils.strip0x(inputCommitmentSalt),
     );
   });
 
@@ -173,7 +173,7 @@ if (process.env.COMPLIANCE !== 'true') {
       const d = '0x00000000000000000000000000000002';
       const e = '0x00000000000000000000000000000001';
       const f = '0x00000000000000000000000000000003';
-      const pkE = await utils.rndHex(32); // public key of Eve, who we transfer to
+      const pkE = await utils.randomHex(32); // public key of Eve, who we transfer to
       const inputCommitments = [
         {
           value: c,
@@ -189,8 +189,8 @@ if (process.env.COMPLIANCE !== 'true') {
         },
       ];
       outputCommitments = [
-        { value: e, salt: await utils.rndHex(32) },
-        { value: f, salt: await utils.rndHex(32) },
+        { value: e, salt: await utils.randomHex(32) },
+        { value: f, salt: await utils.randomHex(32) },
       ];
 
       await erc20.transfer(

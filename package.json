@@ -52,5 +52,7 @@
     "superagent": "^5.1.0",
     "superagent-prefix": "0.0.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "nightlite-utils": "^1.0.6"
+  }
 }

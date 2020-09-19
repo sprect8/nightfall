@@ -1,7 +1,7 @@
 /* eslint-disable import/no-unresolved */
 
 import { erc721 } from '@eyblockchain/nightlite';
-import utils from 'zkp-utils';
+import utils from 'nightlite-utils';
 
 import bc from '../src/web3';
 import controller from '../src/nf-token-controller';
@@ -36,38 +36,38 @@ if (process.env.COMPLIANCE !== 'true') {
     nfTokenShieldAddress = await getContractAddress('NFTokenShield');
     erc721Address = await getContractAddress('NFTokenMetadata');
     const erc721AddressPadded = `0x${utils.strip0x(erc721Address).padStart(64, '0')}`;
-    tokenIdA = await utils.rndHex(32);
-    tokenIdB = await utils.rndHex(32);
-    tokenIdG = await utils.rndHex(32);
-    publicKeyA = utils.ensure0x(utils.strip0x(utils.hash(secretKeyA)).padStart(32, '0'));
-    publicKeyB = utils.ensure0x(utils.strip0x(utils.hash(secretKeyB)).padStart(32, '0'));
-    saltAliceA = await utils.rndHex(32);
-    saltAliceG = await utils.rndHex(32);
-    saltAliceToBobA = await utils.rndHex(32);
-    saltAliceToBobG = await utils.rndHex(32);
-    commitmentAliceA = utils.concatenateThenHash(
-      erc721AddressPadded,
+    tokenIdA = await utils.randomHex(32);
+    tokenIdB = await utils.randomHex(32);
+    tokenIdG = await utils.randomHex(32);
+    publicKeyA = utils.shaHash(utils.strip0x(secretKeyA));
+    publicKeyB = utils.shaHash(utils.strip0x(secretKeyB));
+    saltAliceA = await utils.randomHex(32);
+    saltAliceG = await utils.randomHex(32);
+    saltAliceToBobA = await utils.randomHex(32);
+    saltAliceToBobG = await utils.randomHex(32);
+    commitmentAliceA = utils.shaHash(
+      utils.strip0x(erc721AddressPadded),
       utils.strip0x(tokenIdA).slice(-32 * 2),
-      publicKeyA,
-      saltAliceA,
+      utils.strip0x(publicKeyA),
+      utils.strip0x(saltAliceA),
     );
-    commitmentAliceG = utils.concatenateThenHash(
-      erc721AddressPadded,
+    commitmentAliceG = utils.shaHash(
+      utils.strip0x(erc721AddressPadded),
       utils.strip0x(tokenIdG).slice(-32 * 2),
-      publicKeyA,
-      saltAliceG,
+      utils.strip0x(publicKeyA),
+      utils.strip0x(saltAliceG),
     );
-    commitmentBobA = utils.concatenateThenHash(
-      erc721AddressPadded,
+    commitmentBobA = utils.shaHash(
+      utils.strip0x(erc721AddressPadded),
       utils.strip0x(tokenIdA).slice(-32 * 2),
-      publicKeyB,
-      saltAliceToBobA,
+      utils.strip0x(publicKeyB),
+      utils.strip0x(saltAliceToBobA),
     );
-    commitmentBobG = utils.concatenateThenHash(
-      erc721AddressPadded,
+    commitmentBobG = utils.shaHash(
+      utils.strip0x(erc721AddressPadded),
       utils.strip0x(tokenIdG).slice(-32 * 2),
-      publicKeyB,
-      saltAliceToBobG,
+      utils.strip0x(publicKeyB),
+      utils.strip0x(saltAliceToBobG),
     );
   });
 

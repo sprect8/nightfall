@@ -34,7 +34,7 @@ const web3 = Web3.connection();
 
 describe('PKD Controller testing', () => {
   test('Utility function correctly converts string to hex', () => {
-    const hex = utils.utf8StringToHex('zero-knowledge', 32);
+    const hex = utils.utf8ToHex('zero-knowledge', 32);
 
     expect(hex, 'Test for string to hex conversion failed!').toEqual(
       '0x0000000000000000000000000000000000007a65726f2d6b6e6f776c65646765',
@@ -43,7 +43,7 @@ describe('PKD Controller testing', () => {
   });
 
   test('Utility function correctly converts hex to string', () => {
-    const str = utils.hexToUtf8String(
+    const str = utils.hexToUtf8(
       '0x0000000000000000000000000000000000007a65726f2d6b6e6f776c65646765',
     );
 

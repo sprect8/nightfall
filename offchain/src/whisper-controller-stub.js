@@ -28,7 +28,7 @@ export async function generateWhisperKeys(id) {
   if (id.address === undefined)
     throw new Error('no valid Ethereum Address has been set for this party');
 
-  const shhIdentity = utils.strip0x(await utils.randomHex(32)); // just use a random number
+  const shhIdentity = utils.strip0x(utils.randomHex(32)); // just use a random number
 
   wpk[shhIdentity] = await utils.randomHex(65); // save a corresponding random 'public key'\
   const returnPubKey = wpk[shhIdentity];

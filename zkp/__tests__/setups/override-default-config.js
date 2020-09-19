@@ -4,9 +4,6 @@
  */
 import { overrideDefaultConfig } from '@eyblockchain/nightlite';
 import config from 'config';
-import utils from 'zkp-utils';
-
-utils.setZokratesPrime(config.ZOKRATES_PRIME);
 
 overrideDefaultConfig({
   NODE_HASHLENGTH: config.NODE_HASHLENGTH,

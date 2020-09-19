@@ -1,7 +1,7 @@
 import { exec } from 'child_process';
 import mongoose from 'mongoose';
 import config from 'config';
-import utils from 'zkp-utils';
+import utils from 'nightlite-utils';
 
 import { COLLECTIONS } from '../common/constants';
 import { dbConnections, userDBs } from '../common/dbConnections';
@@ -38,8 +38,8 @@ export default class UserService {
    * @returns {object} a user object
    */
   async createUser(data) {
-    const secretKey = await utils.rndHex(32);
-    const publicKey = utils.hash(secretKey);
+    const secretKey = await utils.randomHex(32);
+    const publicKey = utils.shaHash(utils.strip0x(secretKey));
 
     if (data.name !== 'admin') {
       await this.db.addUser(data.name, data.password);

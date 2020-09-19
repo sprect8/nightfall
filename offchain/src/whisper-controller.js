@@ -62,7 +62,7 @@ Function to decode a javascript object encoded as a Whisper hex message payload 
 @returns {string} - the decoded javascript object
 */
 function decodeMessage(msgHex) {
-  const msgStr = utils.hexToUtf8String(msgHex);
+  const msgStr = utils.hexToUtf8(msgHex);
   return JSON.parse(msgStr);
 }
 

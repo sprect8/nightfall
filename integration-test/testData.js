@@ -1,5 +1,5 @@
 import config from 'config';
-import utils from '../zkp-utils';
+import utils from 'nightlite-utils';
 
 const { leftPadHex } = utils;
 const LEAF_HASHLENGTH = config.get('LEAF_HASHLENGTH');
@@ -9,11 +9,11 @@ function parseMintCommitments(erc20, type, user) {
     return {
       value: leftPadHex(value.toString(16), 32),
       get commitment() {
-        return utils.concatenateThenHash(
-          `0x${utils.strip0x(erc20.contractAddress).padStart(64, '0')}`,
-          this.value,
-          user.pk,
-          this.salt === undefined ? '0x0' : this.salt, // S_A - set at erc-20 commitment mint (step 18)
+        return utils.shaHash(
+          utils.strip0x(erc20.contractAddress).padStart(64, '0'),
+          utils.strip0x(this.value),
+          utils.strip0x(user.pk),
+          this.salt === undefined ? '0' : utils.strip0x(this.salt), // S_A - set at erc-20 commitment mint (step 18)
         );
       },
     };
@@ -26,11 +26,11 @@ function parseTransferCommitments(erc20, type, user) {
       value: leftPadHex(value.toString(16), 32),
       receiver: { name: user.name },
       get commitment() {
-        return utils.concatenateThenHash(
-          `0x${utils.strip0x(erc20.contractAddress).padStart(64, '0')}`,
-          this.value,
-          user.pk,
-          this.salt === undefined ? '0x0' : this.salt, // S_A - set at erc-20 commitment mint (step 18)
+        return utils.shaHash(
+          utils.strip0x(erc20.contractAddress).padStart(64, '0'),
+          utils.strip0x(this.value),
+          utils.strip0x(user.pk),
+          this.salt === undefined ? '0' : utils.strip0x(this.salt), // S_A - set at erc-20 commitment mint (step 18)
         );
       },
     };
@@ -44,7 +44,7 @@ export default {
     email: 'alice@ey.com',
     password: 'pass',
     get pk() {
-      return this.secretKey === undefined ? undefined : utils.hash(this.secretKey); // secretKey - set at login test suit (step 2)
+      return this.secretKey === undefined ? undefined : utils.shaHash(utils.strip0x(this.secretKey)); // secretKey - set at login test suit (step 2)
     },
   },
   bob: {
@@ -52,7 +52,7 @@ export default {
     email: 'bob@ey.com',
     password: 'pass',
     get pk() {
-      return this.secretKey === undefined ? undefined : utils.hash(this.secretKey); // secretKey - set at login test suit (step 2)
+      return this.secretKey === undefined ? undefined : utils.shaHash(utils.strip0x(this.secretKey)); // secretKey - set at login test suit (step 2)
     },
   },
   erc721: {
@@ -85,21 +85,21 @@ export default {
       },
       // commitment while mint
       get mintCommitment() {
-        return utils.concatenateThenHash(
-          `0x${utils.strip0x(erc721.contractAddress).padStart(64, '0')}`,
+        return utils.shaHash(
+          utils.strip0x(erc721.contractAddress).padStart(64, '0'),
           utils.strip0x(this.tokenId).slice(-(LEAF_HASHLENGTH * 2)),
-          alice.pk,
-          this.salt, // salt - set at erc-721 commitment mint (step 4)
+          utils.strip0x(alice.pk),
+          utils.strip0x(this.salt), // salt - set at erc-721 commitment mint (step 4)
         );
       },
 
       // commitment while transfer
       get transferCommitment() {
-        return utils.concatenateThenHash(
-          `0x${utils.strip0x(erc721.contractAddress).padStart(64, '0')}`,
+        return utils.shaHash(
+          utils.strip0x(erc721.contractAddress).padStart(64, '0'),
           utils.strip0x(this.tokenId).slice(-(LEAF_HASHLENGTH * 2)),
-          bob.pk,
-          this.transferredSalt, // S_B - set at erc-721 commitment transfer to bob (step 5)
+          utils.strip0x(bob.pk),
+          utils.strip0x(this.transferredSalt), // S_B - set at erc-721 commitment transfer to bob (step 5)
         );
       },
       get transferCommitmentIndex() {
@@ -116,22 +116,22 @@ export default {
       transferCommitment: {
         value: leftPadHex(erc20.transfer.transferCommitment.toString(16), 32),
         get commitment() {
-          return utils.concatenateThenHash(
-            `0x${utils.strip0x(erc20.contractAddress).padStart(64, '0')}`,
-            this.value,
-            bob.pk,
-            this.salt === undefined ? '0x0' : this.salt, // S_E - set at erc-20 commitment transfer (step 12)
+          return utils.shaHash(
+            utils.strip0x(erc20.contractAddress).padStart(64, '0'),
+            utils.strip0x(this.value),
+            utils.strip0x(bob.pk),
+            this.salt === undefined ? '0x0' : utils.strip0x(this.salt), // S_E - set at erc-20 commitment transfer (step 12)
           );
         },
       },
       changeCommitment: {
         value: leftPadHex(erc20.transfer.changeCommitment.toString(16), 32),
         get commitment() {
-          return utils.concatenateThenHash(
-            `0x${utils.strip0x(erc20.contractAddress).padStart(64, '0')}`,
-            this.value,
-            alice.pk,
-            this.salt === undefined ? '0x0' : this.salt, // S_F - set at erc-20 commitment transfer (step 12)
+          return utils.shaHash(
+            utils.strip0x(erc20.contractAddress).padStart(64, '0'),
+            utils.strip0x(this.value),
+            utils.strip0x(alice.pk),
+            this.salt === undefined ? '0x0' : utils.strip0x(this.salt), // S_F - set at erc-20 commitment transfer (step 12)
           );
         },
       },
@@ -145,11 +145,11 @@ export default {
       mintCommitment: {
         value: leftPadHex(erc20.batchTransfer.mintCommitment.toString(16), 32),
         get commitment() {
-          return utils.concatenateThenHash(
-            `0x${utils.strip0x(erc20.contractAddress).padStart(64, '0')}`,
-            this.value,
-            alice.pk,
-            this.salt === undefined ? '0x0' : this.salt, // S_A - set at erc-20 commitment mint (step 18)
+          return utils.shaHash(
+            utils.strip0x(erc20.contractAddress).padStart(64, '0'),
+            utils.strip0x(this.value),
+            utils.strip0x(alice.pk),
+            this.salt === undefined ? '0x0' : utils.strip0x(this.salt), // S_A - set at erc-20 commitment mint (step 18)
           );
         },
       },
@@ -167,11 +167,11 @@ export default {
           return leftPadHex(erc20.batchTransfer.mintCommitment.toString(16), 32);
         },
         get commitment() {
-          return utils.concatenateThenHash(
-            `0x${utils.strip0x(erc20.contractAddress).padStart(64, '0')}`,
-            this.value,
-            alice.pk,
-            this.salt === undefined ? '0x0' : this.salt, // S_E - set at erc-20 commitment transfer (step 12)
+          return utils.shaHash(
+            utils.strip0x(erc20.contractAddress).padStart(64, '0'),
+            utils.strip0x(this.value),
+            utils.strip0x(alice.pk),
+            this.salt === undefined ? '0x0' : utils.strip0x(this.salt), // S_E - set at erc-20 commitment transfer (step 12)
           );
         },
       },

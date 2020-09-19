@@ -10,8 +10,8 @@ import utils from 'nightlite-utils';
 
 import Web3 from './web3';
 
-const bytes32 = name => utils.utf8StringToHex(name, 32);
-const stringify = hex => utils.hexToUtf8String(hex);
+const bytes32 = name => utils.utf8ToHex(name, 32);
+const stringify = hex => utils.hexToUtf8(hex);
 
 const PKD = tc(jsonfile.readFileSync('/app/build/contracts/PKD.json'));
 PKD.setProvider(Web3.connect());

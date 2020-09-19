@@ -40,6 +40,7 @@
     "keccak": "^2.1.0",
     "left-pad": "^1.3.0",
     "minimist": ">=1.2.3",
+    "nightlite-utils": "^1.0.6",
     "node-docker-api": "^1.1.22",
     "request": "^2.88.0",
     "safe-buffer": "^5.2.0",
