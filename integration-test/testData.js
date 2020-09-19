@@ -44,7 +44,9 @@ export default {
     email: 'alice@ey.com',
     password: 'pass',
     get pk() {
-      return this.secretKey === undefined ? undefined : utils.shaHash(utils.strip0x(this.secretKey)); // secretKey - set at login test suit (step 2)
+      return this.secretKey === undefined
+        ? undefined
+        : utils.shaHash(utils.strip0x(this.secretKey)); // secretKey - set at login test suit (step 2)
     },
   },
   bob: {
@@ -52,7 +54,9 @@ export default {
     email: 'bob@ey.com',
     password: 'pass',
     get pk() {
-      return this.secretKey === undefined ? undefined : utils.shaHash(utils.strip0x(this.secretKey)); // secretKey - set at login test suit (step 2)
+      return this.secretKey === undefined
+        ? undefined
+        : utils.shaHash(utils.strip0x(this.secretKey)); // secretKey - set at login test suit (step 2)
     },
   },
   erc721: {

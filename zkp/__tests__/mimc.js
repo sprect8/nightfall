@@ -32,7 +32,8 @@ if (process.env.HASH_TYPE === 'mimc') {
     test('MiMC hash correctly returns the hash of "0x12345"', async () => {
       const msg = '0x005b570ac05e96f3d8d205138e9b5ee0371377117020468b0fa81419a0a007ae';
       const testHash = await contractInstance.mimcHash([msg], { from: accounts[1], gas: 4000000 });
-      const hash = utils.mimcHash([BigInt(msg)], 'ALT_BN_254')
+      const hash = utils
+        .mimcHash([BigInt(msg)], 'ALT_BN_254')
         .toString(16)
         .padStart(64, '0');
       console.log('node', hash);
@@ -45,10 +46,8 @@ if (process.env.HASH_TYPE === 'mimc') {
         from: accounts[1],
         gas: 4000000,
       });
-      const concatHash = utils.mimcHash([
-        BigInt(commitment1),
-        BigInt(commitment2),
-      ], 'ALT_BN_254')
+      const concatHash = utils
+        .mimcHash([BigInt(commitment1), BigInt(commitment2)], 'ALT_BN_254')
         .toString(16)
         .padStart(64, '0');
       console.log('node', concatHash);
@@ -69,18 +68,14 @@ if (process.env.HASH_TYPE === 'mimc') {
       const testlatestRoot = newLeavesLog[0].args.root;
       // console.log(result.logs[0].args);
       // console.log('no. of leaves:', result.logs[0].args);
-      let _latestRoot = utils.mimcHash([
-        BigInt(commitment1),
-        BigInt(commitment2),
-      ], 'ALT_BN_254')
+      let _latestRoot = utils
+        .mimcHash([BigInt(commitment1), BigInt(commitment2)], 'ALT_BN_254')
         .toString(16)
         .padStart(64, '0'); // hash two newest leaves
       for (let i = 0; i < 31; i++) {
         // hash up the tree: 32-1 hashings to do
-        _latestRoot = utils.mimcHash([
-          BigInt(utils.ensure0x(_latestRoot)),
-          BigInt('0'),
-        ], 'ALT_BN_254')
+        _latestRoot = utils
+          .mimcHash([BigInt(utils.ensure0x(_latestRoot)), BigInt('0')], 'ALT_BN_254')
           .toString(16)
           .padStart(64, '0');
       }
@@ -100,30 +95,25 @@ if (process.env.HASH_TYPE === 'mimc') {
         return log.event === 'NewLeaf';
       });
       const testnewlatestRoot = newLeafLog[0].args.root;
-      const concatHash = utils.mimcHash([
-        BigInt(commitment1),
-        BigInt(commitment2),
-      ], 'ALT_BN_254')
+      const concatHash = utils
+        .mimcHash([BigInt(commitment1), BigInt(commitment2)], 'ALT_BN_254')
         .toString(16)
         .padStart(64, '0');
-      const newcommithash = utils.mimcHash([
-        BigInt(newcommit),
-        BigInt('0')
-      ], 'ALT_BN_254')
+      const newcommithash = utils
+        .mimcHash([BigInt(newcommit), BigInt('0')], 'ALT_BN_254')
         .toString(16)
         .padStart(64, '0');
-      let newlatestRoot = utils.mimcHash([
-        BigInt(utils.ensure0x(concatHash)),
-        BigInt(utils.ensure0x(newcommithash)),
-      ], 'ALT_BN_254')
+      let newlatestRoot = utils
+        .mimcHash(
+          [BigInt(utils.ensure0x(concatHash)), BigInt(utils.ensure0x(newcommithash))],
+          'ALT_BN_254',
+        )
         .toString(16)
-        .padStart(64, '0');// hash newest leaf PLUS next layer up
+        .padStart(64, '0'); // hash newest leaf PLUS next layer up
       for (let i = 0; i < 30; i++) {
         // so 32-2 hashings to do
-        newlatestRoot = utils.mimcHash([
-          BigInt(utils.ensure0x(newlatestRoot)),
-          BigInt('0'),
-        ], 'ALT_BN_254')
+        newlatestRoot = utils
+          .mimcHash([BigInt(utils.ensure0x(newlatestRoot)), BigInt('0')], 'ALT_BN_254')
           .toString(16)
           .padStart(64, '0');
       }
