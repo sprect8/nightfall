@@ -26,8 +26,8 @@
     "minimist": ">=0.2.1",
     "mocha": "^6.1.4",
     "mongoose": "^5.7.5",
-    "nightlite-utils": "^1.0.6",
-    "winston": "^3.1.0"
+    "winston": "^3.1.0",
+    "zkp-utils": "^1.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.4.4",
