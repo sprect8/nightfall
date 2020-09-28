@@ -1,7 +1,8 @@
 /* eslint-disable import/no-unresolved */
 
 import { erc20 } from '@eyblockchain/nightlite';
-import utils from 'nightlite-utils';
+import { randomHex, shaHash } from 'zkp-utils';
+import { GN } from 'general-number';
 
 import bc from '../src/web3';
 import controller from '../src/f-token-controller';
@@ -45,48 +46,24 @@ if (process.env.COMPLIANCE !== 'true') {
     accounts = await (await bc.connection()).eth.getAccounts();
 
     fTokenShieldAddress = await getContractAddress('FTokenShield');
-    erc20Address = await getContractAddress('FToken');
-    const erc20AddressPadded = `0x${utils.strip0x(erc20Address).padStart(64, '0')}`;
+    erc20Address = new GN(await getContractAddress('FToken'));
 
-    saltAliceC = await utils.randomHex(32);
-    saltAliceD = await utils.randomHex(32);
-    saltAliceToBobE = await utils.randomHex(32);
-    saltAliceToAliceF = await utils.randomHex(32);
-    publicKeyA = utils.shaHash(utils.strip0x(secretKeyA));
-    publicKeyB = utils.shaHash(utils.strip0x(secretKeyB));
-    commitmentAliceC = utils.shaHash(
-      utils.strip0x(erc20AddressPadded),
-      utils.strip0x(amountC),
-      utils.strip0x(publicKeyA),
-      utils.strip0x(saltAliceC),
-    );
-    commitmentAliceD = utils.shaHash(
-      utils.strip0x(erc20AddressPadded),
-      utils.strip0x(amountD),
-      utils.strip0x(publicKeyA),
-      utils.strip0x(saltAliceD),
-    );
-    saltBobG = await utils.randomHex(32);
-    saltBobToEveH = await utils.randomHex(32);
-    saltBobToBobI = await utils.randomHex(32);
-    commitmentBobG = utils.shaHash(
-      utils.strip0x(erc20AddressPadded),
-      utils.strip0x(amountG),
-      utils.strip0x(publicKeyB),
-      utils.strip0x(saltBobG),
-    );
-    commitmentBobE = utils.shaHash(
-      utils.strip0x(erc20AddressPadded),
-      utils.strip0x(amountE),
-      utils.strip0x(publicKeyB),
-      utils.strip0x(saltAliceToBobE),
-    );
-    commitmentAliceF = utils.shaHash(
-      utils.strip0x(erc20AddressPadded),
-      utils.strip0x(amountF),
-      utils.strip0x(publicKeyA),
-      utils.strip0x(saltAliceToAliceF),
-    );
+    saltAliceC = await randomHex(32);
+    saltAliceD = await randomHex(32);
+    saltAliceToBobE = await randomHex(32);
+    saltAliceToAliceF = await randomHex(32);
+    publicKeyA = shaHash(secretKeyA);
+    publicKeyB = shaHash(secretKeyB);
+    commitmentAliceC = shaHash(erc20Address.hex(32), amountC, publicKeyA, saltAliceC);
+    commitmentAliceD = shaHash(erc20Address.hex(32), amountD, publicKeyA, saltAliceD);
+    saltBobG = await randomHex(32);
+    saltBobToEveH = await randomHex(32);
+    saltBobToBobI = await randomHex(32);
+    commitmentBobG = shaHash(erc20Address.hex(32), amountG, publicKeyB, saltBobG);
+    commitmentBobE = shaHash(erc20Address.hex(32), amountE, publicKeyB, saltAliceToBobE);
+    commitmentAliceF = shaHash(erc20Address.hex(32), amountF, publicKeyA, saltAliceToAliceF);
+
+    erc20Address = erc20Address.hex();
   });
 
   // eslint-disable-next-line no-undef

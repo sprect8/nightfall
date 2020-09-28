@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { erc20, elgamal } from '@eyblockchain/nightlite';
 import contract from 'truffle-contract';
-import utils from 'nightlite-utils';
+import { randomHex } from 'zkp-utils';
 
 import fTokenController from '../f-token-controller';
 import { getTruffleContractInstance, getContractAddress } from '../contractUtils';
@@ -43,7 +43,7 @@ const router = Router();
 async function mint(req, res, next) {
   const { address } = req.headers;
   const { value, owner } = req.body;
-  const salt = await utils.randomHex(32);
+  const salt = await randomHex(32);
   const fTokenShieldAddress = await getContractAddress('FTokenShield');
   const erc20Address = await getContractAddress('FToken');
 
@@ -131,8 +131,8 @@ async function transfer(req, res, next) {
   const fTokenShieldAddress = await getContractAddress('FTokenShield');
   const erc20Address = await getContractAddress('FToken');
 
-  outputCommitments[0].salt = await utils.randomHex(32);
-  outputCommitments[1].salt = await utils.randomHex(32);
+  outputCommitments[0].salt = await randomHex(32);
+  outputCommitments[1].salt = await randomHex(32);
 
   try {
     const { txReceipt } = await erc20.transfer(
@@ -432,7 +432,7 @@ async function simpleFTCommitmentBatchTransfer(req, res, next) {
 
   for (const data of outputCommitments) {
     /* eslint-disable no-await-in-loop */
-    data.salt = await utils.randomHex(32);
+    data.salt = await randomHex(32);
   }
 
   try {
@@ -572,7 +572,7 @@ async function consolidationTransfer(req, res, next) {
 
   if (!inputCommitments) throw new Error('Invalid data input');
 
-  outputCommitment.salt = await utils.randomHex(32);
+  outputCommitment.salt = await randomHex(32);
 
   try {
     const { txReceipt } = await erc20.consolidationTransfer(

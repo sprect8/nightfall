@@ -1,7 +1,8 @@
 /* eslint-disable import/no-unresolved */
 
 import { erc20 } from '@eyblockchain/nightlite';
-import utils from 'nightlite-utils';
+import { randomHex, shaHash } from 'zkp-utils';
+import { GN } from 'general-number';
 
 import bc from '../src/web3';
 import controller from '../src/f-token-controller';
@@ -72,21 +73,17 @@ if (process.env.HASH_TYPE === 'mimc') {
   beforeAll(async () => {
     if (!(await bc.isConnected())) await bc.connect();
     accounts = await (await bc.connection()).eth.getAccounts();
-    erc20Address = await getContractAddress('FToken');
-    const erc20AddressPadded = `0x${utils.strip0x(erc20Address).padStart(64, '0')}`;
+    erc20Address = new GN(await getContractAddress('FToken'));
     fTokenShieldAddress = await getContractAddress('FTokenShield');
+
     for (let i = 0; i < PROOF_LENGTH; i++) {
-      publicKeyB[i] = utils.shaHash(utils.strip0x(secretKeyB[i]));
+      publicKeyB[i] = shaHash(secretKeyB[i]);
     }
     publicKeyB = await Promise.all(publicKeyB);
-    saltAliceC = await utils.randomHex(32);
-    publicKeyA = utils.shaHash(utils.strip0x(secretKeyA));
-    commitmentAliceC = utils.shaHash(
-      utils.strip0x(erc20AddressPadded),
-      utils.strip0x(amountC),
-      utils.strip0x(publicKeyA),
-      utils.strip0x(saltAliceC),
-    );
+    saltAliceC = await randomHex(32);
+    publicKeyA = shaHash(secretKeyA);
+    commitmentAliceC = shaHash(erc20Address.hex(32), amountC, publicKeyA, saltAliceC);
+    erc20Address = erc20Address.hex();
   });
   // eslint-disable-next-line no-undef
   describe('f-token-controller.js tests', () => {
@@ -175,7 +172,7 @@ if (process.env.HASH_TYPE === 'mimc') {
     });
 
     test('Should consolidate the 20 commitments just created', async () => {
-      const publicKeyE = await utils.randomHex(32); // public key of Eve, who we transfer to
+      const publicKeyE = await randomHex(32); // public key of Eve, who we transfer to
       const inputCommitments = [];
       for (let i = 0; i < amountE.length; i++) {
         inputCommitments[i] = {
@@ -185,7 +182,7 @@ if (process.env.HASH_TYPE === 'mimc') {
           commitmentIndex: outputCommitments[i].commitmentIndex,
         };
       }
-      const outputCommitment = { value: amountC, salt: await utils.randomHex(32) };
+      const outputCommitment = { value: amountC, salt: await randomHex(32) };
       console.log(`********************** inputCommitments : ${JSON.stringify(inputCommitments)}`);
       console.log(`********************** outputCommitment : ${JSON.stringify(outputCommitment)}`);
       const response = await erc20.consolidationTransfer(

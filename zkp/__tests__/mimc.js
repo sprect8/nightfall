@@ -1,5 +1,6 @@
 import contract from 'truffle-contract';
-import utils from 'nightlite-utils';
+import { mimcHash, ensure0x } from 'zkp-utils';
+import { GN } from 'general-number';
 
 import { getContractAddress, getContractInterface } from '../src/contractUtils';
 import bc from '../src/web3';
@@ -20,8 +21,8 @@ if (process.env.HASH_TYPE === 'mimc') {
     done();
   });
 
-  const commitment1 = utils.utf8ToHex('2', 32);
-  const commitment2 = utils.utf8ToHex('3', 32);
+  const commitment1 = new GN('2').hex(32);
+  const commitment2 = new GN('2').hex(32);
 
   // NOTE - the MerkleTree.sol tests will not work without a newly deployed shield contract
   describe('MiMC hash function tests', () => {
@@ -32,13 +33,12 @@ if (process.env.HASH_TYPE === 'mimc') {
     test('MiMC hash correctly returns the hash of "0x12345"', async () => {
       const msg = '0x005b570ac05e96f3d8d205138e9b5ee0371377117020468b0fa81419a0a007ae';
       const testHash = await contractInstance.mimcHash([msg], { from: accounts[1], gas: 4000000 });
-      const hash = utils
-        .mimcHash([BigInt(msg)], 'ALT_BN_254')
+      const hash = mimcHash([BigInt(msg)], 'ALT_BN_254')
         .toString(16)
         .padStart(64, '0');
       console.log('node', hash);
       console.log('shield contract', testHash);
-      expect(hash).toEqual(utils.strip0x(testHash));
+      expect(ensure0x(hash)).toEqual(testHash);
     });
 
     test('MiMC hash correctly returns the hash of two commitments', async () => {
@@ -46,13 +46,12 @@ if (process.env.HASH_TYPE === 'mimc') {
         from: accounts[1],
         gas: 4000000,
       });
-      const concatHash = utils
-        .mimcHash([BigInt(commitment1), BigInt(commitment2)], 'ALT_BN_254')
+      const concatHash = mimcHash([BigInt(commitment1), BigInt(commitment2)], 'ALT_BN_254')
         .toString(16)
         .padStart(64, '0');
       console.log('node', concatHash);
       console.log('shield contract', testConcatHash);
-      expect(concatHash).toEqual(utils.strip0x(testConcatHash));
+      expect(ensure0x(concatHash)).toEqual(testConcatHash);
     });
 
     // NB - below two tests require a fresh MerkleTree.sol
@@ -68,25 +67,23 @@ if (process.env.HASH_TYPE === 'mimc') {
       const testlatestRoot = newLeavesLog[0].args.root;
       // console.log(result.logs[0].args);
       // console.log('no. of leaves:', result.logs[0].args);
-      let _latestRoot = utils
-        .mimcHash([BigInt(commitment1), BigInt(commitment2)], 'ALT_BN_254')
+      let _latestRoot = mimcHash([BigInt(commitment1), BigInt(commitment2)], 'ALT_BN_254')
         .toString(16)
         .padStart(64, '0'); // hash two newest leaves
       for (let i = 0; i < 31; i++) {
         // hash up the tree: 32-1 hashings to do
-        _latestRoot = utils
-          .mimcHash([BigInt(utils.ensure0x(_latestRoot)), BigInt('0')], 'ALT_BN_254')
+        _latestRoot = mimcHash([BigInt(ensure0x(_latestRoot)), BigInt('0')], 'ALT_BN_254')
           .toString(16)
           .padStart(64, '0');
       }
       console.log('Shield new root', testlatestRoot);
       console.log('MiMC new root', _latestRoot);
-      expect(utils.strip0x(testlatestRoot)).toEqual(_latestRoot);
+      expect(testlatestRoot).toEqual(ensure0x(_latestRoot));
     });
 
     test('MerkleTree.sol (via FTokenShield) correctly inserts a single new leaf to Merkle Tree', async () => {
       // do two above leaves stay in? -yes
-      const newcommit = utils.utf8ToHex('4', 32);
+      const newcommit = new GN('4').hex(32);
       const result = await contractInstance.insertLeaf(newcommit, {
         from: accounts[1],
         gas: 4000000,
@@ -95,31 +92,27 @@ if (process.env.HASH_TYPE === 'mimc') {
         return log.event === 'NewLeaf';
       });
       const testnewlatestRoot = newLeafLog[0].args.root;
-      const concatHash = utils
-        .mimcHash([BigInt(commitment1), BigInt(commitment2)], 'ALT_BN_254')
+      const concatHash = mimcHash([BigInt(commitment1), BigInt(commitment2)], 'ALT_BN_254')
         .toString(16)
         .padStart(64, '0');
-      const newcommithash = utils
-        .mimcHash([BigInt(newcommit), BigInt('0')], 'ALT_BN_254')
+      const newcommithash = mimcHash([BigInt(newcommit), BigInt('0')], 'ALT_BN_254')
         .toString(16)
         .padStart(64, '0');
-      let newlatestRoot = utils
-        .mimcHash(
-          [BigInt(utils.ensure0x(concatHash)), BigInt(utils.ensure0x(newcommithash))],
-          'ALT_BN_254',
-        )
+      let newlatestRoot = mimcHash(
+        [BigInt(ensure0x(concatHash)), BigInt(ensure0x(newcommithash))],
+        'ALT_BN_254',
+      )
         .toString(16)
         .padStart(64, '0'); // hash newest leaf PLUS next layer up
       for (let i = 0; i < 30; i++) {
         // so 32-2 hashings to do
-        newlatestRoot = utils
-          .mimcHash([BigInt(utils.ensure0x(newlatestRoot)), BigInt('0')], 'ALT_BN_254')
+        newlatestRoot = mimcHash([BigInt(ensure0x(newlatestRoot)), BigInt('0')], 'ALT_BN_254')
           .toString(16)
           .padStart(64, '0');
       }
       console.log('Shield latest root', testnewlatestRoot);
       console.log('MiMC latest root', newlatestRoot);
-      expect(utils.strip0x(testnewlatestRoot)).toEqual(newlatestRoot);
+      expect(testnewlatestRoot).toEqual(ensure0x(newlatestRoot));
     });
   });
 } else {
