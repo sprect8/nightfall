@@ -7,7 +7,7 @@ const LEAF_HASHLENGTH = config.get('LEAF_HASHLENGTH');
 function parseMintCommitments(erc20, type, user) {
   return erc20[type].mintCommitments.map(value => {
     return {
-      value: new GN(value).hex(32),
+      value: new GN(value).hex(16),
       get commitment() {
         return shaHash(
           erc20.contractAddress.hex(32),
@@ -23,7 +23,7 @@ function parseMintCommitments(erc20, type, user) {
 function parseTransferCommitments(erc20, type, user) {
   return erc20[type].transferCommitments.map(value => {
     return {
-      value: new GN(value).hex(32),
+      value: new GN(value).hex(16),
       receiver: { name: user.name },
       get commitment() {
         return shaHash(
@@ -70,7 +70,7 @@ export default {
       },
     },
     batchTransfer: {
-      mintCommitment: new GN(50),
+      mintCommitment: 50,
       transferCommitments: [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4],
     },
   },
@@ -114,7 +114,7 @@ export default {
     return {
       mintCommitments: parseMintCommitments(erc20, 'transfer', alice),
       transferCommitment: {
-        value: new GN(erc20.transfer.transferCommitment).hex(32),
+        value: new GN(erc20.transfer.transferCommitment).hex(16),
         get commitment() {
           return shaHash(
             erc20.contractAddress.hex(32),
@@ -125,7 +125,7 @@ export default {
         },
       },
       changeCommitment: {
-        value: new GN(erc20.transfer.changeCommitment).hex(32),
+        value: new GN(erc20.transfer.changeCommitment).hex(16),
         get commitment() {
           return shaHash(
             erc20.contractAddress.hex(32),
@@ -143,7 +143,7 @@ export default {
     const { alice, bob, erc20 } = this;
     return {
       mintCommitment: {
-        value: erc20.batchTransfer.mintCommitment.hex(32),
+        value: new GN(erc20.batchTransfer.mintCommitment).hex(16),
         get commitment() {
           return shaHash(
             erc20.contractAddress.hex(32),
@@ -163,9 +163,7 @@ export default {
     return {
       mintCommitments: erc20CommitmentBatchTransfer.transferCommitments,
       transferCommitment: {
-        get value() {
-          return erc20.batchTransfer.mintCommitment.hex(32);
-        },
+        value: new GN(erc20.batchTransfer.mintCommitment).hex(16),
         get commitment() {
           return shaHash(
             erc20.contractAddress.hex(32),
