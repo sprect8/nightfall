@@ -6,12 +6,11 @@ The functions are fairly self-documenting so not individually commented.
 
 import tc from 'truffle-contract';
 import jsonfile from 'jsonfile';
-import utils from 'nightlite-utils';
+import { utf8ToHex, hexToUtf8, ensure0x } from 'zkp-utils';
 
 import Web3 from './web3';
 
-const bytes32 = name => utils.utf8ToHex(name, 32);
-const stringify = hex => utils.hexToUtf8(hex);
+const bytes32 = name => utf8ToHex(name, 32);
 
 const PKD = tc(jsonfile.readFileSync('/app/build/contracts/PKD.json'));
 PKD.setProvider(Web3.connect());
@@ -28,13 +27,13 @@ export async function getAddressFromName(name) {
 
 export async function getNameFromAddress(address) {
   const pkd = await PKD.deployed();
-  return stringify(await pkd.getNameFromAddress.call(utils.ensure0x(address)));
+  return hexToUtf8(await pkd.getNameFromAddress.call(ensure0x(address)));
 }
 
 export async function getNames() {
   const pkd = await PKD.deployed();
   const names = await pkd.getNames.call();
-  return names.map(name => stringify(name));
+  return names.map(name => hexToUtf8(name));
 }
 
 export async function getWhisperPublicKeyFromName(name) {
@@ -44,7 +43,7 @@ export async function getWhisperPublicKeyFromName(name) {
 
 export async function getWhisperPublicKeyFromAddress(address) {
   const pkd = await PKD.deployed();
-  return pkd.getWhisperPublicKeyFromAddress.call(utils.ensure0x(address));
+  return pkd.getWhisperPublicKeyFromAddress.call(ensure0x(address));
 }
 
 export async function getZkpPublicKeyFromName(name) {
@@ -54,7 +53,7 @@ export async function getZkpPublicKeyFromName(name) {
 
 export async function getZkpPublicKeyFromAddress(address) {
   const pkd = await PKD.deployed();
-  return pkd.getZkpPublicKeyFromAddress.call(utils.ensure0x(address));
+  return pkd.getZkpPublicKeyFromAddress.call(ensure0x(address));
 }
 
 export async function getPublicKeysFromName(name) {
@@ -64,12 +63,12 @@ export async function getPublicKeysFromName(name) {
 
 export async function getNameFromZkpPublicKey(zkp) {
   const pkd = await PKD.deployed();
-  return stringify(await pkd.getNameFromZkpPublicKey(zkp));
+  return hexToUtf8(await pkd.getNameFromZkpPublicKey(zkp));
 }
 
 export async function getPublicKeysFromAddress(address) {
   const pkd = await PKD.deployed();
-  return pkd.getPublicKeysFromAddress.call(utils.ensure0x(address));
+  return pkd.getPublicKeysFromAddress.call(ensure0x(address));
 }
 
 // set a name for the user (the smart contract enforces uniqueness)
