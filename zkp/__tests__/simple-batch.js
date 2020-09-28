@@ -89,7 +89,7 @@ if (process.env.COMPLIANCE !== 'true') {
       inputCommitmentSalt,
     );
 
-    erc20Address = erc20Address.hex(32);
+    erc20Address = erc20Address.hex();
   });
 
   // eslint-disable-next-line no-undef
