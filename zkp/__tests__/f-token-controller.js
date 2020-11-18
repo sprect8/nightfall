@@ -4,7 +4,7 @@ import { erc20 } from '@eyblockchain/nightlite';
 import { randomHex, shaHash } from 'zkp-utils';
 import { GN } from 'general-number';
 
-import bc from '../src/web3';
+import Web3 from '../src/web3';
 import controller from '../src/f-token-controller';
 import { getContractAddress } from '../src/contractUtils';
 
@@ -42,8 +42,8 @@ let fTokenShieldAddress;
 let erc20Address;
 if (process.env.COMPLIANCE !== 'true') {
   beforeAll(async () => {
-    if (!(await bc.isConnected())) await bc.connect();
-    accounts = await (await bc.connection()).eth.getAccounts();
+    await Web3.waitTillConnected();
+    accounts = await Web3.connection().eth.getAccounts();
 
     fTokenShieldAddress = await getContractAddress('FTokenShield');
     erc20Address = new GN(await getContractAddress('FToken'));
@@ -108,7 +108,7 @@ if (process.env.COMPLIANCE !== 'true') {
     });
 
     test('Should mint an ERC-20 commitment Z_A_C for Alice for asset C', async () => {
-      console.log('Alices account ', (await controller.getBalance(accounts[0])).toNumber());
+      console.log('Alices account ', await controller.getBalance(accounts[0]));
       const { commitment: zTest, commitmentIndex: zIndex } = await erc20.mint(
         amountC,
         publicKeyA,
@@ -126,7 +126,7 @@ if (process.env.COMPLIANCE !== 'true') {
       );
       zInd1 = parseInt(zIndex, 10);
       expect(commitmentAliceC).toEqual(zTest);
-      console.log(`Alice's account `, (await controller.getBalance(accounts[0])).toNumber());
+      console.log(`Alice's account `, Number(await controller.getBalance(accounts[0])));
     });
 
     test('Should mint another ERC-20 commitment Z_A_D for Alice for asset D', async () => {
@@ -147,7 +147,7 @@ if (process.env.COMPLIANCE !== 'true') {
       );
       zInd2 = parseInt(zIndex, 10);
       expect(commitmentAliceD).toEqual(zTest);
-      console.log(`Alice's account `, (await controller.getBalance(accounts[0])).toNumber());
+      console.log(`Alice's account `, await controller.getBalance(accounts[0]));
     });
 
     test('Should transfer a ERC-20 commitment to Bob (two coins get nullified, two created; one coin goes to Bob, the other goes back to Alice as change)', async () => {
@@ -236,8 +236,8 @@ if (process.env.COMPLIANCE !== 'true') {
     test(`Should burn Alice's remaining ERC-20 commitment`, async () => {
       const bal1 = await controller.getBalance(accounts[3]);
       const bal = await controller.getBalance(accounts[0]);
-      console.log('accounts[3]', bal1.toNumber());
-      console.log('accounts[0]', bal.toNumber());
+      console.log('accounts[3]', bal1);
+      console.log('accounts[0]', bal);
       await erc20.burn(
         amountF,
         secretKeyA,
@@ -257,7 +257,7 @@ if (process.env.COMPLIANCE !== 'true') {
         },
       );
       const bal2 = await controller.getBalance(accounts[3]);
-      console.log('accounts[3]', bal2.toNumber());
+      console.log('accounts[3]', bal2);
       expect(parseInt(amountF, 16)).toEqual(bal2 - bal1);
     });
   });

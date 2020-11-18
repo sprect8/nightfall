@@ -58,7 +58,7 @@ export default class NftBurnComponent implements OnInit , AfterContentInit {
 
   ngAfterContentInit() {
     setTimeout(() => {
-      this.select.filterInput.nativeElement.focus();
+      this.select.focus();
     }, 500);
   }
 

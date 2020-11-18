@@ -4,7 +4,7 @@ import { erc20 } from '@eyblockchain/nightlite';
 import { randomHex, shaHash } from 'zkp-utils';
 import { GN } from 'general-number';
 
-import bc from '../src/web3';
+import Web3 from '../src/web3';
 import controller from '../src/f-token-controller';
 import { getContractAddress } from '../src/contractUtils';
 // import vk from '../src/vk-controller';
@@ -71,8 +71,8 @@ let erc20Address;
 
 if (process.env.HASH_TYPE === 'mimc') {
   beforeAll(async () => {
-    if (!(await bc.isConnected())) await bc.connect();
-    accounts = await (await bc.connection()).eth.getAccounts();
+    await Web3.waitTillConnected();
+    accounts = await Web3.connection().eth.getAccounts();
     erc20Address = new GN(await getContractAddress('FToken'));
     fTokenShieldAddress = await getContractAddress('FTokenShield');
 

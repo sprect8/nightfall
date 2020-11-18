@@ -1,24 +1,31 @@
-import contract from 'truffle-contract';
 import { mimcHash, ensure0x } from 'zkp-utils';
 import { GN } from 'general-number';
 
-import { getContractAddress, getContractInterface } from '../src/contractUtils';
-import bc from '../src/web3';
+import {
+  getWeb3ContractInstance,
+  getContractInterface,
+  getContractAddress,
+} from '../src/contractUtils';
+import Web3 from '../src/web3';
 
 if (process.env.HASH_TYPE === 'mimc') {
   let accounts;
   let contractInstance;
-  beforeAll(async done => {
-    if (!(await bc.isConnected())) await bc.connect();
-    accounts = await (await bc.connection()).eth.getAccounts();
-
-    const contractJson = await getContractInterface('FTokenShield');
-    contractInstance = contract(contractJson);
-    contractInstance.setProvider(bc.connect());
-
+  beforeAll(async () => {
+    await Web3.waitTillConnected();
+    accounts = await Web3.connection().eth.getAccounts();
+    const { bytecode } = getContractInterface('FTokenShield');
     const verifierAddress = await getContractAddress('Verifier');
-    contractInstance = await contractInstance.new(verifierAddress, { from: accounts[0] });
-    done();
+    contractInstance = await getWeb3ContractInstance('FTokenShield');
+    contractInstance = await contractInstance
+      .deploy({
+        data: bytecode,
+        arguments: [verifierAddress],
+      })
+      .send({
+        from: accounts[0],
+        gas: 4700000,
+      });
   });
 
   const commitment1 = new GN('2').hex(32);
@@ -32,23 +39,30 @@ if (process.env.HASH_TYPE === 'mimc') {
 
     test('MiMC hash correctly returns the hash of "0x12345"', async () => {
       const msg = '0x005b570ac05e96f3d8d205138e9b5ee0371377117020468b0fa81419a0a007ae';
-      const testHash = await contractInstance.mimcHash([msg], { from: accounts[1], gas: 4000000 });
+
+      const testHash = await contractInstance.methods
+        .mimcHash([msg])
+        .call({ from: accounts[1], gas: 4000000 });
       const hash = mimcHash([BigInt(msg)], 'ALT_BN_254')
         .toString(16)
         .padStart(64, '0');
+
       console.log('node', hash);
       console.log('shield contract', testHash);
       expect(ensure0x(hash)).toEqual(testHash);
     });
 
     test('MiMC hash correctly returns the hash of two commitments', async () => {
-      const testConcatHash = await contractInstance.mimcHash([commitment1, commitment2], {
-        from: accounts[1],
-        gas: 4000000,
-      });
+      const testConcatHash = await contractInstance.methods
+        .mimcHash([commitment1, commitment2])
+        .call({
+          from: accounts[1],
+          gas: 4000000,
+        });
       const concatHash = mimcHash([BigInt(commitment1), BigInt(commitment2)], 'ALT_BN_254')
         .toString(16)
         .padStart(64, '0');
+
       console.log('node', concatHash);
       console.log('shield contract', testConcatHash);
       expect(ensure0x(concatHash)).toEqual(testConcatHash);
@@ -57,19 +71,21 @@ if (process.env.HASH_TYPE === 'mimc') {
     // NB - below two tests require a fresh MerkleTree.sol
 
     test('MerkleTree.sol (via FTokenShield) correctly inserts two first leaves to Merkle Tree', async () => {
-      const result = await contractInstance.insertLeaves([commitment1, commitment2], {
-        from: accounts[1],
-        gas: 4000000,
+      const txReceipt = await contractInstance.methods
+        .insertLeaves([commitment1, commitment2])
+        .send({
+          from: accounts[1],
+          gas: 4000000,
+        });
+      const newLeavesEvents = await contractInstance.getPastEvents('NewLeaves', {
+        filter: { transactionHash: txReceipt.transactionHash },
       });
-      const newLeavesLog = result.logs.filter(log => {
-        return log.event === 'NewLeaves';
-      });
-      const testlatestRoot = newLeavesLog[0].args.root;
-      // console.log(result.logs[0].args);
-      // console.log('no. of leaves:', result.logs[0].args);
+
+      const testlatestRoot = newLeavesEvents[0].returnValues.root;
       let _latestRoot = mimcHash([BigInt(commitment1), BigInt(commitment2)], 'ALT_BN_254')
         .toString(16)
         .padStart(64, '0'); // hash two newest leaves
+
       for (let i = 0; i < 31; i++) {
         // hash up the tree: 32-1 hashings to do
         _latestRoot = mimcHash([BigInt(ensure0x(_latestRoot)), BigInt('0')], 'ALT_BN_254')
@@ -84,14 +100,16 @@ if (process.env.HASH_TYPE === 'mimc') {
     test('MerkleTree.sol (via FTokenShield) correctly inserts a single new leaf to Merkle Tree', async () => {
       // do two above leaves stay in? -yes
       const newcommit = new GN('4').hex(32);
-      const result = await contractInstance.insertLeaf(newcommit, {
+      const txReceipt = await contractInstance.methods.insertLeaf(newcommit).send({
         from: accounts[1],
         gas: 4000000,
       });
-      const newLeafLog = result.logs.filter(log => {
-        return log.event === 'NewLeaf';
+
+      const newLeafEvents = await contractInstance.getPastEvents('NewLeaf', {
+        filter: { transactionHash: txReceipt.transactionHash },
       });
-      const testnewlatestRoot = newLeafLog[0].args.root;
+
+      const testnewlatestRoot = newLeafEvents[0].returnValues.root;
       const concatHash = mimcHash([BigInt(commitment1), BigInt(commitment2)], 'ALT_BN_254')
         .toString(16)
         .padStart(64, '0');
@@ -104,6 +122,7 @@ if (process.env.HASH_TYPE === 'mimc') {
       )
         .toString(16)
         .padStart(64, '0'); // hash newest leaf PLUS next layer up
+
       for (let i = 0; i < 30; i++) {
         // so 32-2 hashings to do
         newlatestRoot = mimcHash([BigInt(ensure0x(newlatestRoot)), BigInt('0')], 'ALT_BN_254')

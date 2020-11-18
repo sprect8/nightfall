@@ -9,7 +9,7 @@ declare isTestFailed=false
 
 launchContainersAndRunIntegrationTest(){
   printf "${GREEN}*** Docker Compose Build ***${NC}\n"
-  docker-compose build
+  docker-compose build --build-arg NPM_TOKEN=${NPM_TOKEN}
 
   printf "${GREEN}*** Launching containerized ganache ***${NC}\n"
   docker-compose up -d ganache
@@ -26,7 +26,13 @@ launchContainersAndRunIntegrationTest(){
   docker-compose up -d mongo-merkle-tree
   docker-compose up -d mongo-nightfall
 
-  sleep 10
+  # check to avoid `docker-compose exec` in github actions workflow
+  if [[ ! $GITHUB_ACTION ]]
+  then
+    while ! docker-compose exec mongo-nightfall mongo nightfall --host=localhost -u admin -p admin is-mongo-ready.js; do
+      sleep 3
+    done
+  fi
 
   printf "${GREEN}*** Launching containerized microservices ***${NC}\n"
   if [[ -f docker-compose.override.yml ]]
@@ -75,6 +81,12 @@ cleanup(){
 
 cleanup
 
+if [[ -z "$NPM_TOKEN" ]]; then
+  printf "${RED}*** ENV variable NPM_TOKEN is not set ***${NC}\n"
+  printf "Please set a valid (permission required :repo and :read-packages) github personal access token to the ENV - 'NPM_TOKEN'\n"
+  exit 1
+fi
+
 printf "${GREEN}*** Pull zokrates docker image ***${NC}\n"
 docker pull zokrates/zokrates:0.5.1
 
@@ -83,7 +95,7 @@ npm ci
 
 printf "${GREEN}*** Installing zkp dependencies ***${NC}\n"
 pushd zkp
-npm ci
+npm i
 popd
 
 if [[ "$1" == "compliance" || "$1" == "mimc" ]]

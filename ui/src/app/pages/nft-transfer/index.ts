@@ -71,7 +71,7 @@ export default class NftTransferComponent implements OnInit, AfterContentInit {
 
   ngAfterContentInit() {
     setTimeout(() => {
-      this.select.filterInput.nativeElement.focus();
+      this.select.focus();
     }, 500);
   }
 
