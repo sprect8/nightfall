@@ -51,7 +51,7 @@ docker restart nightfall_zkp_1
 ```
 
 ## Results
-Youtube Video Walkthrough will demonstrate the user interface and transactions privacy. We will also discuss the first impressions of using BSC Testnet, areas of improvements, and future / next steps if this project is to proceed further.  
+[Youtube Video Walkthrough](https://youtu.be/-YZ4ZPDEw5Y) will demonstrate the user interface and transactions privacy. We will also discuss the first impressions of using BSC Testnet, areas of improvements, and future / next steps if this project is to proceed further.  
 
 The simulation resulted in the important Testnet blockchain events detailed below:
 
