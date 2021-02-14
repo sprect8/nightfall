@@ -64,7 +64,7 @@ services:
     environment:
       AUTHENTICATION_API_HOST: http://api-gateway
       AUTHENTICATION_API_PORT: 80
-      BLOCKCHAIN_HOST: ws://ganache
+      BLOCKCHAIN_HOST: http://ganache
       BLOCKCHAIN_PORT: 8545
     networks:
       - nightfall_network
@@ -89,7 +89,7 @@ services:
       - /dev:/dev # only for github actions
     environment:
       HASH_TYPE: 'sha' #override this with docker-compose.override.mimc
-      BLOCKCHAIN_HOST: ws://ganache
+      BLOCKCHAIN_HOST: http://ganache
       BLOCKCHAIN_PORT: 8545
       MERKLE_TREE_HOST: http://merkle-tree
       MERKLE_TREE_PORT: 80
@@ -120,13 +120,13 @@ services:
     networks:
       - nightfall_network
 
-  ganache:
-    image: trufflesuite/ganache-cli:latest
-    command: ganache-cli --accounts=10 --defaultBalanceEther=1000
-    ports:
-      - '8545:8545'
-    networks:
-      - nightfall_network
+  # ganache:
+  #   image: trufflesuite/ganache-cli:latest
+  #   command: ganache-cli --accounts=10 --defaultBalanceEther=1000
+  #   ports:
+  #     - '8545:8545'
+  #   networks:
+  #     - nightfall_network
 
   database:
     build:
@@ -168,6 +168,7 @@ services:
     environment:
       SOLC_VERSION: 0.5.8
       ETH_HOST: ganache
+      ETH_PORT: 8545
       ETH_GAS: 6000000
       ETH_GAS_PRICE: 20000000000
     volumes:
@@ -188,6 +189,7 @@ services:
     environment:
       SOLC_VERSION: 0.5.8
       ETH_HOST: ganache
+      ETH_PORT: 8545
       ETH_GAS: 6000000
       ETH_GAS_PRICE: 20000000000
     volumes:
@@ -207,6 +209,7 @@ services:
     environment:
       SOLC_VERSION: 0.5.8
       ETH_HOST: ganache
+      ETH_PORT: 8545
       ETH_GAS: 6000000
       ETH_GAS_PRICE: 20000000000
     volumes:
@@ -223,6 +226,26 @@ services:
     networks:
       - nightfall_network
 
+  ganache:
+      build:
+        context: ./ethsigner/
+        dockerfile: Dockerfile
+      restart: unless-stopped
+      volumes:
+        - ./ethsigner/keygen:/keygen/
+      environment: 
+        - CHAIN_ID
+        - DOWNSTREAM_HTTP_HOST
+        - DOWNSTREAM_HTTP_PORT
+      command: ["--chain-id=${CHAIN_ID}", "--logging=WARN", "--http-listen-host=0.0.0.0", "--downstream-http-tls-enabled", "--downstream-http-port=${DOWNSTREAM_HTTP_PORT}", "--downstream-http-host=${DOWNSTREAM_HTTP_HOST}", "file-based-signer", "--key-file=/keygen/keyFile", "--password-file=/keygen/passwordFile"]
+      ports:
+        - 8545:8545
+      logging:
+        options:
+          max-size: 10m  
+      networks:
+        - nightfall_network
+
   merkle-tree:
     image: eyblockchain/timber:v2.1.0
     restart: on-failure
@@ -237,7 +260,7 @@ services:
     ports:
       - '9000:80'
     environment:
-      BLOCKCHAIN_HOST: ws://ganache
+      BLOCKCHAIN_HOST: wss://data-seed-prebsc-1-s1.binance.org
       BLOCKCHAIN_PORT: 8545
       CONTRACT_LOCATION: 'default' # Where to find the contractInstances?
       # Specify one of:

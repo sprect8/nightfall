@@ -37,7 +37,9 @@ async function createAccount(req, res, next) {
   const { password } = req.body;
   try {
     const address = await newAccount(password);
+    console.log("Address is ", address);
     if (password) {
+      console.log("transferring eth to account ...");
       await transferEtherToAccount(address);
     }
     res.data = address;

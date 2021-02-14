@@ -1,6 +1,5 @@
-import Web3 from 'web3';
-import config from 'config';
-import logger from './logger';
+const Web3 = require('web3');
+const logger = require('./logger');
 const accounts = [
   "0xda7bbd3f9120fc010b81603dae88612b5aa551b0417f57643aeb458cd19d8ccb",
   "0x89df02eec8119fc1983b3d214fc0f2580676d6029fa81ea544f1a0672366cfca",
@@ -13,9 +12,9 @@ const accounts = [
   "0x8417a78e079e3ef6e6f43bd904d579276f664d4408b18c1a8617c43ab79a3b3e",
   "0x741dc271874bde7cc5579505d625daa823c2d932ea2941cb55269740cb2babbc"
 ];
-
 const mapping = {}
-export default {
+
+module.exports = {
   mapping,
   connection() {
     return this.web3;
@@ -28,12 +27,19 @@ export default {
     if (this.web3) return this.web3.currentProvider;
 
     logger.info('Blockchain Connecting ...');
+    // const provider = new Web3.providers.WebsocketProvider(
+    //   `${process.env.BLOCKCHAIN_HOST}:${process.env.BLOCKCHAIN_PORT}`,
+    // );
+
+    // provider.on('error', logger.error);
+    // provider.on('connect', () => logger.info('Blockchain Connected ...'));
+    // provider.on('end', logger.error);
+    const provider = new Web3.providers.HttpProvider("http://ganache:8545"); //WebsocketProvider("wss://ropsten.infura.io/ws/v3/dbb21c28c80b42e0966df9bb94325b59");
     // const provider = new Web3.providers.WebsocketProvider(config.get('web3ProviderURL'));
 
     // provider.on('error', logger.error);
     // provider.on('connect', () => logger.info('Blockchain Connected ...'));
     // provider.on('end', logger.error);
-    const provider = new Web3.providers.HttpProvider(config.get('web3ProviderURL'));
 
     this.web3 = new Web3(provider);
 
@@ -45,7 +51,6 @@ export default {
 
     this.web3.eth.defaultAccount = this.web3.eth.accounts.privateKeyToAccount("0xbc696d9be5af89ff3389f2517b419dea6928054997ddf231791c38783a8e86f0").address;
     // this.web3 = new Web3(provider);
-
 
     return provider;
   },
